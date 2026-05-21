@@ -28,10 +28,9 @@ type HomeTableProps = {
   matches: Match[];
   activeTab: TeamKey;
   onEdit: (id: number) => void;
-  onDelete: (id: number) => void;
 };
 
-export default function HomeTable({ players, matches, activeTab, onEdit, onDelete }: HomeTableProps) {
+export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps) {
   return (
     <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
       <div className="flex items-center justify-between px-6 py-4 bg-white/3 border-b border-white/[0.07]">
@@ -98,7 +97,7 @@ export default function HomeTable({ players, matches, activeTab, onEdit, onDelet
                   <td className="text-center justify-center flex px-5 py-4">
                     <button
                       type="button"
-                      onClick={() => onDelete(player.id)}
+                      onClick={() => onEdit(player.id)}
                       className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
                     >
                       Detail →

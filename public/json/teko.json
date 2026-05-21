@@ -209,6 +209,132 @@
         "slice": 4,
         "loop": 4
       }
+    },
+        {
+      "id": 11,
+      "name": "Andi Wijaya",
+      "nickname": "Andi Ace",
+      "birthPlace": "Bogor",
+      "birthDate": "1990-03-10",
+      "gender": "Pria",
+      "houseBlock": "H1",
+      "houseNumber": "01",
+      "startMonth": "April",
+      "startYear": "2019",
+      "reason": "Mencari tantangan baru di dunia olahraga.",
+      "skills": {
+        "forehand": 7,
+        "backhand": 6,
+        "service": 8,
+        "volley": 5,
+        "slice": 6,
+        "loop": 7
+      }
+    },
+    {
+      "id": 12,
+      "name": "Bayu Pratama",
+      "nickname": "Bayu Power",
+      "birthPlace": "Bekasi",
+      "birthDate": "1987-09-22",
+      "gender": "Pria",
+      "houseBlock": "I2",
+      "houseNumber": "03",
+      "startMonth": "Juni",
+      "startYear": "2018",
+      "reason": "Ingin menjaga kebugaran tubuh dan bersosialisasi.",
+      "skills": {
+        "forehand": 8,
+        "backhand": 5,
+        "service": 7,
+        "volley": 6,
+        "slice": 5,
+        "loop": 8
+      }
+    },
+    {
+      "id": 13,
+      "name": "Candra Gunawan",
+      "nickname": "Candra Drop",
+      "birthPlace": "Depok",
+      "birthDate": "1992-01-05",
+      "gender": "Pria",
+      "houseBlock": "J3",
+      "houseNumber": "05",
+      "startMonth": "Agustus",
+      "startYear": "2020",
+      "reason": "Tertarik dengan strategi dan kecepatan permainan tenis.",
+      "skills": {
+        "forehand": 6,
+        "backhand": 7,
+        "service": 6,
+        "volley": 7,
+        "slice": 8,
+        "loop": 6
+      }
+    },
+    {
+      "id": 14,
+      "name": "Dedi Setiawan",
+      "nickname": "Dedi Net",
+      "birthPlace": "Tangerang",
+      "birthDate": "1989-06-18",
+      "gender": "Pria",
+      "houseBlock": "K4",
+      "houseNumber": "07",
+      "startMonth": "Maret",
+      "startYear": "2017",
+      "reason": "Mencari kegiatan positif di akhir pekan.",
+      "skills": {
+        "forehand": 7,
+        "backhand": 6,
+        "service": 7,
+        "volley": 8,
+        "slice": 6,
+        "loop": 5
+      }
+    },
+    {
+      "id": 15,
+      "name": "Gilang Ramadhan",
+      "nickname": "Gilang Spin",
+      "birthPlace": "Cirebon",
+      "birthDate": "1993-11-29",
+      "gender": "Pria",
+      "houseBlock": "L5",
+      "houseNumber": "09",
+      "startMonth": "Juli",
+      "startYear": "2021",
+      "reason": "Terinspirasi dari turnamen tenis profesional.",
+      "skills": {
+        "forehand": 8,
+        "backhand": 7,
+        "service": 6,
+        "volley": 5,
+        "slice": 7,
+        "loop": 9
+      }
+    },
+    {
+      "id": 16,
+      "name": "Hana Putri",
+      "nickname": "Hana Forehand",
+      "birthPlace": "Bandung",
+      "birthDate": "1996-02-14",
+      "gender": "Wanita",
+      "houseBlock": "M1",
+      "houseNumber": "10",
+      "startMonth": "Januari",
+      "startYear": "2022",
+      "reason": "Ingin mencoba olahraga baru yang menantang.",
+      "skills": {
+        "forehand": 7,
+        "backhand": 5,
+        "service": 6,
+        "volley": 4,
+        "slice": 5,
+        "loop": 6
+      }
     }
   ],
   "matches": [
@@ -253,6 +379,209 @@
       "player2": "Sari Dewi",
       "winner": "Sari Dewi",
       "setScore": "4-1"
+    },
+    {
+      "id": 7,
+      "player1": "Andi Wijaya",
+      "player2": "Bayu Pratama",
+      "winner": "Andi Wijaya",
+      "setScore": "4-2"
+    },
+    {
+      "id": 8,
+      "player1": "Candra Gunawan",
+      "player2": "Dedi Setiawan",
+      "winner": "Candra Gunawan",
+      "setScore": "4-3"
+    },
+    {
+      "id": 9,
+      "player1": "Gilang Ramadhan",
+      "player2": "Budi Santoso",
+      "winner": "Gilang Ramadhan",
+      "setScore": "4-1"
+    },
+    {
+      "id": 10,
+      "player1": "Eko Prasetyo",
+      "player2": "Doni Kurniawan",
+      "winner": "Eko Prasetyo",
+      "setScore": "4-0"
+    },
+    {
+      "id": 11,
+      "player1": "Riko Hermawan",
+      "player2": "Fajar Nugroho",
+      "winner": "Riko Hermawan",
+      "setScore": "4-2"
+    },
+    {
+      "id": 12,
+      "player1": "Andi Wijaya",
+      "player2": "Candra Gunawan",
+      "winner": "Andi Wijaya",
+      "setScore": "4-1"
+    },
+    {
+      "id": 13,
+      "player1": "Bayu Pratama",
+      "player2": "Dedi Setiawan",
+      "winner": "Bayu Pratama",
+      "setScore": "4-3"
+    },
+    {
+      "id": 14,
+      "player1": "Gilang Ramadhan",
+      "player2": "Eko Prasetyo",
+      "winner": "Gilang Ramadhan",
+      "setScore": "4-2"
+    },
+    {
+      "id": 15,
+      "player1": "Doni Kurniawan",
+      "player2": "Fajar Nugroho",
+      "winner": "Doni Kurniawan",
+      "setScore": "4-1"
+    },
+    {
+      "id": 16,
+      "player1": "Budi Santoso",
+      "player2": "Riko Hermawan",
+      "winner": "Budi Santoso",
+      "setScore": "4-0"
+    },
+    {
+      "id": 17,
+      "player1": "Andi Wijaya",
+      "player2": "Gilang Ramadhan",
+      "winner": "Andi Wijaya",
+      "setScore": "4-3"
+    },
+    {
+      "id": 18,
+      "player1": "Bayu Pratama",
+      "player2": "Candra Gunawan",
+      "winner": "Bayu Pratama",
+      "setScore": "4-2"
+    },
+    {
+      "id": 19,
+      "player1": "Dedi Setiawan",
+      "player2": "Doni Kurniawan",
+      "winner": "Dedi Setiawan",
+      "setScore": "4-2"
+    },
+    {
+      "id": 20,
+      "player1": "Eko Prasetyo",
+      "player2": "Riko Hermawan",
+      "winner": "Eko Prasetyo",
+      "setScore": "4-1"
+    },
+    {
+      "id": 21,
+      "player1": "Fajar Nugroho",
+      "player2": "Andi Wijaya",
+      "winner": "Andi Wijaya",
+      "setScore": "4-0"
+    },
+    {
+      "id": 22,
+      "player1": "Budi Santoso",
+      "player2": "Bayu Pratama",
+      "winner": "Budi Santoso",
+      "setScore": "4-3"
+    },
+    {
+      "id": 23,
+      "player1": "Candra Gunawan",
+      "player2": "Gilang Ramadhan",
+      "winner": "Gilang Ramadhan",
+      "setScore": "4-2"
+    },
+    {
+      "id": 24,
+      "player1": "Dedi Setiawan",
+      "player2": "Eko Prasetyo",
+      "winner": "Eko Prasetyo",
+      "setScore": "4-1"
+    },
+    {
+      "id": 25,
+      "player1": "Doni Kurniawan",
+      "player2": "Riko Hermawan",
+      "winner": "Doni Kurniawan",
+      "setScore": "4-3"
+    },
+    {
+      "id": 26,
+      "player1": "Hana Putri",
+      "player2": "Sari Dewi",
+      "winner": "Sari Dewi",
+      "setScore": "4-2"
+    },
+    {
+      "id": 27,
+      "player1": "Rina Lestari",
+      "player2": "Mega Putri",
+      "winner": "Rina Lestari",
+      "setScore": "4-3"
+    },
+    {
+      "id": 28,
+      "player1": "Nita Rahayu",
+      "player2": "Yuni Safitri",
+      "winner": "Nita Rahayu",
+      "setScore": "4-1"
+    },
+    {
+      "id": 29,
+      "player1": "Hana Putri",
+      "player2": "Rina Lestari",
+      "winner": "Rina Lestari",
+      "setScore": "4-0"
+    },
+    {
+      "id": 30,
+      "player1": "Sari Dewi",
+      "player2": "Mega Putri",
+      "winner": "Sari Dewi",
+      "setScore": "4-3"
+    },
+    {
+      "id": 31,
+      "player1": "Yuni Safitri",
+      "player2": "Hana Putri",
+      "winner": "Yuni Safitri",
+      "setScore": "4-2"
+    },
+    {
+      "id": 32,
+      "player1": "Nita Rahayu",
+      "player2": "Sari Dewi",
+      "winner": "Sari Dewi",
+      "setScore": "4-0"
+    },
+    {
+      "id": 33,
+      "player1": "Mega Putri",
+      "player2": "Hana Putri",
+      "winner": "Mega Putri",
+      "setScore": "4-1"
+    },
+    {
+      "id": 34,
+      "player1": "Rina Lestari",
+      "player2": "Yuni Safitri",
+      "winner": "Rina Lestari",
+      "setScore": "4-2"
+    },
+    {
+      "id": 35,
+      "player1": "Nita Rahayu",
+      "player2": "Mega Putri",
+      "winner": "Nita Rahayu",
+      "setScore": "4-3"
     }
   ]
 }

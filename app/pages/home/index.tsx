@@ -70,7 +70,7 @@ function buildPlayerStats(players: Player[], matches: Match[]): Map<string, Play
   });
 
   statsByName.forEach((stats) => {
-    stats.points = (stats.wins * 100) + (stats.losses * 20) + (stats.setWin * 10);
+    stats.points = (stats.wins * 100) + (stats.losses * 30) + (stats.setWin * 10);
   });
 
   return statsByName;
@@ -134,14 +134,16 @@ export default function HomeContent() {
       {/* Tabs */}
       <HomeTab activeTab={activeTab} onSelect={setActiveTab} />
 
-      {/* Card */}
+      {/* Player Table */}
       <HomeTable
         players={currentPlayers}
         matches={currentMatches}
         activeTab={activeTab}
         onEdit={handleEdit}
-        onDelete={handleDelete}
       />
+
+      {/* Match Table */}
+      
     </section>
   );
 }
