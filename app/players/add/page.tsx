@@ -4,17 +4,17 @@ import { FormEvent, useRef, useState } from "react";
 import Link from "next/link";
 
 type NewPlayerForm = {
-  nama: string;
-  panggilanGokil: string;
-  tempatLahir: string;
-  tanggalLahir: string;
+  name: string;
+  nickname: string;
+  birthPlace: string;
+  birthDate: string;
   gender: "Pria" | "Wanita";
-  blokRumah: string;
-  nomorRumah: string;
-  mainTenisMonth: string;
-  mainTenisYear: string;
-  kenapa: string;
-  skill: {
+  houseBlock: string;
+  houseNumber: string;
+  startMonth: string;
+  startYear: string;
+  reason: string;
+  skills: {
     forehand: number;
     backhand: number;
     service: number;
@@ -26,17 +26,17 @@ type NewPlayerForm = {
 };
 
 const initialForm: NewPlayerForm = {
-  nama: "",
-  panggilanGokil: "",
-  tempatLahir: "",
-  tanggalLahir: "",
+  name: "",
+  nickname: "",
+  birthPlace: "",
+  birthDate: "",
   gender: "Pria",
-  blokRumah: "",
-  nomorRumah: "",
-  mainTenisMonth: "",
-  mainTenisYear: "",
-  kenapa: "",
-  skill: {
+  houseBlock: "",
+  houseNumber: "",
+  startMonth: "",
+  startYear: "",
+  reason: "",
+  skills: {
     forehand: 1,
     backhand: 1,
     service: 1,
@@ -60,11 +60,11 @@ export default function AddPlayerPage() {
     setForm((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSkillChange = (field: keyof NewPlayerForm["skill"], value: number) => {
+  const handleSkillChange = (field: keyof NewPlayerForm["skills"], value: number) => {
     setForm((prev) => ({
       ...prev,
-      skill: {
-        ...prev.skill,
+      skills: {
+        ...prev.skills,
         [field]: value,
       },
     }));
@@ -129,8 +129,8 @@ export default function AddPlayerPage() {
             <input
               id="nama"
               type="text"
-              value={form.nama}
-              onChange={(event) => handleChange("nama", event.target.value)}
+              value={form.name}
+              onChange={(event) => handleChange("name", event.target.value)}
               placeholder="Masukkan nama lengkap"
               className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               required
@@ -144,8 +144,8 @@ export default function AddPlayerPage() {
             <input
               id="panggilanGokil"
               type="text"
-              value={form.panggilanGokil}
-              onChange={(event) => handleChange("panggilanGokil", event.target.value)}
+              value={form.nickname}
+              onChange={(event) => handleChange("nickname", event.target.value)}
               placeholder="Contoh: Si Unyil, Kojak, dll"
               className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               required
@@ -160,8 +160,8 @@ export default function AddPlayerPage() {
               <input
                 id="tempatLahir"
                 type="text"
-                value={form.tempatLahir}
-                onChange={(event) => handleChange("tempatLahir", event.target.value)}
+                value={form.birthPlace}
+                onChange={(event) => handleChange("birthPlace", event.target.value)}
                 placeholder="Contoh: Jakarta"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
@@ -174,8 +174,8 @@ export default function AddPlayerPage() {
               <input
                 id="tanggalLahir"
                 type="date"
-                value={form.tanggalLahir}
-                onChange={(event) => handleChange("tanggalLahir", event.target.value)}
+                value={form.birthDate}
+                onChange={(event) => handleChange("birthDate", event.target.value)}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
               />
@@ -209,8 +209,8 @@ export default function AddPlayerPage() {
               <input
                 id="blokRumah"
                 type="text"
-                value={form.blokRumah}
-                onChange={(event) => handleChange("blokRumah", event.target.value)}
+                value={form.houseBlock}
+                onChange={(event) => handleChange("houseBlock", event.target.value)}
                 placeholder="Contoh: A1"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
@@ -224,8 +224,8 @@ export default function AddPlayerPage() {
               <input
                 id="nomorRumah"
                 type="text"
-                value={form.nomorRumah}
-                onChange={(event) => handleChange("nomorRumah", event.target.value)}
+                value={form.houseNumber}
+                onChange={(event) => handleChange("houseNumber", event.target.value)}
                 placeholder="Contoh: 12"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
@@ -238,8 +238,8 @@ export default function AddPlayerPage() {
             <div className="flex gap-4">
               <select
                 id="mainTenisMonth"
-                value={form.mainTenisMonth}
-                onChange={(e) => handleChange("mainTenisMonth", e.target.value)}
+                value={form.startMonth}
+                onChange={(e) => handleChange("startMonth", e.target.value)}
                 required
                 className="w-2/3 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               >
@@ -261,8 +261,8 @@ export default function AddPlayerPage() {
               <input
                 id="mainTenisYear"
                 type="number"
-                value={form.mainTenisYear}
-                onChange={(e) => handleChange("mainTenisYear", e.target.value)}
+                value={form.startYear}
+                onChange={(e) => handleChange("startYear", e.target.value)}
                 placeholder="2022"
                 min={1900}
                 max={new Date().getFullYear()}
@@ -278,8 +278,8 @@ export default function AddPlayerPage() {
             </label>
             <textarea
               id="kenapa"
-              value={form.kenapa}
-              onChange={(event) => handleChange("kenapa", event.target.value)}
+              value={form.reason}
+              onChange={(event) => handleChange("reason", event.target.value)}
               placeholder="Jelaskan motivasi atau alasan Anda bermain tenis..."
               rows={4}
               className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 resize-none"
@@ -332,11 +332,11 @@ export default function AddPlayerPage() {
                   type="range"
                   min={1}
                   max={10}
-                  value={form.skill[item.key as keyof NewPlayerForm["skill"]]}
-                  onChange={(e) => handleSkillChange(item.key as keyof NewPlayerForm["skill"], Number(e.target.value))}
+                  value={form.skills[item.key as keyof NewPlayerForm["skills"]]}
+                  onChange={(e) => handleSkillChange(item.key as keyof NewPlayerForm["skills"], Number(e.target.value))}
                   className="flex-1 accent-emerald-500 h-2 rounded-lg appearance-none cursor-pointer bg-slate-700"
                 />
-                <span className="w-8 text-center text-slate-100 font-bold">{form.skill[item.key as keyof NewPlayerForm["skill"]]}</span>
+                <span className="w-8 text-center text-slate-100 font-bold">{form.skills[item.key as keyof NewPlayerForm["skills"]]}</span>
               </div>
             ))}
           </div>
@@ -373,16 +373,16 @@ export default function AddPlayerPage() {
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
               <p className="text-xs text-slate-400">Nama</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.nama || "-"}</p>
+              <p className="mt-1 font-semibold text-slate-100">{form.name || "-"}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
               <p className="text-xs text-slate-400">Panggilan Gokil</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.panggilanGokil || "-"}</p>
+              <p className="mt-1 font-semibold text-slate-100">{form.nickname || "-"}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
               <p className="text-xs text-slate-400">Tempat / Tanggal Lahir</p>
               <p className="mt-1 font-semibold text-slate-100">
-                {(form.tempatLahir || "-") + (form.tanggalLahir ? (", " + form.tanggalLahir) : "")}
+                {(form.birthPlace || "-") + (form.birthDate ? (", " + form.birthDate) : "")}
               </p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
@@ -391,25 +391,25 @@ export default function AddPlayerPage() {
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
               <p className="text-xs text-slate-400">Alamat</p>
-              <p className="mt-1 font-semibold text-slate-100">Blok {form.blokRumah || "-"} / No. {form.nomorRumah || "-"}</p>
+              <p className="mt-1 font-semibold text-slate-100">Blok {form.houseBlock || "-"} / No. {form.houseNumber || "-"}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Main Tenis Sejak</p>
-                <p className="mt-1 font-semibold text-slate-100">{form.mainTenisMonth || "-"} {form.mainTenisYear || "-"}</p>
+                <p className="mt-1 font-semibold text-slate-100">{form.startMonth || "-"} {form.startYear || "-"}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
               <p className="text-xs text-slate-400">Alasan Main Tenis</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.kenapa || "-"}</p>
+              <p className="mt-1 font-semibold text-slate-100">{form.reason || "-"}</p>
             </div>
             <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
               <p className="text-xs text-slate-400">Skill (1-10)</p>
               <ul className="mt-1 font-semibold text-slate-100 space-y-1">
-                <li>Forehand: {form.skill.forehand}</li>
-                <li>Backhand: {form.skill.backhand}</li>
-                <li>Service: {form.skill.service}</li>
-                <li>Volley: {form.skill.volley}</li>
-                <li>Slice: {form.skill.slice}</li>
-                <li>Loop: {form.skill.loop}</li>
+                <li>Forehand: {form.skills.forehand}</li>
+                <li>Backhand: {form.skills.backhand}</li>
+                <li>Service: {form.skills.service}</li>
+                <li>Volley: {form.skills.volley}</li>
+                <li>Slice: {form.skills.slice}</li>
+                <li>Loop: {form.skills.loop}</li>
               </ul>
             </div>
           </div>

@@ -2,7 +2,7 @@ import type { TeamKey } from "@components/home/tab";
 
 type Player = {
   id: number;
-  nama: string;
+  name: string;
   gender: "Pria" | "Wanita";
 };
 
@@ -80,7 +80,7 @@ export default function HomeTable({ players, matches, activeTab, onEdit, onDelet
                   </td>
                   <td className="px-5 py-4">
                     <div className="flex items-center gap-3 font-bold text-slate-100">
-                      {player.nama}
+                      {player.name}
                     </div>
                   </td>
                   <td className="text-center px-5 py-4 font-bold text-slate-400">

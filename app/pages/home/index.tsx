@@ -6,7 +6,7 @@ import HomeTable from "@components/home/table";
 
 type Player = {
   id: number;
-  nama: string;
+  name: string;
   gender: "Pria" | "Wanita";
 };
 
@@ -27,7 +27,6 @@ type PlayerStats = {
   points: number;
 };
 
-type PlayerWithStats = Player & PlayerStats;
 
 function parseSetScore(value: string): [number, number] {
   const [home, away] = value.split("-").map((v) => Number(v.trim()));
@@ -38,7 +37,7 @@ function buildPlayerStats(players: Player[], matches: Match[]): Map<string, Play
   const statsByName = new Map<string, PlayerStats>();
 
   players.forEach((player) => {
-    statsByName.set(player.nama, {
+    statsByName.set(player.name, {
       matchesPlayed: 0,
       wins: 0,
       losses: 0,
@@ -71,7 +70,7 @@ function buildPlayerStats(players: Player[], matches: Match[]): Map<string, Play
   });
 
   statsByName.forEach((stats) => {
-    stats.points = stats.wins * 10 + stats.losses * 2;
+    stats.points = (stats.wins * 100) + (stats.losses * 20) + (stats.setWin * 10);
   });
 
   return statsByName;
@@ -101,7 +100,7 @@ export default function HomeContent() {
       .filter((player) => player.gender === activeTab)
       .map((player) => ({
         ...player,
-        ...(statsByName.get(player.nama) ?? {
+        ...(statsByName.get(player.name) ?? {
           matchesPlayed: 0,
           wins: 0,
           losses: 0,
@@ -117,7 +116,7 @@ export default function HomeContent() {
   const currentMatches = useMemo(
     () =>
       matches.filter((match) =>
-        currentPlayers.some((player) => player.nama === match.player1 || player.nama === match.player2)
+        currentPlayers.some((player) => player.name === match.player1 || player.name === match.player2)
       ),
     [currentPlayers, matches]
   );
