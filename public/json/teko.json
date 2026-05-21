@@ -1,0 +1,258 @@
+{
+  "players": [
+    {
+      "id": 1,
+      "nama": "Budi Santoso",
+      "panggilanGokil": "Budi Smash",
+      "tempatLahir": "Jakarta",
+      "tanggalLahir": "1985-05-15",
+      "gender": "Pria",
+      "blokRumah": "A1",
+      "nomorRumah": "12",
+      "mainTenisMonth": "Januari",
+      "mainTenisYear": "2020",
+      "kenapa": "Cari keringat biar nggak kaku banget pas kerja.",
+      "skill": {
+        "forehand": 7,
+        "backhand": 5,
+        "service": 6,
+        "volley": 4,
+        "slice": 3,
+        "loop": 5
+      }
+    },
+    {
+      "id": 2,
+      "nama": "Eko Prasetyo",
+      "panggilanGokil": "Eko Slice",
+      "tempatLahir": "Bandung",
+      "tanggalLahir": "1990-08-20",
+      "gender": "Pria",
+      "blokRumah": "B2",
+      "nomorRumah": "05",
+      "mainTenisMonth": "Maret",
+      "mainTenisYear": "2021",
+      "kenapa": "Hobi baru setelah pensiun main futsal.",
+      "skill": {
+        "forehand": 6,
+        "backhand": 7,
+        "service": 5,
+        "volley": 6,
+        "slice": 8,
+        "loop": 4
+      }
+    },
+    {
+      "id": 3,
+      "nama": "Doni Kurniawan",
+      "panggilanGokil": "Doni Loop",
+      "tempatLahir": "Surabaya",
+      "tanggalLahir": "1988-12-10",
+      "gender": "Pria",
+      "blokRumah": "C3",
+      "nomorRumah": "21",
+      "mainTenisMonth": "Juni",
+      "mainTenisYear": "2019",
+      "kenapa": "Biar punya alasan keluar rumah hari minggu.",
+      "skill": {
+        "forehand": 8,
+        "backhand": 4,
+        "service": 7,
+        "volley": 5,
+        "slice": 4,
+        "loop": 9
+      }
+    },
+    {
+      "id": 4,
+      "nama": "Riko Hermawan",
+      "panggilanGokil": "Riko Volley",
+      "tempatLahir": "Semarang",
+      "tanggalLahir": "1992-03-25",
+      "gender": "Pria",
+      "blokRumah": "A4",
+      "nomorRumah": "08",
+      "mainTenisMonth": "September",
+      "mainTenisYear": "2022",
+      "kenapa": "Tertarik lihat Federer main di TV.",
+      "skill": {
+        "forehand": 5,
+        "backhand": 5,
+        "service": 6,
+        "volley": 8,
+        "slice": 5,
+        "loop": 6
+      }
+    },
+    {
+      "id": 5,
+      "nama": "Fajar Nugroho",
+      "panggilanGokil": "Fajar Service",
+      "tempatLahir": "Yogyakarta",
+      "tanggalLahir": "1987-11-05",
+      "gender": "Pria",
+      "blokRumah": "D1",
+      "nomorRumah": "15",
+      "mainTenisMonth": "Mei",
+      "mainTenisYear": "2018",
+      "kenapa": "Diajak tetangga sebelah rumah.",
+      "skill": {
+        "forehand": 6,
+        "backhand": 6,
+        "service": 9,
+        "volley": 5,
+        "slice": 6,
+        "loop": 5
+      }
+    },
+    {
+      "id": 6,
+      "nama": "Sari Dewi",
+      "panggilanGokil": "Sari Backhand",
+      "tempatLahir": "Jakarta",
+      "tanggalLahir": "1993-07-14",
+      "gender": "Wanita",
+      "blokRumah": "E5",
+      "nomorRumah": "02",
+      "mainTenisMonth": "Februari",
+      "mainTenisYear": "2023",
+      "kenapa": "Lagi tren dan ternyata seru banget.",
+      "skill": {
+        "forehand": 5,
+        "backhand": 8,
+        "service": 4,
+        "volley": 6,
+        "slice": 5,
+        "loop": 4
+      }
+    },
+    {
+      "id": 7,
+      "nama": "Rina Lestari",
+      "panggilanGokil": "Rina Sprint",
+      "tempatLahir": "Malang",
+      "tanggalLahir": "1995-01-30",
+      "gender": "Wanita",
+      "blokRumah": "B1",
+      "nomorRumah": "11",
+      "mainTenisMonth": "Oktober",
+      "mainTenisYear": "2021",
+      "kenapa": "Suka olahraga outdoor yang menantang.",
+      "skill": {
+        "forehand": 6,
+        "backhand": 5,
+        "service": 5,
+        "volley": 4,
+        "slice": 4,
+        "loop": 6
+      }
+    },
+    {
+      "id": 8,
+      "nama": "Mega Putri",
+      "panggilanGokil": "Mega Power",
+      "tempatLahir": "Denpasar",
+      "tanggalLahir": "1991-09-18",
+      "gender": "Wanita",
+      "blokRumah": "F2",
+      "nomorRumah": "09",
+      "mainTenisMonth": "Agustus",
+      "mainTenisYear": "2020",
+      "kenapa": "Biar badan tetap fit dan kencang.",
+      "skill": {
+        "forehand": 8,
+        "backhand": 4,
+        "service": 6,
+        "volley": 5,
+        "slice": 3,
+        "loop": 5
+      }
+    },
+    {
+      "id": 9,
+      "nama": "Nita Rahayu",
+      "panggilanGokil": "Nita Agresif",
+      "tempatLahir": "Medan",
+      "tanggalLahir": "1989-04-22",
+      "gender": "Wanita",
+      "blokRumah": "A2",
+      "nomorRumah": "03",
+      "mainTenisMonth": "Desember",
+      "mainTenisYear": "2019",
+      "kenapa": "Mengisi waktu luang di akhir pekan.",
+      "skill": {
+        "forehand": 6,
+        "backhand": 6,
+        "service": 5,
+        "volley": 7,
+        "slice": 4,
+        "loop": 5
+      }
+    },
+    {
+      "id": 10,
+      "nama": "Yuni Safitri",
+      "panggilanGokil": "Yuni Kalem",
+      "tempatLahir": "Palembang",
+      "tanggalLahir": "1994-11-11",
+      "gender": "Wanita",
+      "blokRumah": "G4",
+      "nomorRumah": "07",
+      "mainTenisMonth": "Juli",
+      "mainTenisYear": "2022",
+      "kenapa": "Suka gaya berpakaian pemain tenis (tennis core).",
+      "skill": {
+        "forehand": 5,
+        "backhand": 4,
+        "service": 5,
+        "volley": 4,
+        "slice": 4,
+        "loop": 4
+      }
+    }
+  ],
+  "matches": [
+    {
+      "id": 1,
+      "player1": "Budi Santoso",
+      "player2": "Eko Prasetyo",
+      "winner": "Budi Santoso",
+      "setScore": "4-2"
+    },
+    {
+      "id": 2,
+      "player1": "Doni Kurniawan",
+      "player2": "Riko Hermawan",
+      "winner": "Doni Kurniawan",
+      "setScore": "4-1"
+    },
+    {
+      "id": 3,
+      "player1": "Fajar Nugroho",
+      "player2": "Budi Santoso",
+      "winner": "Budi Santoso",
+      "setScore": "4-3"
+    },
+    {
+      "id": 4,
+      "player1": "Sari Dewi",
+      "player2": "Rina Lestari",
+      "winner": "Sari Dewi",
+      "setScore": "4-0"
+    },
+    {
+      "id": 5,
+      "player1": "Mega Putri",
+      "player2": "Nita Rahayu",
+      "winner": "Mega Putri",
+      "setScore": "4-2"
+    },
+    {
+      "id": 6,
+      "player1": "Yuni Safitri",
+      "player2": "Sari Dewi",
+      "winner": "Sari Dewi",
+      "setScore": "4-1"
+    }
+  ]
+}
