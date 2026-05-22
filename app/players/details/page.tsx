@@ -156,6 +156,7 @@ export default function PlayerDetailPage() {
           <Image
               src={'/logoHD.webp'} // Use player's image or a generic placeholder
               alt={player.name}
+              loading="eager"
               width={320}
               height={320}
               className="object-cover opacity-10 grayscale"
@@ -172,8 +173,8 @@ export default function PlayerDetailPage() {
                 src="/indonesia.png"
                 alt="Indonesia Flag"
                 width={28}
-                height={28}
-                className="object-contain"
+                height={'28'}
+                className="w-auto object-contain"
               />
               <span className="font-semibold capitalize text-slate-200">{player.birthPlace}</span>
             </div>
@@ -191,7 +192,7 @@ export default function PlayerDetailPage() {
           </div>
         </div>
 
-        <div className="relative z-10 mt-5 py-3 rounded-xl text-center bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30">
+        <div className="relative z-10 mt-5 px-4 py-3 rounded-xl text-center bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30">
           <h3 className="font-semibold">Alasan Main Tenis :</h3>
           <p className="italic capitalize text-sm text-emerald-400">"{player.reason}"</p>
         </div>
@@ -218,12 +219,12 @@ export default function PlayerDetailPage() {
           <h3 className="mb-2 font-bold text-xl">Skill Pemain</h3>
           <div className="p-4 rounded-xl bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30">
             <SkillsPlayerDetail 
-              imgUrl="/icons/forehand.webp"
+              imgUrl="/icons/fore.webp"
               skillName="Forehand"
               value={player.skills.forehand}
             />
             <SkillsPlayerDetail 
-              imgUrl="/icons/backhand.webp"
+              imgUrl="/icons/back.webp"
               skillName="Backhand"
               value={player.skills.backhand}
             />
