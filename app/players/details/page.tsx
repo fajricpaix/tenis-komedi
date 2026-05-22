@@ -109,6 +109,30 @@ export default function PlayerDetailPage() {
 			.catch(() => setLoading(false));
 	}, [id]);
 
+	const handleDownloadImage = async () => {
+		const cardElement = document.getElementById("cardPlayer");
+		if (!cardElement) return;
+
+		try {
+			// Mengimpor library secara dinamis saat tombol diklik
+			const { toPng } = await import("html-to-image");
+			
+			const dataUrl = await toPng(cardElement, { 
+				cacheBust: true,
+				// Memberikan background solid agar transparansi tidak bermasalah saat disimpan
+				backgroundColor: '#0f172a', 
+			});
+			
+			const link = document.createElement("a");
+			link.download = `${player?.name.replace(/\s+/g, '-').toLowerCase()}.png`;
+			link.href = dataUrl;
+			link.click();
+		} catch (err) {
+			console.error("Gagal membuat gambar:", err);
+			alert("Maaf, terjadi kesalahan saat mencoba membuat gambar.");
+		}
+	};
+
 	if (loading) {
 		return <div className="p-10 text-center text-lg text-slate-400">Memuat data pemain...</div>;
 	}
@@ -126,7 +150,7 @@ export default function PlayerDetailPage() {
 
 	return (
 		<section className="max-w-xl mx-auto px-4 py-10">
-			<div className="relative rounded-2xl shadow-xl p-8 bg-white/10 border border-white/10">
+			<div id="cardPlayer" className="relative rounded-2xl shadow-xl p-8 bg-white/10 border border-white/10">
 
         <figure className="absolute z-0 top-12 left-12">
           <Image
@@ -227,6 +251,12 @@ export default function PlayerDetailPage() {
         </div>
 
 			</div>
+
+      <button 
+        onClick={handleDownloadImage}
+        className="w-full mt-4 py-4 rounded-xl text-sm font-extrabold tracking-widest cursor-pointer uppercase transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 hover:scale-[1.02] active:scale-[0.98]">
+        Buat jadi image
+      </button>
 		</section>
 	);
 }
