@@ -78,7 +78,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                     {index+1}.
                   </td>
                   <td className="p-4">
-                    <div className="flex items-center gap-3 font-bold text-slate-100">
+                    <div className="flex items-center gap-3 font-bold text-slate-100 capitalize">
                       {player.name}
                     </div>
                   </td>
@@ -95,7 +95,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                   <td className="text-center p-4 font-bold text-slate-400">
                     {player.points}
                   </td>
-                  <td className="text-center justify-center flex px-5 py-4">
+                  <td className="text-center px-5 py-4">
                     <Link
                       href={`/players/details?id=${player.id}`}
                       className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"

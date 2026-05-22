@@ -19,7 +19,7 @@ type Player = {
 	startMonth: string;
 	startYear: string;
 	reason: string;
-	imageSrc?: string; // Add this line for player-specific image source
+	imgUrl?: string; // Add this line for player-specific image source
 	skills: { // Keep existing skills property
 		forehand: number;
 		backhand: number;
@@ -141,8 +141,8 @@ export default function PlayerDetailPage() {
 				<div className="flex gap-6 relative z-10">
           <div className="w-3/5">
             <p className="text-sm mb-2 italic font-black text-emerald-400">Peringkat #{rank} {player.gender === 'Pria' ? 'Pria' : 'Wanita'}</p>
-            <h2 className="text-4xl font-black text-slate-100 leading-10 mb-1">{player.name}</h2>
-            <h3 className="text-xl font-semibold text-slate-100 italic"><small>A.K.A</small> <span className="text-emerald-400">{player.nickname}</span></h3>
+            <h2 className="text-4xl font-black text-slate-100 leading-10 mb-1 capitalize">{player.name}</h2>
+            <h3 className="text-xl font-semibold text-slate-100 italic"><small>A.K.A</small> <span className="capitalize text-emerald-400">{player.nickname}</span></h3>
             <div className="flex items-center mt-3 gap-x-2">
               <Image 
                 src="/indonesia.png"
@@ -151,25 +151,25 @@ export default function PlayerDetailPage() {
                 height={28}
                 className="object-contain"
               />
-              <span className="font-semibold uppercase text-slate-200">{player.birthPlace}</span>
+              <span className="font-semibold capitalize text-slate-200">{player.birthPlace}</span>
             </div>
           </div>
           <div className="w-2/5">
             <figure className="rounded-xl overflow-hidden p-2 border border-emerald-400 shadow-lg shadow-emerald-900/30">
               <Image
-                src={player.imageSrc || '/photo/federer.webp'} // Use player's image or a generic placeholder
+                src={player.imgUrl || '/photo/federer.webp'} // Use player's image or a generic placeholder
                 alt={player.name}
                 width={200}
                 height={200}
-                className="w-full object-cover rounded-lg"
+                className="w-full aspect-square object-cover rounded-lg"
               />
             </figure>
           </div>
         </div>
 
         <div className="relative z-10 mt-5 py-3 rounded-xl text-center bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30">
-          <h3 className="font-semibold text-sm">Alasan Main Tenis :</h3>
-          <p className="italic text-xs text-emerald-400">"{player.reason}"</p>
+          <h3 className="font-semibold">Alasan Main Tenis :</h3>
+          <p className="italic capitalize text-sm text-emerald-400">"{player.reason}"</p>
         </div>
 
         <div className="relative z-10 flex gap-4 mt-5">

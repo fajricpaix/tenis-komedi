@@ -54,6 +54,8 @@ export default function AddPlayerPage() {
   const [submitted, setSubmitted] = useState<NewPlayerForm | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
+  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
   const photoInputRef = useRef<HTMLInputElement>(null);
 
   const handleChange = (field: keyof NewPlayerForm, value: string | number) => {
@@ -96,11 +98,37 @@ export default function AddPlayerPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setSubmitted(form);
-    setForm(initialForm);
-    setPhotoPreview(null);
-    setPhotoError(null);
-    if (photoInputRef.current) photoInputRef.current.value = "";
+    setIsPreviewOpen(true); // Membuka modal preview terlebih dahulu
+  };
+
+  const handleConfirmSave = async () => {
+    setIsSaving(true);
+    try {
+      const response = await fetch('/api/players', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      });
+
+      const result = await response.json();
+
+      if (result.success) {
+        setSubmitted(result.player);
+        setForm(initialForm);
+        setPhotoPreview(null);
+        setPhotoError(null);
+        setIsPreviewOpen(false);
+        if (photoInputRef.current) photoInputRef.current.value = "";
+        alert("Horee! Pemain baru berhasil ditambahkan.");
+      } else {
+        alert("Gagal simpan: " + result.message);
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Terjadi kesalahan koneksi saat menyimpan data.");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   return (
@@ -120,8 +148,8 @@ export default function AddPlayerPage() {
         </Link>
       </div>
 
-      <section className="grid gap-8 lg:grid-cols-[1.3fr_0.9fr]">
-        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-900/70 border border-white/10 rounded-3xl p-8 shadow-2xl shadow-slate-950/30">
+      <section className="max-w-2xl mx-auto">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-900/70 border border-white/10 rounded-3xl p-8 shadow-2xl shadow-slate-950/30 mb-10">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="nama">
               Nama Pemain
@@ -349,81 +377,92 @@ export default function AddPlayerPage() {
           </button>
         </form>
 
-        <aside className="space-y-6 rounded-3xl border border-white/10 bg-slate-900/70 p-8 shadow-2xl shadow-slate-950/30">
-          <div>
-            <h2 className="text-xl font-bold text-slate-100">Preview Data</h2>
-            <p className="mt-2 text-slate-400 text-sm">Data pemain yang akan disimpan ke JSON.</p>
+        {submitted && (
+          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-100">
+            <p className="font-bold text-sm">Berhasil Simpan Data!</p>
+            <pre className="mt-2 overflow-x-auto text-xs text-slate-200 bg-slate-950/80 rounded p-2">{JSON.stringify(submitted, null, 2)}</pre>
           </div>
+        )}
+      </section>
 
-          <div className="space-y-3 text-sm">
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 flex items-center gap-4">
-              <div>
-                <p className="text-xs text-slate-400">Foto</p>
-                {form.photoUrl ? (
-                  <img
-                    src={form.photoUrl}
-                    alt="Foto Preview"
-                    className="rounded-xl object-cover border border-white/10 mt-1"
-                    style={{ width: 60, height: 60, aspectRatio: '1/1' }}
-                  />
-                ) : (
-                  <span className="text-slate-500">-</span>
-                )}
+      {/* Modal Preview */}
+      {isPreviewOpen && (
+        <div className="fixed inset-0 z-70 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
+          <div className="w-full max-w-lg bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
+            <div className="absolute -top-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
+            
+            <h2 className="text-2xl font-black text-slate-100 mb-6 relative">Konfirmasi Data Pemain</h2>
+            
+            <div className="space-y-3 text-sm relative z-10 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 flex items-center gap-4">
+                <div className="w-full">
+                  <p className="text-xs text-slate-400">Foto</p>
+                  {form.photoUrl ? (
+                    <img
+                      src={form.photoUrl}
+                      alt="Foto Preview"
+                      className="rounded-xl object-cover border border-white/10 mt-1"
+                      style={{ width: 60, height: 60, aspectRatio: '1/1' }}
+                    />
+                  ) : (
+                    <span className="text-slate-500">-</span>
+                  )}
+                </div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Nama / Panggilan</p>
+                <p className="mt-1 font-semibold text-slate-100">{form.name} ({form.nickname})</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Tempat / Tanggal Lahir / Gender</p>
+                <p className="mt-1 font-semibold text-slate-100">
+                  {form.birthPlace}, {form.birthDate} ({form.gender})
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Alamat</p>
+                <p className="mt-1 font-semibold text-slate-100">Blok {form.houseBlock} / No. {form.houseNumber}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                  <p className="text-xs text-slate-400">Main Tenis Sejak</p>
+                  <p className="mt-1 font-semibold text-slate-100">{form.startMonth} {form.startYear}</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Alasan Main Tenis</p>
+                <p className="mt-1 font-semibold text-slate-100 italic">"{form.reason}"</p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Skill (1-10)</p>
+                <div className="grid grid-cols-2 mt-1 font-semibold text-slate-100 gap-1">
+                  <span>Forehand: {form.skills.forehand}</span>
+                  <span>Backhand: {form.skills.backhand}</span>
+                  <span>Service: {form.skills.service}</span>
+                  <span>Volley: {form.skills.volley}</span>
+                  <span>Slice: {form.skills.slice}</span>
+                  <span>Loop: {form.skills.loop}</span>
+                </div>
               </div>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Nama</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.name || "-"}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Panggilan Gokil</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.nickname || "-"}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Tempat / Tanggal Lahir</p>
-              <p className="mt-1 font-semibold text-slate-100">
-                {(form.birthPlace || "-") + (form.birthDate ? (", " + form.birthDate) : "")}
-              </p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Gender</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.gender}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Alamat</p>
-              <p className="mt-1 font-semibold text-slate-100">Blok {form.houseBlock || "-"} / No. {form.houseNumber || "-"}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-                <p className="text-xs text-slate-400">Main Tenis Sejak</p>
-                <p className="mt-1 font-semibold text-slate-100">{form.startMonth || "-"} {form.startYear || "-"}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Alasan Main Tenis</p>
-              <p className="mt-1 font-semibold text-slate-100">{form.reason || "-"}</p>
-            </div>
-            <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-              <p className="text-xs text-slate-400">Skill (1-10)</p>
-              <ul className="mt-1 font-semibold text-slate-100 space-y-1">
-                <li>Forehand: {form.skills.forehand}</li>
-                <li>Backhand: {form.skills.backhand}</li>
-                <li>Service: {form.skills.service}</li>
-                <li>Volley: {form.skills.volley}</li>
-                <li>Slice: {form.skills.slice}</li>
-                <li>Loop: {form.skills.loop}</li>
-              </ul>
+
+            <div className="flex gap-3 pt-6 relative z-10">
+              <button 
+                type="button" 
+                onClick={() => setIsPreviewOpen(false)}
+                className="flex-1 rounded-xl border border-white/10 px-4 py-3 font-bold text-slate-400 hover:bg-white/5 transition-colors cursor-pointer"
+              >
+                Batal
+              </button>
+              <button 
+                disabled={isSaving}
+                onClick={handleConfirmSave}
+                className={`flex-1 rounded-xl bg-emerald-500 px-4 py-3 font-bold text-slate-950 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-emerald-400'}`}
+              >
+                {isSaving ? "Menyimpan..." : "OK, Simpan"}
+              </button>
             </div>
           </div>
-
-          {submitted ? (
-            <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-100">
-              <p className="font-bold text-sm">Data disimpan:</p>
-              <pre className="mt-2 overflow-x-auto text-xs text-slate-200 bg-slate-950/80 rounded p-2">{JSON.stringify(submitted, null, 2)}</pre>
-            </div>
-          ) : (
-            <p className="text-slate-500 text-sm">Isi form dan tekan simpan untuk melihat JSON yang akan dikirim.</p>
-          )}
-        </aside>
-      </section>
+        </div>
+      )}
     </main>
   );
 }
