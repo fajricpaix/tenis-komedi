@@ -11,7 +11,7 @@ const tabs: TeamKey[] = ["Pria", "Wanita"];
 
 export default function HomeTab({ activeTab, onSelect }: HomeTabProps) {
   return (
-    <div className="flex justify-between items-center mb-8">
+    <div className="flex justify-between items-center">
       <div className="flex gap-1 bg-white/5 border border-white/10 rounded-2xl p-1.5 w-fit">
         {tabs.map((tab) => (
           <button
@@ -29,13 +29,6 @@ export default function HomeTab({ activeTab, onSelect }: HomeTabProps) {
         ))}
         
       </div>
-
-      <Link
-        href="/players/add"
-        className="ml-auto rounded-full border border-emerald-300 bg-emerald-500/20 px-4 py-2 text-sm font-bold uppercase tracking-[0.2em] text-emerald-100 transition hover:bg-emerald-500/30 hover:text-white"
-      >
-        Tambah Pemain
-      </Link>
     </div>
   );
 }

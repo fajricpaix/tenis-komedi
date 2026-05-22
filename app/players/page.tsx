@@ -79,11 +79,10 @@ function buildPlayerStats(players: Player[], matches: Match[]): Map<string, Play
   return statsByName;
 }
 
-export default function HomeContent() {
+export default function PlayersList() {
   const [activeTab, setActiveTab] = useState<TeamKey>("Pria");
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
-  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     fetch("/json/teko.json")
@@ -132,11 +131,6 @@ export default function HomeContent() {
     alert(`Edit pemain dengan ID: ${id}`);
   };
 
-  const handleSaveMatch = (newMatch: Match) => {
-    setMatches((prev) => [...prev, newMatch]);
-    setIsModalOpen(false);
-  };
-
   return (
     <section className="px-4 py-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
@@ -144,47 +138,19 @@ export default function HomeContent() {
         <HomeTab activeTab={activeTab} onSelect={setActiveTab} />
         
         <div className="flex gap-x-4">
-          <Link href="/players/add" className="font-black px-2 md:px-7 py-2 md:py-2.5 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400">
+          <Link href="/players/add" className="font-black px-2 md:px-7 py-2 md:py-2.5 rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-white">
             <span className="text-xl">+</span> Pemain
           </Link>
-          <button 
-            onClick={() => setIsModalOpen(true)}
-            className="font-black px-2 md:px-7 py-2 md:py-2.5 cursor-pointer rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400"
-          >
-            <span className="text-xl">+</span> Pertandingan
-          </button>
         </div>
       </div>
 
-
-      <div className="flex gap-x-8">
-        {/* Player Table */}
-        <div className="w-3/5">
-          <HomeTable
-            players={currentPlayers}
-            matches={currentMatches}
-            activeTab={activeTab}
-            onEdit={handleEdit}
-          />
-        </div>
-
-        {/* Match Table */}
-        <div className="w-2/5">
-          <MatchTable 
-            matches={currentMatches} 
-            activeTab={activeTab} 
-          />
-        </div>
-      </div>
-
-      {isModalOpen && (
-        <MatchModal 
-          players={players.filter(p => p.gender === activeTab)}
-          onClose={() => setIsModalOpen(false)}
-          onSave={handleSaveMatch}
-          nextId={matches.length > 0 ? Math.max(...matches.map(m => m.id)) + 1 : 1}
-        />
-      )}
+      {/* Player Table */}
+      <HomeTable
+        players={currentPlayers}
+        matches={currentMatches}
+        activeTab={activeTab}
+        onEdit={handleEdit}
+      />
     </section>
   );
 }

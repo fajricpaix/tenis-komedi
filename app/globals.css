@@ -34,3 +34,4 @@ input[type="number"].no-spin::-webkit-inner-spin-button {
 input[type="number"].no-spin {
   -moz-appearance: textfield;
 }
+
