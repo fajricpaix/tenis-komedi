@@ -51,10 +51,16 @@ function formatIndonesianDate(dateString: string): string {
   }).format(date);
 }
 
+function parseSetScore(value: string): [number, number] {
+  const [s1, s2] = value.split("-").map((v) => Number(v.trim()));
+  return [s1 || 0, s2 || 0];
+}
+
 export default function PlayerDetailPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
 	const [player, setPlayer] = useState<Player | null>(null);
+	const [rank, setRank] = useState<number>(0);
 	const [loading, setLoading] = useState(true);
 
 	const id = Number(searchParams.get("id"));
@@ -62,9 +68,42 @@ export default function PlayerDetailPage() {
 	useEffect(() => {
 		fetch("/json/teko.json")
 			.then((res) => res.json())
-			.then((data) => {
-				const found = data.players.find((p: Player) => p.id === id);
-				setPlayer(found ?? null);
+			.then((data: { players: Player[]; matches: any[] }) => {
+				const found = data.players.find((p) => p.id === id);
+				if (found) {
+					setPlayer(found);
+
+					// Hitung statistik untuk semua pemain dengan gender yang sama
+					const sameGenderPlayers = data.players.filter(p => p.gender === found.gender);
+					const statsMap = new Map<string, { wins: number; losses: number; setWin: number; points: number }>();
+
+					sameGenderPlayers.forEach(p => {
+						statsMap.set(p.name, { wins: 0, losses: 0, setWin: 0, points: 0 });
+					});
+
+					data.matches.forEach(match => {
+						const [s1, s2] = parseSetScore(match.setScore);
+						const p1Stats = statsMap.get(match.player1);
+						const p2Stats = statsMap.get(match.player2);
+
+						if (p1Stats && p2Stats) {
+							const isP1Winner = match.winner === match.player1;
+							p1Stats[isP1Winner ? 'wins' : 'losses'] += 1;
+							p1Stats.setWin += s1;
+							p2Stats[!isP1Winner ? 'wins' : 'losses'] += 1;
+							p2Stats.setWin += s2;
+						}
+					});
+
+					const rankedList = sameGenderPlayers.map(p => {
+						const s = statsMap.get(p.name)!;
+						const points = (s.wins * 100) + (s.losses * 30) + (s.setWin * 10);
+						return { id: p.id, points };
+					}).sort((a, b) => b.points - a.points);
+
+					const currentRank = rankedList.findIndex(p => p.id === id) + 1;
+					setRank(currentRank);
+				}
 				setLoading(false);
 			})
 			.catch(() => setLoading(false));
@@ -100,8 +139,9 @@ export default function PlayerDetailPage() {
         </figure>
 
 				<div className="flex gap-6 relative z-10">
-          <div className="w-2/3">
-            <h1 className="text-5xl font-black text-slate-100 leading-14">{player.name}</h1>
+          <div className="w-3/5">
+            <p className="text-sm mb-2 italic font-black text-emerald-400">Peringkat #{rank} {player.gender === 'Pria' ? 'Pria' : 'Wanita'}</p>
+            <h2 className="text-4xl font-black text-slate-100 leading-10 mb-1">{player.name}</h2>
             <h3 className="text-xl font-semibold text-slate-100 italic"><small>A.K.A</small> <span className="text-emerald-400">{player.nickname}</span></h3>
             <div className="flex items-center mt-3 gap-x-2">
               <Image 
@@ -114,14 +154,16 @@ export default function PlayerDetailPage() {
               <span className="font-semibold uppercase text-slate-200">{player.birthPlace}</span>
             </div>
           </div>
-          <div className="w-1/3">
-            <Image
-              src={player.imageSrc || '/photo/federer.webp'} // Use player's image or a generic placeholder
-              alt={player.name}
-              width={200}
-              height={200}
-              className="rounded-lg border w-full border-white/10 shadow-lg shadow-emerald-900/30 object-cover"
-            />
+          <div className="w-2/5">
+            <figure className="rounded-xl overflow-hidden p-2 border border-emerald-400 shadow-lg shadow-emerald-900/30">
+              <Image
+                src={player.imageSrc || '/photo/federer.webp'} // Use player's image or a generic placeholder
+                alt={player.name}
+                width={200}
+                height={200}
+                className="w-full object-cover rounded-lg"
+              />
+            </figure>
           </div>
         </div>
 
