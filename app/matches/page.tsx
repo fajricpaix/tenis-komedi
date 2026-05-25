@@ -16,8 +16,8 @@ export default function HomeContent() {
   useEffect(() => {
     getTekoData()
       .then(({ players, matches }) => {
-        setPlayers(players);
-        setMatches(matches);
+        setPlayers(Array.isArray(players) ? players : []);
+        setMatches(Array.isArray(matches) ? matches : []);
       })
       .catch((error) => {
         console.error("Gagal memuat data pemain:", error);
@@ -26,20 +26,21 @@ export default function HomeContent() {
 
   const currentMatches = useMemo(
     () => {
+      const safePlayers = Array.isArray(players) ? players : [];
+      const safeMatches = Array.isArray(matches) ? matches : [];
+
       // Ambil nama pemain yang gender-nya sesuai tab aktif
       const playerNamesInTab = new Set(
-        players.filter((p) => p.gender === activeTab).map((p) => p.name)
+        safePlayers.filter((p) => p.gender === activeTab).map((p) => p.name)
       );
 
-      // Hanya tampilkan pertandingan jika kedua pemain ada di tab aktif
-      return [...matches]
+      return [...safeMatches]
         .filter(
-          (m) => playerNamesInTab.has(m.player1) && playerNamesInTab.has(m.player2)
+          (m) => playerNamesInTab.has(m.player1) || playerNamesInTab.has(m.player2)
         )
         .reverse()
         .slice(0, 20);
-    },
-    [matches, players, activeTab]
+    }, [matches, players, activeTab]
   );
 
   const handleSaveMatch = async (newMatch: Match) => {

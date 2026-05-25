@@ -50,9 +50,15 @@ export async function getTekoData(): Promise<TekoData> {
 		
 		if (snapshot.exists()) {
 			const data = snapshot.val();
+			
+			const rawPlayers = data["0"]?.players;
+			const rawMatches = data["1"]?.matches;
+
+			// Firebase RTD sering mengubah array dengan numeric keys/holes menjadi object.
+			// Kita harus memastikan data dikembalikan sebagai array asli.
 			return {
-				players: data["0"]?.players || [],
-				matches: data["1"]?.matches || [],
+				players: Array.isArray(rawPlayers) ? rawPlayers.filter(Boolean) : (rawPlayers ? Object.values(rawPlayers) : []),
+				matches: Array.isArray(rawMatches) ? rawMatches.filter(Boolean) : (rawMatches ? Object.values(rawMatches) : []),
 			};
 		}
 		return { players: [], matches: [] };

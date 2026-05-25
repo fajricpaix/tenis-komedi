@@ -20,7 +20,11 @@ type PlayerStats = {
 function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
 
-  players?.forEach((player) => {
+  // Pengamanan tambahan jika data bukan array
+const playersList: Player[] = Array.isArray(players) ? players : [];
+const matchesList: Match[] = Array.isArray(matches) ? matches : [];
+
+playersList.forEach((player) => {
     statsByName.set(player.name, {
       matchesPlayed: 0,
       wins: 0,
@@ -31,7 +35,7 @@ function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<st
     });
   });
 
-  matches?.forEach((match) => {
+  matchesList.forEach((match) => {
     const [winnerScore, loserScore] = parseSetScore(match.setScore);
     const loserName = match.player1 === match.winner ? match.player2 : match.player1;
 
@@ -69,8 +73,8 @@ export default function HomeContent() {
   useEffect(() => {
     getTekoData()
       .then(({ players, matches }) => {
-        setPlayers(players);
-        setMatches(matches);
+        setPlayers(Array.isArray(players) ? players : []);
+        setMatches(Array.isArray(matches) ? matches : []);
       })
       .catch((error) => {
         console.error("Gagal memuat data pemain:", error);
@@ -79,9 +83,11 @@ export default function HomeContent() {
 
   const statsByName = useMemo(() => buildPlayerStats(players, matches), [players, matches]);
 
+  const safePlayers = Array.isArray(players) ? players : [];
+
   const currentPlayers = useMemo(() =>
-    players
-      .filter((player) => player.gender === activeTab)
+    safePlayers
+      .filter((player) => player?.gender === activeTab)
       .map((player) => ({
         ...player,
         ...(statsByName.get(player.name) ?? {
@@ -94,25 +100,35 @@ export default function HomeContent() {
         }),
       }))
       .sort((a, b) => b.points - a.points),
-    [activeTab, players, statsByName]
+    [activeTab, safePlayers, statsByName]
   );
 
   const currentMatches = useMemo(
     () => {
+      const safeMatches = Array.isArray(matches) ? matches : [];
       // Ambil nama pemain yang gender-nya sesuai tab aktif
       const playerNamesInTab = new Set(
-        players.filter((p) => p.gender === activeTab).map((p) => p.name)
+        safePlayers.filter((p) => p.gender === activeTab).map((p) => p.name)
       );
 
-      // Hanya tampilkan pertandingan jika kedua pemain ada di tab aktif
-      return [...matches]
+      // Fallback: Jika pemain tidak ada di database, kita cek secara manual 
+      // (atau pastikan Anda menambah Rina & Yuni ke menu Tambah Pemain)
+      return [...safeMatches]
         .filter(
-          (m) => playerNamesInTab.has(m.player1) && playerNamesInTab.has(m.player2)
+          (m) => {
+            // Tampilkan jika salah satu pemain ada di daftar gender tersebut
+            const p1Match = playerNamesInTab.has(m.player1);
+            const p2Match = playerNamesInTab.has(m.player2);
+            
+            // Jika match "Rina vs Yuni" tapi mereka belum terdaftar di 'players', 
+            // match ini akan hilang kecuali mereka ditambahkan ke database 'players'
+            return p1Match || p2Match;
+          }
         )
         .reverse()
-        .slice(0, 10);
+        .slice(0, 20);
     },
-    [matches, players, activeTab]
+    [matches, safePlayers, activeTab]
   );
 
   const handleEdit = (id: number) => {
