@@ -32,21 +32,21 @@ export default function MatchTable({ matches, activeTab, fullWidth }: MatchTable
 
   return (
     <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-      <div className="flex items-center justify-between px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
-        <h2 className="text-xl font-black text-slate-100">
-          Riwayat Pertandingan {activeTab}
+      <div className="flex items-center justify-between gap-4 px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
+        <h2 className="text-sm md:text-xl font-black text-slate-100">
+          Pertandingan {activeTab}
         </h2>
         <input
           type="text"
           placeholder="Cari pemain..."
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
-          className="px-4 py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+          className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
         />
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-xs">
+        <table className="w-121.5 md:w-full text-xs">
           <thead>
             <tr className="bg-emerald-500/[0.07]">
               {["Pertandingan", "Skor", "Pemenang"].map((h) => (

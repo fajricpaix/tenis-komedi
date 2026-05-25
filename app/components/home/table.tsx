@@ -41,7 +41,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-full text-sm">
+        <table className="w-175 md:w-full text-sm">
           <thead>
             <tr className="bg-emerald-500/[0.07]">
               {[

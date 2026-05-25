@@ -13,7 +13,7 @@ export default function Header() {
             />
           </Link>
           <div>
-            <h1 className="text-xl md:text-2xl font-black tracking-widest text-white leading-none">
+            <h1 className="text-lg md:text-2xl font-black tracking-widest text-white leading-none">
               Tenis Komedi
             </h1>
             <p className="text-xs tracking-wide md:tracking-wider text-emerald-300 mt-2 font-semibold">
@@ -22,7 +22,7 @@ export default function Header() {
           </div>
         </div>
         <nav>
-          <ul className="flex items-center gap-6 text-sm">
+          <ul className="hidden md:flex items-center gap-6 text-sm">
             {/* <li>
               <Link
                 href="/players"

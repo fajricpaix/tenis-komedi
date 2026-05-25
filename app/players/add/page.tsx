@@ -172,23 +172,23 @@ export default function AddPlayerPage() {
         </div>
       )}
 
-      <div className="max-w-2xl mx-auto mb-10 flex items-center justify-between">
+      <div className="max-w-2xl mx-auto mb-10">
+        <Link
+          href="/"
+          className="inline-flex items-center mb-3 font-semibold text-white transition hover:text-emerald-400"
+        >
+          ← Kembali
+        </Link>
         <div>
           <h1 className="text-3xl font-extrabold text-slate-100">Tambah Pemain</h1>
           <p className="mt-3 text-slate-400 max-w-2xl">
             Lengkapi informasi pemain baru untuk ditambahkan ke database.
           </p>
         </div>
-        <Link
-          href="/"
-          className="inline-flex items-center rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-semibold text-white transition hover:border-emerald-300 hover:bg-emerald-500/20"
-        >
-          Kembali
-        </Link>
       </div>
 
       <section className="max-w-2xl mx-auto">
-        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-900/70 border border-white/10 rounded-3xl p-8 shadow-2xl shadow-slate-950/30 mb-10">
+        <form onSubmit={handleSubmit} className="space-y-6 bg-slate-900/70 border border-white/10 rounded-3xl p-4 md:p-8 shadow-2xl shadow-slate-950/30 mb-10">
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="nama">
               Nama Pemain
