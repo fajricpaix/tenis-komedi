@@ -36,12 +36,12 @@ export default function PlayerDetailPage() {
 	const [rank, setRank] = useState<number>(0);
 	const [loading, setLoading] = useState(true);
 
-	const id = Number(searchParams.get("id"));
+	const id = searchParams.get("id"); // hapus Number()
 
 	useEffect(() => {
 		getTekoData()
 			.then(({ players, matches }) => {
-				const found = players.find((p) => p.id === id);
+				const found = players.find((p) => String(p.id) === id);
 				if (found) {
 					setPlayer(found);
 
@@ -73,7 +73,7 @@ export default function PlayerDetailPage() {
 						return { id: p.id, points };
 					}).sort((a, b) => b.points - a.points);
 
-					const currentRank = rankedList.findIndex(p => p.id === id) + 1;
+					const currentRank = rankedList.findIndex(p => String(p.id) === id) + 1;
 					setRank(currentRank);
 				}
 				setLoading(false);
@@ -154,11 +154,14 @@ export default function PlayerDetailPage() {
           <div className="w-2/5">
             <figure className="rounded-xl overflow-hidden p-2 border border-emerald-400 shadow-lg shadow-emerald-900/30">
               <Image
-                src={player.imgUrl || '/photo/federer.webp'} // Use player's image or a generic placeholder
+                src={player.imgUrl || '/logoHD.webp'}
                 alt={player.name}
                 width={200}
                 height={200}
                 className="w-full aspect-square object-cover rounded-lg"
+                onError={(e) => {
+                  (e.target as HTMLImageElement).src = '/logoHD.webp';
+                }}
               />
             </figure>
           </div>

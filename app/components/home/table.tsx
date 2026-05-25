@@ -97,7 +97,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                   </td>
                   <td className="text-center px-5 py-4">
                     <Link
-                      href={`/players/details?name=${encodeURIComponent(player.name)}`}
+                      href={`/players/details?id=${player.id}`}
                       className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
                     >
                       Detail →
