@@ -112,7 +112,6 @@ export default function HomeContent() {
       );
 
       // Fallback: Jika pemain tidak ada di database, kita cek secara manual 
-      // (atau pastikan Anda menambah Rina & Yuni ke menu Tambah Pemain)
       return [...safeMatches]
         .filter(
           (m) => {
@@ -120,7 +119,6 @@ export default function HomeContent() {
             const p1Match = playerNamesInTab.has(m.player1);
             const p2Match = playerNamesInTab.has(m.player2);
             
-            // Jika match "Rina vs Yuni" tapi mereka belum terdaftar di 'players', 
             // match ini akan hilang kecuali mereka ditambahkan ke database 'players'
             return p1Match || p2Match;
           }

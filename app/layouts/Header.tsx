@@ -21,16 +21,16 @@ export default function Header() {
             </p>
           </div>
         </div>
-        {/* <nav>
+        <nav>
           <ul className="flex items-center gap-6 text-sm">
-            <li>
+            {/* <li>
               <Link
                 href="/players"
                 className={`text-emerald-300 hover:text-white transition-colors duration-150 font-bold uppercase tracking-wide`}
               >
                 List Pemain
               </Link>
-            </li>
+            </li> */}
             <li>
               <Link
                 href="/matches"
@@ -40,7 +40,7 @@ export default function Header() {
               </Link>
             </li>
           </ul>
-        </nav> */}
+        </nav>
       </div>
     </header>
   );
