@@ -43,22 +43,28 @@ export default function HomeContent() {
     }, [matches, players, activeTab]
   );
 
-  const handleSaveMatch = async (newMatch: Match) => {
-    try {
-      const response = await fetch('/api/matches', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMatch),
-      });
+  const handleSaveMatch = async (newMatch: Omit<Match, "id">) => {
+  // ✅ ID dihitung di sini, bukan di modal
+  const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
+  const matchWithId: Match = { id, ...newMatch };
 
-      if (response.ok) {
-        setMatches((prev) => [...prev, newMatch]);
-        setIsModalOpen(false);
-      }
-    } catch (error) {
-      console.error("Gagal menyimpan pertandingan:", error);
-    }
-  };
+  try {
+    const response = await fetch("/api/matches", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(matchWithId),
+    });
+
+    if (!response.ok) throw new Error("Gagal menyimpan");
+
+    // ✅ Update state lokal setelah berhasil disimpan
+    setMatches((prev) => [...prev, matchWithId]);
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error("Gagal menyimpan pertandingan:", error);
+    alert("Gagal menyimpan pertandingan. Coba lagi.");
+  }
+};
 
   return (
     <section className="px-6 py-10">
@@ -87,7 +93,6 @@ export default function HomeContent() {
           players={players.filter(p => p.gender === activeTab)}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveMatch}
-          nextId={matches.length > 0 ? Math.max(...matches.map(m => m.id)) + 1 : 1}
         />
       )}
 

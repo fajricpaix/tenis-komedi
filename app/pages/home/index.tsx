@@ -58,7 +58,7 @@ playersList.forEach((player) => {
   });
 
   statsByName.forEach((stats) => {
-    stats.points = (stats.wins * 100) + (stats.losses * 30) + (stats.setWin * 10);
+    stats.points = (stats.wins * 113) + (37) + (stats.setLose * 3);
   });
 
   return statsByName;
@@ -135,22 +135,32 @@ export default function HomeContent() {
     alert(`Edit pemain dengan ID: ${id}`);
   };
 
-  const handleSaveMatch = async (newMatch: Match) => {
-    try {
-      const response = await fetch('/api/matches', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(newMatch),
-      });
+  const handleSaveMatch = async (newMatch: Omit<Match, "id">) => {
+  const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
+  const matchWithId: Match = { id, ...newMatch };
 
-      if (response.ok) {
-        setMatches((prev) => [...prev, newMatch]);
-        setIsModalOpen(false);
-      }
-    } catch (error) {
-      console.error("Gagal menyimpan pertandingan:", error);
+  console.log("Payload dikirim:", matchWithId); // ← tambah ini sementara
+
+  try {
+    const response = await fetch("/api/matches", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(matchWithId),
+    });
+
+    if (!response.ok) {
+      const err = await response.json();
+      console.error("Response error:", err); // ← dan ini
+      throw new Error(err.message);
     }
-  };
+
+    setMatches((prev) => [...prev, matchWithId]);
+    setIsModalOpen(false);
+  } catch (error) {
+    console.error("Gagal menyimpan pertandingan:", error);
+    alert("Gagal menyimpan pertandingan. Coba lagi.");
+  }
+};
 
   return (
     <section className="px-4 py-10">
@@ -197,7 +207,6 @@ export default function HomeContent() {
           players={players.filter(p => p.gender === activeTab)}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveMatch}
-          nextId={matches.length > 0 ? Math.max(...matches.map(m => m.id)) + 1 : 1}
         />
       )}
     </section>

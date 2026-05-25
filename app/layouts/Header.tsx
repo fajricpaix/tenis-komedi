@@ -21,7 +21,7 @@ export default function Header() {
             </p>
           </div>
         </div>
-        <nav>
+        {/* <nav>
           <ul className="flex items-center gap-6 text-sm">
             <li>
               <Link
@@ -40,7 +40,7 @@ export default function Header() {
               </Link>
             </li>
           </ul>
-        </nav>
+        </nav> */}
       </div>
     </header>
   );

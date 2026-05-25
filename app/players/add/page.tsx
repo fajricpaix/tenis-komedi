@@ -151,7 +151,7 @@ export default function AddPlayerPage() {
       {/* Sticky Toast Notification */}
       {toast && (
         <div
-          className={`fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-sm font-semibold transition-all duration-300
+          className={`fixed top-6 left-1/2 -translate-x-1/2 z-100 flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-sm font-semibold transition-all duration-300
             ${toast.type === "success"
               ? "bg-emerald-500 text-slate-950 shadow-emerald-500/30"
               : "bg-red-500 text-white shadow-red-500/30"
