@@ -1,3 +1,7 @@
+import { app } from "@utils/firebase";
+import { getDatabase, ref, get } from "firebase/database";
+const db = getDatabase(app);
+
 export type Player = {
 	id: number;
 	name: string;
@@ -40,12 +44,20 @@ export function parseSetScore(value: string): [number, number] {
 }
 
 export async function getTekoData(): Promise<TekoData> {
-	const res = await fetch("/json/teko.json");
-	if (!res.ok) return { players: [], matches: [] };
-	const rawData = await res.json();
-
-	return {
-		players: rawData["tenis-komedi"]?.["0"]?.players || [],
-		matches: rawData["tenis-komedi"]?.["1"]?.matches || [],
-	};
+	try {
+		const dbRef = ref(db, 'tenis-komedi');
+		const snapshot = await get(dbRef);
+		
+		if (snapshot.exists()) {
+			const data = snapshot.val();
+			return {
+				players: data["0"]?.players || [],
+				matches: data["1"]?.matches || [],
+			};
+		}
+		return { players: [], matches: [] };
+	} catch (error) {
+		console.error("Error fetching data from Firebase:", error);
+		return { players: [], matches: [] };
+	}
 }

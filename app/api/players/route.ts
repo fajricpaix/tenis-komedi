@@ -1,51 +1,41 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
+import { app } from '@utils/firebase';
+import { getDatabase, ref, get, set } from 'firebase/database';
 
 export async function POST(request: Request) {
   try {
-    const data = await request.json();
-    const { name, photoUrl, ...playerData } = data;
+    const playerData = await request.json();
+    const db = getDatabase(app);
+    const playersRef = ref(db, 'tenis-komedi/0/players');
 
-    // 1. Proses Simpan Foto jika ada
-    let imgUrl = "/photo/default-avatar.png";
-    if (photoUrl && photoUrl.startsWith('data:image')) {
-      const base64Data = photoUrl.split(',')[1];
-      const buffer = Buffer.from(base64Data, 'base64');
-      const fileName = `${Date.now()}-${name.toLowerCase().replace(/\s+/g, '-')}.jpg`;
-      const filePath = path.join(process.cwd(), 'public', 'photo', fileName);
-      
-      await fs.writeFile(filePath, buffer);
-      imgUrl = `/photo/${fileName}`;
+    // 1. Ambil data pemain yang sudah ada
+    const snapshot = await get(playersRef);
+    let currentPlayers = [];
+    
+    if (snapshot.exists()) {
+      currentPlayers = snapshot.val();
+      // Pastikan data tetap berupa array
+      if (!Array.isArray(currentPlayers)) {
+        currentPlayers = Object.values(currentPlayers);
+      }
     }
 
-    // 2. Update teko.json
-    const jsonPath = path.join(process.cwd(), 'public', 'json', 'teko.json');
-    const fileData = await fs.readFile(jsonPath, 'utf8');
-    const db = JSON.parse(fileData);
-    
-    const players = db["tenis-komedi"]["0"].players;
+    // 2. Tambahkan pemain baru ke array
+    const updatedPlayers = [...currentPlayers, playerData];
 
-    const newPlayer = {
-      id: players.length > 0 ? Math.max(...players.map((p: any) => p.id)) + 1 : 1,
-      name,
-      ...playerData,
-      imgUrl
-    };
+    // 3. Simpan kembali seluruh array ke path yang benar
+    await set(playersRef, updatedPlayers);
 
-    players.push(newPlayer);
-    await fs.writeFile(jsonPath, JSON.stringify(db, null, 2));
-
-    return NextResponse.json({ 
-      success: true, 
-      message: "Pemain berhasil disimpan ke sistem",
-      player: newPlayer 
+    return NextResponse.json({
+      success: true,
+      message: "Pemain berhasil disimpan ke Realtime Database",
+      player: playerData
     });
 
   } catch (error) {
     console.error("Error saving player:", error);
     return NextResponse.json(
-      { success: false, message: "Gagal menyimpan data ke file JSON" },
+      { success: false, message: "Gagal menyimpan data pemain" },
       { status: 500 }
     );
   }

@@ -42,9 +42,21 @@ export default function HomeContent() {
     [matches, players, activeTab]
   );
 
-  const handleSaveMatch = (newMatch: Match) => {
-    setMatches((prev) => [...prev, newMatch]);
-    setIsModalOpen(false);
+  const handleSaveMatch = async (newMatch: Match) => {
+    try {
+      const response = await fetch('/api/matches', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newMatch),
+      });
+
+      if (response.ok) {
+        setMatches((prev) => [...prev, newMatch]);
+        setIsModalOpen(false);
+      }
+    } catch (error) {
+      console.error("Gagal menyimpan pertandingan:", error);
+    }
   };
 
   return (
