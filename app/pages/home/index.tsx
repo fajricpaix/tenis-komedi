@@ -6,20 +6,7 @@ import HomeTable from "@components/home/table";
 import MatchModal from "@components/match/match-modal";
 import MatchTable from "@components/match/match-table";
 import Link from "next/link";
-
-type Player = {
-  id: number;
-  name: string;
-  gender: "Pria" | "Wanita";
-};
-
-type Match = {
-  id: number;
-  player1: string;
-  player2: string;
-  winner: string;
-  setScore: string;
-};
+import { getTekoData, parseSetScore, type Player, type Match } from "../../utils/fetcher";
 
 type PlayerStats = {
   matchesPlayed: number;
@@ -29,12 +16,6 @@ type PlayerStats = {
   setLose: number;
   points: number;
 };
-
-
-function parseSetScore(value: string): [number, number] {
-  const [home, away] = value.split("-").map((v) => Number(v.trim()));
-  return Number.isFinite(home) && Number.isFinite(away) ? [home, away] : [0, 0];
-}
 
 function buildPlayerStats(players: Player[], matches: Match[]): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
@@ -86,11 +67,10 @@ export default function HomeContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch("/json/teko.json")
-      .then((res) => res.json())
-      .then((data: { players: Player[]; matches: Match[] }) => {
-        setPlayers(data.players);
-        setMatches(data.matches);
+    getTekoData()
+      .then(({ players, matches }) => {
+        setPlayers(players);
+        setMatches(matches);
       })
       .catch((error) => {
         console.error("Gagal memuat data pemain:", error);

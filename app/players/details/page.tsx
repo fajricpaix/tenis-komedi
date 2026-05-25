@@ -6,29 +6,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import BoxPlayerDetail from "@components/players/box";
 import SkillsPlayerDetail from "@components/players/skills";
-
-type Player = {
-	id: number;
-	name: string;
-	nickname: string;
-	birthPlace: string;
-	birthDate: string;
-	gender: "Pria" | "Wanita";
-	houseBlock: string;
-	houseNumber: string;
-	startMonth: string;
-	startYear: string;
-	reason: string;
-	imgUrl?: string; // Add this line for player-specific image source
-	skills: { // Keep existing skills property
-		forehand: number;
-		backhand: number;
-		service: number;
-		volley: number;
-		slice: number;
-		loop: number;
-	};
-};
+import { getTekoData, parseSetScore, type Player, type Match } from "@utils/fetcher";
 
 function calculateAge(birthDate: string): string {
   const today = new Date();
@@ -51,11 +29,6 @@ function formatIndonesianDate(dateString: string): string {
   }).format(date);
 }
 
-function parseSetScore(value: string): [number, number] {
-  const [s1, s2] = value.split("-").map((v) => Number(v.trim()));
-  return [s1 || 0, s2 || 0];
-}
-
 export default function PlayerDetailPage() {
 	const searchParams = useSearchParams();
 	const router = useRouter();
@@ -66,22 +39,21 @@ export default function PlayerDetailPage() {
 	const id = Number(searchParams.get("id"));
 
 	useEffect(() => {
-		fetch("/json/teko.json")
-			.then((res) => res.json())
-			.then((data: { players: Player[]; matches: any[] }) => {
-				const found = data.players.find((p) => p.id === id);
+		getTekoData()
+			.then(({ players, matches }) => {
+				const found = players.find((p) => p.id === id);
 				if (found) {
 					setPlayer(found);
 
 					// Hitung statistik untuk semua pemain dengan gender yang sama
-					const sameGenderPlayers = data.players.filter(p => p.gender === found.gender);
+					const sameGenderPlayers = players.filter(p => p.gender === found.gender);
 					const statsMap = new Map<string, { wins: number; losses: number; setWin: number; points: number }>();
 
 					sameGenderPlayers.forEach(p => {
 						statsMap.set(p.name, { wins: 0, losses: 0, setWin: 0, points: 0 });
 					});
 
-					data.matches.forEach(match => {
+					matches.forEach(match => {
 						const [s1, s2] = parseSetScore(match.setScore);
 						const p1Stats = statsMap.get(match.player1);
 						const p2Stats = statsMap.get(match.player2);

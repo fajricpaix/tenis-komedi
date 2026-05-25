@@ -22,13 +22,16 @@
     "baseUrl": ".",
     "paths": {
       "@components/*": [
-        "./app/components/*"
+        "./app/components/*",
       ],
       "@pages/*": [
         "./app/pages/*"
       ],
       "@layout/*": [
         "./app/layouts/*"
+      ],
+      "@utils/*": [
+        "./app/utils/*"
       ]
     },
     "plugins": [
