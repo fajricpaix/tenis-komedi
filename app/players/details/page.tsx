@@ -217,7 +217,7 @@ export default function PlayerDetailPage() {
         
         <div className="mt-5 relative z-10">
           <h3 className="mb-2 font-bold text-xl">Skill Pemain</h3>
-          <div className="p-4 rounded-xl bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30">
+          <div className="p-4 rounded-xl bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30 space-y-2">
             <SkillsPlayerDetail 
               imgUrl="/icons/fore.webp"
               skillName="Forehand"

@@ -43,6 +43,28 @@
         "loop": 3
       },
       "imgUrl": "/photo/1779441048083-muhammad-fajri.jpg"
+    },
+    {
+      "id": 19,
+      "name": "Rafael Nadal Parera",
+      "nickname": "King of Clay",
+      "birthPlace": "Manacor",
+      "birthDate": "1986-06-03",
+      "gender": "Pria",
+      "houseBlock": "X1",
+      "houseNumber": "88",
+      "startMonth": "Mei",
+      "startYear": "1991",
+      "reason": "Top of the world",
+      "skills": {
+        "forehand": 10,
+        "backhand": 9,
+        "service": 9,
+        "volley": 8,
+        "slice": 7,
+        "loop": 7
+      },
+      "imgUrl": "/photo/1779443351396-rafael-nadal-parera.jpg"
     }
   ],
   "matches": [
