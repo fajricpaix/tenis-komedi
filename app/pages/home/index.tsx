@@ -20,11 +20,10 @@ type PlayerStats = {
 function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
 
-  // Pengamanan tambahan jika data bukan array
-const playersList: Player[] = Array.isArray(players) ? players : [];
-const matchesList: Match[] = Array.isArray(matches) ? matches : [];
+  const playersList: Player[] = Array.isArray(players) ? players : [];
+  const matchesList: Match[] = Array.isArray(matches) ? matches : [];
 
-playersList.forEach((player) => {
+  playersList.forEach((player) => {
     statsByName.set(player.name, {
       matchesPlayed: 0,
       wins: 0,
@@ -58,7 +57,9 @@ playersList.forEach((player) => {
   });
 
   statsByName.forEach((stats) => {
-    stats.points = (stats.wins * 113) + (37) + (stats.setLose * 3);
+    stats.points = stats.matchesPlayed === 0
+      ? 0
+      : (stats.wins * 113) + 37 + (stats.setLose * 3);
   });
 
   return statsByName;
@@ -106,20 +107,15 @@ export default function HomeContent() {
   const currentMatches = useMemo(
     () => {
       const safeMatches = Array.isArray(matches) ? matches : [];
-      // Ambil nama pemain yang gender-nya sesuai tab aktif
       const playerNamesInTab = new Set(
         safePlayers.filter((p) => p.gender === activeTab).map((p) => p.name)
       );
 
-      // Fallback: Jika pemain tidak ada di database, kita cek secara manual 
       return [...safeMatches]
         .filter(
           (m) => {
-            // Tampilkan jika salah satu pemain ada di daftar gender tersebut
             const p1Match = playerNamesInTab.has(m.player1);
             const p2Match = playerNamesInTab.has(m.player2);
-            
-            // match ini akan hilang kecuali mereka ditambahkan ke database 'players'
             return p1Match || p2Match;
           }
         )
@@ -134,36 +130,35 @@ export default function HomeContent() {
   };
 
   const handleSaveMatch = async (newMatch: Omit<Match, "id">) => {
-  const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
-  const matchWithId: Match = { id, ...newMatch };
+    const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
+    const matchWithId: Match = { id, ...newMatch };
 
-  console.log("Payload dikirim:", matchWithId); // ← tambah ini sementara
+    console.log("Payload dikirim:", matchWithId);
 
-  try {
-    const response = await fetch("/api/matches", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(matchWithId),
-    });
+    try {
+      const response = await fetch("/api/matches", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(matchWithId),
+      });
 
-    if (!response.ok) {
-      const err = await response.json();
-      console.error("Response error:", err); // ← dan ini
-      throw new Error(err.message);
+      if (!response.ok) {
+        const err = await response.json();
+        console.error("Response error:", err);
+        throw new Error(err.message);
+      }
+
+      setMatches((prev) => [...prev, matchWithId]);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Gagal menyimpan pertandingan:", error);
+      alert("Gagal menyimpan pertandingan. Coba lagi.");
     }
-
-    setMatches((prev) => [...prev, matchWithId]);
-    setIsModalOpen(false);
-  } catch (error) {
-    console.error("Gagal menyimpan pertandingan:", error);
-    alert("Gagal menyimpan pertandingan. Coba lagi.");
-  }
-};
+  };
 
   return (
     <section className="px-4 py-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
-        {/* Tabs */}
         <HomeTab activeTab={activeTab} onSelect={setActiveTab} />
         
         <div className="flex gap-x-4">
@@ -179,9 +174,7 @@ export default function HomeContent() {
         </div>
       </div>
 
-
       <div className="flex gap-x-8">
-        {/* Player Table */}
         <div className="w-3/5">
           <HomeTable
             players={currentPlayers}
@@ -191,7 +184,6 @@ export default function HomeContent() {
           />
         </div>
 
-        {/* Match Table */}
         <div className="w-2/5">
           <MatchTable 
             matches={currentMatches} 
