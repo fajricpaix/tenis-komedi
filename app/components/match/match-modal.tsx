@@ -55,7 +55,7 @@ export default function MatchModal({ players, onClose, onSave, nextId }: MatchMo
             <select 
               value={player1} 
               onChange={(e) => setPlayer1(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+              className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
               required
             >
               <option value="">Pilih Pemain 1</option>
@@ -70,7 +70,7 @@ export default function MatchModal({ players, onClose, onSave, nextId }: MatchMo
             <select 
               value={player2} 
               onChange={(e) => setPlayer2(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+              className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
               required
             >
               <option value="">Pilih Pemain 2</option>
@@ -97,7 +97,7 @@ export default function MatchModal({ players, onClose, onSave, nextId }: MatchMo
             <select 
               value={winner} 
               onChange={(e) => setWinner(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+              className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
               required
             >
               <option value="">Pilih Pemenang</option>

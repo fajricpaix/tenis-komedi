@@ -23,15 +23,17 @@ export async function POST(request: Request) {
     const jsonPath = path.join(process.cwd(), 'public', 'json', 'teko.json');
     const fileData = await fs.readFile(jsonPath, 'utf8');
     const db = JSON.parse(fileData);
+    
+    const players = db["tenis-komedi"]["0"].players;
 
     const newPlayer = {
-      id: db.players.length > 0 ? Math.max(...db.players.map((p: any) => p.id)) + 1 : 1,
+      id: players.length > 0 ? Math.max(...players.map((p: any) => p.id)) + 1 : 1,
       name,
       ...playerData,
       imgUrl
     };
 
-    db.players.push(newPlayer);
+    players.push(newPlayer);
     await fs.writeFile(jsonPath, JSON.stringify(db, null, 2));
 
     return NextResponse.json({ 

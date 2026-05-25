@@ -6,20 +6,7 @@ import HomeTable from "@components/home/table";
 import MatchModal from "@components/match/match-modal";
 import MatchTable from "@components/match/match-table";
 import Link from "next/link";
-
-type Player = {
-  id: number;
-  name: string;
-  gender: "Pria" | "Wanita";
-};
-
-type Match = {
-  id: number;
-  player1: string;
-  player2: string;
-  winner: string;
-  setScore: string;
-};
+import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
 
 type PlayerStats = {
   matchesPlayed: number;
@@ -30,16 +17,10 @@ type PlayerStats = {
   points: number;
 };
 
-
-function parseSetScore(value: string): [number, number] {
-  const [home, away] = value.split("-").map((v) => Number(v.trim()));
-  return Number.isFinite(home) && Number.isFinite(away) ? [home, away] : [0, 0];
-}
-
-function buildPlayerStats(players: Player[], matches: Match[]): Map<string, PlayerStats> {
+function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
 
-  players.forEach((player) => {
+  players?.forEach((player) => {
     statsByName.set(player.name, {
       matchesPlayed: 0,
       wins: 0,
@@ -50,7 +31,7 @@ function buildPlayerStats(players: Player[], matches: Match[]): Map<string, Play
     });
   });
 
-  matches.forEach((match) => {
+  matches?.forEach((match) => {
     const [winnerScore, loserScore] = parseSetScore(match.setScore);
     const loserName = match.player1 === match.winner ? match.player2 : match.player1;
 
@@ -85,11 +66,10 @@ export default function PlayersList() {
   const [matches, setMatches] = useState<Match[]>([]);
 
   useEffect(() => {
-    fetch("/json/teko.json")
-      .then((res) => res.json())
-      .then((data: { players: Player[]; matches: Match[] }) => {
-        setPlayers(data.players);
-        setMatches(data.matches);
+    getTekoData()
+      .then(({ players, matches }) => {
+        setPlayers(players);
+        setMatches(matches);
       })
       .catch((error) => {
         console.error("Gagal memuat data pemain:", error);
@@ -118,13 +98,17 @@ export default function PlayersList() {
 
   const currentMatches = useMemo(
     () =>
-      matches
-        .filter((match) =>
-          currentPlayers.some((player) => player.name === match.player1 || player.name === match.player2)
-        )
-        .slice(-10) // tampilkan maksimal 10 pertandingan terakhir
-    ,
-    [currentPlayers, matches]
+      {
+        const playerNamesInTab = new Set(
+          players.filter((p) => p.gender === activeTab).map((p) => p.name)
+        );
+
+        return [...matches]
+          .filter((m) => playerNamesInTab.has(m.player1) || playerNamesInTab.has(m.player2))
+          .reverse()
+          .slice(0, 10);
+      },
+    [matches, players, activeTab]
   );
 
   const handleEdit = (id: number) => {

@@ -17,10 +17,10 @@ type PlayerStats = {
   points: number;
 };
 
-function buildPlayerStats(players: Player[], matches: Match[]): Map<string, PlayerStats> {
+function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
 
-  players.forEach((player) => {
+  players?.forEach((player) => {
     statsByName.set(player.name, {
       matchesPlayed: 0,
       wins: 0,
@@ -31,7 +31,7 @@ function buildPlayerStats(players: Player[], matches: Match[]): Map<string, Play
     });
   });
 
-  matches.forEach((match) => {
+  matches?.forEach((match) => {
     const [winnerScore, loserScore] = parseSetScore(match.setScore);
     const loserName = match.player1 === match.winner ? match.player2 : match.player1;
 
@@ -98,14 +98,21 @@ export default function HomeContent() {
   );
 
   const currentMatches = useMemo(
-    () =>
-      matches
-        .filter((match) =>
-          currentPlayers.some((player) => player.name === match.player1 || player.name === match.player2)
+    () => {
+      // Ambil nama pemain yang gender-nya sesuai tab aktif
+      const playerNamesInTab = new Set(
+        players.filter((p) => p.gender === activeTab).map((p) => p.name)
+      );
+
+      // Hanya tampilkan pertandingan jika kedua pemain ada di tab aktif
+      return [...matches]
+        .filter(
+          (m) => playerNamesInTab.has(m.player1) && playerNamesInTab.has(m.player2)
         )
-        .slice(-10) // tampilkan maksimal 10 pertandingan terakhir
-    ,
-    [currentPlayers, matches]
+        .reverse()
+        .slice(0, 10);
+    },
+    [matches, players, activeTab]
   );
 
   const handleEdit = (id: number) => {

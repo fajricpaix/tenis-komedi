@@ -12,9 +12,10 @@ type Match = {
 type MatchTableProps = {
   matches: Match[];
   activeTab: TeamKey;
+  fullWidth?: boolean;
 };
 
-export default function MatchTable({ matches, activeTab }: MatchTableProps) {
+export default function MatchTable({ matches, activeTab, fullWidth }: MatchTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
 
   const filteredMatches = useMemo(() => {
@@ -79,11 +80,11 @@ export default function MatchTable({ matches, activeTab }: MatchTableProps) {
                 >
                   <td className="p-4 text-center">
                     <div className="flex items-center justify-center gap-4">
-                      <span className={`w-28 font-bold ${match.winner === match.player1 ? 'text-emerald-400' : 'text-slate-300'}`}>
+                      <span className={`${fullWidth ? 'w-36' : 'w-28' } font-bold ${match.winner === match.player1 ? 'text-emerald-400' : 'text-slate-300'}`}>
                         {match.player1}
                       </span>
                       <span className="text-slate-600 font-black italic text-xs">VS</span>
-                      <span className={`w-28 font-bold ${match.winner === match.player2 ? 'text-emerald-400' : 'text-slate-300'}`}>
+                      <span className={`${fullWidth ? 'w-36' : 'w-28' } font-bold ${match.winner === match.player2 ? 'text-emerald-400' : 'text-slate-300'}`}>
                         {match.player2}
                       </span>
                     </div>

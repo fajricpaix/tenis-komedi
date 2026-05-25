@@ -4,78 +4,8 @@ import HomeTab, { TeamKey } from "@components/home/tab";
 import MatchModal from "@components/match/match-modal";
 import MatchTable from "@components/match/match-table";
 import { useEffect, useMemo, useState } from "react";
+import { getTekoData, type Player, type Match } from "@utils/fetcher";
 
-type Player = {
-  id: number;
-  name: string;
-  gender: "Pria" | "Wanita";
-};
-
-type Match = {
-  id: number;
-  player1: string;
-  player2: string;
-  winner: string;
-  setScore: string;
-};
-
-type PlayerStats = {
-  matchesPlayed: number;
-  wins: number;
-  losses: number;
-  setWin: number;
-  setLose: number;
-  points: number;
-};
-
-
-function parseSetScore(value: string): [number, number] {
-  const [home, away] = value.split("-").map((v) => Number(v.trim()));
-  return Number.isFinite(home) && Number.isFinite(away) ? [home, away] : [0, 0];
-}
-
-function buildPlayerStats(players: Player[], matches: Match[]): Map<string, PlayerStats> {
-  const statsByName = new Map<string, PlayerStats>();
-
-  players.forEach((player) => {
-    statsByName.set(player.name, {
-      matchesPlayed: 0,
-      wins: 0,
-      losses: 0,
-      setWin: 0,
-      setLose: 0,
-      points: 0,
-    });
-  });
-
-  matches.forEach((match) => {
-    const [winnerScore, loserScore] = parseSetScore(match.setScore);
-    const loserName = match.player1 === match.winner ? match.player2 : match.player1;
-
-    const winnerStats = statsByName.get(match.winner);
-    const loserStats = statsByName.get(loserName);
-
-    if (winnerStats) {
-      winnerStats.matchesPlayed += 1;
-      winnerStats.wins += 1;
-      winnerStats.setWin += winnerScore;
-      winnerStats.setLose += loserScore;
-    }
-
-    if (loserStats) {
-      loserStats.matchesPlayed += 1;
-      loserStats.losses += 1;
-      loserStats.setWin += loserScore;
-      loserStats.setLose += winnerScore;
-    }
-  });
-
-  statsByName.forEach((stats) => {
-    stats.points = (stats.wins * 100) + (stats.losses * 30) + (stats.setWin * 10);
-  });
-
-  return statsByName;
-}
 
 export default function HomeContent() {
   const [activeTab, setActiveTab] = useState<TeamKey>("Pria");
@@ -84,43 +14,32 @@ export default function HomeContent() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    fetch("/json/teko.json")
-      .then((res) => res.json())
-      .then((data: { players: Player[]; matches: Match[] }) => {
-        setPlayers(data.players);
-        setMatches(data.matches);
+    getTekoData()
+      .then(({ players, matches }) => {
+        setPlayers(players);
+        setMatches(matches);
       })
       .catch((error) => {
         console.error("Gagal memuat data pemain:", error);
       });
   }, []);
 
-  const statsByName = useMemo(() => buildPlayerStats(players, matches), [players, matches]);
-
-  const currentPlayers = useMemo(() =>
-    players
-      .filter((player) => player.gender === activeTab)
-      .map((player) => ({
-        ...player,
-        ...(statsByName.get(player.name) ?? {
-          matchesPlayed: 0,
-          wins: 0,
-          losses: 0,
-          setWin: 0,
-          setLose: 0,
-          points: 0,
-        }),
-      }))
-      .sort((a, b) => b.points - a.points),
-    [activeTab, players, statsByName]
-  );
-
   const currentMatches = useMemo(
-    () =>
-      matches.filter((match) =>
-        currentPlayers.some((player) => player.name === match.player1 || player.name === match.player2)
-      ),
-    [currentPlayers, matches]
+    () => {
+      // Ambil nama pemain yang gender-nya sesuai tab aktif
+      const playerNamesInTab = new Set(
+        players.filter((p) => p.gender === activeTab).map((p) => p.name)
+      );
+
+      // Hanya tampilkan pertandingan jika kedua pemain ada di tab aktif
+      return [...matches]
+        .filter(
+          (m) => playerNamesInTab.has(m.player1) && playerNamesInTab.has(m.player2)
+        )
+        .reverse()
+        .slice(0, 20);
+    },
+    [matches, players, activeTab]
   );
 
   const handleSaveMatch = (newMatch: Match) => {
@@ -144,7 +63,11 @@ export default function HomeContent() {
 
 
       {/* Match Table */}
-      <MatchTable matches={currentMatches} activeTab={activeTab} />
+      <MatchTable 
+        matches={currentMatches} 
+        activeTab={activeTab} 
+        fullWidth
+      />
 
       {isModalOpen && (
         <MatchModal 

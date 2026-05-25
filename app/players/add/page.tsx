@@ -133,11 +133,11 @@ export default function AddPlayerPage() {
 
   return (
     <main className="px-6 py-10 mx-auto max-w-6xl">
-      <div className="mb-10 flex items-center justify-between">
+      <div className="max-w-2xl mx-auto mb-10 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-100">Tambah Pemain</h1>
           <p className="mt-3 text-slate-400 max-w-2xl">
-            Lengkapi semua informasi pemain baru untuk ditambahkan ke database.
+            Lengkapi informasi pemain baru untuk ditambahkan ke database.
           </p>
         </div>
         <Link
