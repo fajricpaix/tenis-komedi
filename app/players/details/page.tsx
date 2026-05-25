@@ -1,6 +1,6 @@
-
 "use client";
 
+import { Suspense } from "react";
 import { useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
@@ -29,113 +29,110 @@ function formatIndonesianDate(dateString: string): string {
   }).format(date);
 }
 
-export default function PlayerDetailPage() {
-	const searchParams = useSearchParams();
-	const router = useRouter();
-	const [player, setPlayer] = useState<Player | null>(null);
-	const [rank, setRank] = useState<number>(0);
-	const [loading, setLoading] = useState(true);
+function PlayerDetailContent() {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const [player, setPlayer] = useState<Player | null>(null);
+  const [rank, setRank] = useState<number>(0);
+  const [loading, setLoading] = useState(true);
 
-	const id = searchParams.get("id"); // hapus Number()
+  const id = searchParams.get("id");
 
-	useEffect(() => {
-		getTekoData()
-			.then(({ players, matches }) => {
-				const found = players.find((p) => String(p.id) === id);
-				if (found) {
-					setPlayer(found);
+  useEffect(() => {
+    getTekoData()
+      .then(({ players, matches }) => {
+        const found = players.find((p) => String(p.id) === id);
+        if (found) {
+          setPlayer(found);
 
-					// Hitung statistik untuk semua pemain dengan gender yang sama
-					const sameGenderPlayers = players.filter(p => p.gender === found.gender);
-					const statsMap = new Map<string, { wins: number; losses: number; setWin: number; points: number }>();
+          const sameGenderPlayers = players.filter(p => p.gender === found.gender);
+          const statsMap = new Map<string, { wins: number; losses: number; setWin: number; points: number }>();
 
-					sameGenderPlayers.forEach(p => {
-						statsMap.set(p.name, { wins: 0, losses: 0, setWin: 0, points: 0 });
-					});
+          sameGenderPlayers.forEach(p => {
+            statsMap.set(p.name, { wins: 0, losses: 0, setWin: 0, points: 0 });
+          });
 
-					matches.forEach(match => {
-						const [s1, s2] = parseSetScore(match.setScore);
-						const p1Stats = statsMap.get(match.player1);
-						const p2Stats = statsMap.get(match.player2);
+          matches.forEach(match => {
+            const [s1, s2] = parseSetScore(match.setScore);
+            const p1Stats = statsMap.get(match.player1);
+            const p2Stats = statsMap.get(match.player2);
 
-						if (p1Stats && p2Stats) {
-							const isP1Winner = match.winner === match.player1;
-							p1Stats[isP1Winner ? 'wins' : 'losses'] += 1;
-							p1Stats.setWin += s1;
-							p2Stats[!isP1Winner ? 'wins' : 'losses'] += 1;
-							p2Stats.setWin += s2;
-						}
-					});
+            if (p1Stats && p2Stats) {
+              const isP1Winner = match.winner === match.player1;
+              p1Stats[isP1Winner ? 'wins' : 'losses'] += 1;
+              p1Stats.setWin += s1;
+              p2Stats[!isP1Winner ? 'wins' : 'losses'] += 1;
+              p2Stats.setWin += s2;
+            }
+          });
 
-					const rankedList = sameGenderPlayers.map(p => {
-						const s = statsMap.get(p.name)!;
-						const points = (s.wins * 100) + (s.losses * 30) + (s.setWin * 10);
-						return { id: p.id, points };
-					}).sort((a, b) => b.points - a.points);
+          const rankedList = sameGenderPlayers.map(p => {
+            const s = statsMap.get(p.name)!;
+            const points = (s.wins * 100) + (s.losses * 30) + (s.setWin * 10);
+            return { id: p.id, points };
+          }).sort((a, b) => b.points - a.points);
 
-					const currentRank = rankedList.findIndex(p => String(p.id) === id) + 1;
-					setRank(currentRank);
-				}
-				setLoading(false);
-			})
-			.catch(() => setLoading(false));
-	}, [id]);
+          const currentRank = rankedList.findIndex(p => String(p.id) === id) + 1;
+          setRank(currentRank);
+        }
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, [id]);
 
-	const handleDownloadImage = async () => {
-		const cardElement = document.getElementById("cardPlayer");
-		if (!cardElement) return;
+  const handleDownloadImage = async () => {
+    const cardElement = document.getElementById("cardPlayer");
+    if (!cardElement) return;
 
-		try {
-			// Mengimpor library secara dinamis saat tombol diklik
-			const { toPng } = await import("html-to-image");
-			
-			const dataUrl = await toPng(cardElement, { 
-				cacheBust: true,
-				// Memberikan background solid agar transparansi tidak bermasalah saat disimpan
-				backgroundColor: '#0f172a', 
-			});
-			
-			const link = document.createElement("a");
-			link.download = `${player?.name.replace(/\s+/g, '-').toLowerCase()}.png`;
-			link.href = dataUrl;
-			link.click();
-		} catch (err) {
-			console.error("Gagal membuat gambar:", err);
-			alert("Maaf, terjadi kesalahan saat mencoba membuat gambar.");
-		}
-	};
+    try {
+      const { toPng } = await import("html-to-image");
+      
+      const dataUrl = await toPng(cardElement, { 
+        cacheBust: true,
+        backgroundColor: '#0f172a', 
+      });
+      
+      const link = document.createElement("a");
+      link.download = `${player?.name.replace(/\s+/g, '-').toLowerCase()}.png`;
+      link.href = dataUrl;
+      link.click();
+    } catch (err) {
+      console.error("Gagal membuat gambar:", err);
+      alert("Maaf, terjadi kesalahan saat mencoba membuat gambar.");
+    }
+  };
 
-	if (loading) {
-		return <div className="p-10 text-center text-lg text-slate-400">Memuat data pemain...</div>;
-	}
+  if (loading) {
+    return <div className="p-10 text-center text-lg text-slate-400">Memuat data pemain...</div>;
+  }
 
-	if (!player) {
-		return (
-			<div className="p-10 text-center text-red-500">
-				Pemain tidak ditemukan.<br />
-				<button className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded-lg" onClick={() => router.back()}>
-					Kembali
-				</button>
-			</div>
-		);
-	}
+  if (!player) {
+    return (
+      <div className="p-10 text-center text-red-500">
+        Pemain tidak ditemukan.<br />
+        <button className="mt-4 px-4 py-2 bg-emerald-500 text-white rounded-lg" onClick={() => router.back()}>
+          Kembali
+        </button>
+      </div>
+    );
+  }
 
-	return (
-		<section className="max-w-xl mx-auto px-4 py-10">
-			<div id="cardPlayer" className="relative rounded-2xl shadow-xl p-8 bg-white/10 border border-white/10">
+  return (
+    <section className="max-w-xl mx-auto px-4 py-10">
+      <div id="cardPlayer" className="relative rounded-2xl shadow-xl p-8 bg-white/10 border border-white/10">
 
         <figure className="absolute z-0 top-12 left-12">
           <Image
-              src={'/logoHD.webp'} // Use player's image or a generic placeholder
-              alt={player.name}
-              loading="eager"
-              width={320}
-              height={320}
-              className="object-cover opacity-10 grayscale"
-            />
+            src={'/logoHD.webp'}
+            alt={player.name}
+            loading="eager"
+            width={320}
+            height={320}
+            className="object-cover opacity-10 grayscale"
+          />
         </figure>
 
-				<div className="flex gap-6 relative z-10">
+        <div className="flex gap-6 relative z-10">
           <div className="w-3/5">
             <p className="text-sm mb-2 italic font-black text-emerald-400">Peringkat #{rank} {player.gender === 'Pria' ? 'Pria' : 'Wanita'}</p>
             <h2 className="text-4xl font-black text-slate-100 leading-10 mb-1 capitalize">{player.name}</h2>
@@ -145,7 +142,7 @@ export default function PlayerDetailPage() {
                 src="/indonesia.png"
                 alt="Indonesia Flag"
                 width={28}
-                height={'28'}
+                height={28}
                 className="w-auto object-contain"
               />
               <span className="font-semibold capitalize text-slate-200">{player.birthPlace}</span>
@@ -226,13 +223,25 @@ export default function PlayerDetailPage() {
           </div>
         </div>
 
-			</div>
+      </div>
 
       <button 
         onClick={handleDownloadImage}
         className="w-full mt-4 py-4 rounded-xl text-sm font-extrabold tracking-widest cursor-pointer uppercase transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 hover:scale-[1.02] active:scale-[0.98]">
         Buat jadi image
       </button>
-		</section>
-	);
+    </section>
+  );
+}
+
+export default function PlayerDetailPage() {
+  return (
+    <Suspense fallback={
+      <div className="p-10 text-center text-lg text-slate-400">
+        Memuat data pemain...
+      </div>
+    }>
+      <PlayerDetailContent />
+    </Suspense>
+  );
 }
