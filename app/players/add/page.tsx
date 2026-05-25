@@ -2,6 +2,7 @@
 
 import { FormEvent, useRef, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 type NewPlayerForm = {
   name: string;
@@ -47,16 +48,27 @@ const initialForm: NewPlayerForm = {
   photoUrl: undefined,
 };
 
-
+type Toast = {
+  message: string;
+  type: "success" | "error";
+};
 
 export default function AddPlayerPage() {
+  const router = useRouter();
   const [form, setForm] = useState<NewPlayerForm>(initialForm);
-  const [submitted, setSubmitted] = useState<NewPlayerForm | null>(null);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
   const [isPreviewOpen, setIsPreviewOpen] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
   const photoInputRef = useRef<HTMLInputElement>(null);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    if (type === "error") {
+      setTimeout(() => setToast(null), 4000);
+    }
+  };
 
   const handleChange = (field: keyof NewPlayerForm, value: string | number) => {
     setForm((prev) => ({ ...prev, [field]: value }));
@@ -65,10 +77,7 @@ export default function AddPlayerPage() {
   const handleSkillChange = (field: keyof NewPlayerForm["skills"], value: number) => {
     setForm((prev) => ({
       ...prev,
-      skills: {
-        ...prev.skills,
-        [field]: value,
-      },
+      skills: { ...prev.skills, [field]: value },
     }));
   };
 
@@ -76,14 +85,14 @@ export default function AddPlayerPage() {
     const file = e.target.files?.[0];
     setPhotoError(null);
     if (!file) return;
-    if (!file.type.startsWith('image/')) {
-      setPhotoError('File harus berupa gambar.');
+    if (!file.type.startsWith("image/")) {
+      setPhotoError("File harus berupa gambar.");
       setPhotoPreview(null);
       setForm((prev) => ({ ...prev, photoUrl: undefined }));
       return;
     }
     if (file.size > 2 * 1024 * 1024) {
-      setPhotoError('Ukuran gambar maksimal 2MB.');
+      setPhotoError("Ukuran gambar maksimal 2MB.");
       setPhotoPreview(null);
       setForm((prev) => ({ ...prev, photoUrl: undefined }));
       return;
@@ -98,34 +107,39 @@ export default function AddPlayerPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setIsPreviewOpen(true); // Membuka modal preview terlebih dahulu
+    setIsPreviewOpen(true);
   };
 
   const handleConfirmSave = async () => {
     setIsSaving(true);
     try {
-      const response = await fetch('/api/players', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("/api/players", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        setSubmitted(result.player);
+        setIsPreviewOpen(false);
         setForm(initialForm);
         setPhotoPreview(null);
         setPhotoError(null);
-        setIsPreviewOpen(false);
         if (photoInputRef.current) photoInputRef.current.value = "";
-        alert("Horee! Pemain baru berhasil ditambahkan.");
+
+        showToast("Horee! Pemain baru berhasil ditambahkan.", "success");
+
+        // Redirect ke home setelah 1.5 detik (biar toast sempat kebaca)
+        setTimeout(() => router.push("/"), 1500);
       } else {
-        alert("Gagal simpan: " + result.message);
+        setIsPreviewOpen(false);
+        showToast("Gagal menyimpan: " + result.message, "error");
       }
     } catch (error) {
       console.error("Error:", error);
-      alert("Terjadi kesalahan koneksi saat menyimpan data.");
+      setIsPreviewOpen(false);
+      showToast("Terjadi kesalahan koneksi saat menyimpan data.", "error");
     } finally {
       setIsSaving(false);
     }
@@ -133,6 +147,31 @@ export default function AddPlayerPage() {
 
   return (
     <main className="px-6 py-10 mx-auto max-w-6xl">
+
+      {/* Sticky Toast Notification */}
+      {toast && (
+        <div
+          className={`fixed top-6 left-1/2 -translate-x-1/2 z-[100] flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-sm font-semibold transition-all duration-300
+            ${toast.type === "success"
+              ? "bg-emerald-500 text-slate-950 shadow-emerald-500/30"
+              : "bg-red-500 text-white shadow-red-500/30"
+            }`}
+        >
+          <span>
+            {toast.type === "success" ? "✓" : "✕"}
+          </span>
+          {toast.message}
+          {toast.type === "error" && (
+            <button
+              onClick={() => setToast(null)}
+              className="ml-2 opacity-70 hover:opacity-100 transition-opacity"
+            >
+              ✕
+            </button>
+          )}
+        </div>
+      )}
+
       <div className="max-w-2xl mx-auto mb-10 flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-extrabold text-slate-100">Tambah Pemain</h1>
@@ -182,7 +221,7 @@ export default function AddPlayerPage() {
 
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm fonrt-semibold text-slate-300" htmlFor="tempatLahir">
+              <label className="text-sm font-semibold text-slate-300" htmlFor="tempatLahir">
                 Tempat Lahir
               </label>
               <input
@@ -336,7 +375,7 @@ export default function AddPlayerPage() {
                   src={photoPreview}
                   alt="Preview Foto"
                   className="rounded-xl object-cover border border-white/10"
-                  style={{ width: 120, height: 120, aspectRatio: '1/1' }}
+                  style={{ width: 120, height: 120, aspectRatio: "1/1" }}
                 />
               </div>
             )}
@@ -344,7 +383,9 @@ export default function AddPlayerPage() {
 
           {/* Input skill tenis */}
           <div className="space-y-4 mt-8">
-            <label className="text-sm font-semibold text-slate-300 block mb-2">Skill (1-10, menurut rasa sendiri)</label>
+            <label className="text-sm font-semibold text-slate-300 block mb-2">
+              Skill (1-10, menurut rasa sendiri)
+            </label>
             {[
               { key: "forehand", label: "Forehand" },
               { key: "backhand", label: "Backhand" },
@@ -354,17 +395,26 @@ export default function AddPlayerPage() {
               { key: "loop", label: "Loop" },
             ].map((item) => (
               <div key={item.key} className="flex items-center gap-4">
-                <label htmlFor={item.key} className="w-24 text-slate-200">{item.label}</label>
+                <label htmlFor={item.key} className="w-24 text-slate-200">
+                  {item.label}
+                </label>
                 <input
                   id={item.key}
                   type="range"
                   min={1}
                   max={10}
                   value={form.skills[item.key as keyof NewPlayerForm["skills"]]}
-                  onChange={(e) => handleSkillChange(item.key as keyof NewPlayerForm["skills"], Number(e.target.value))}
+                  onChange={(e) =>
+                    handleSkillChange(
+                      item.key as keyof NewPlayerForm["skills"],
+                      Number(e.target.value)
+                    )
+                  }
                   className="flex-1 accent-emerald-500 h-2 rounded-lg appearance-none cursor-pointer bg-slate-700"
                 />
-                <span className="w-8 text-center text-slate-100 font-bold">{form.skills[item.key as keyof NewPlayerForm["skills"]]}</span>
+                <span className="w-8 text-center text-slate-100 font-bold">
+                  {form.skills[item.key as keyof NewPlayerForm["skills"]]}
+                </span>
               </div>
             ))}
           </div>
@@ -376,13 +426,6 @@ export default function AddPlayerPage() {
             Simpan Pemain
           </button>
         </form>
-
-        {submitted && (
-          <div className="rounded-2xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-emerald-100">
-            <p className="font-bold text-sm">Berhasil Simpan Data!</p>
-            <pre className="mt-2 overflow-x-auto text-xs text-slate-200 bg-slate-950/80 rounded p-2">{JSON.stringify(submitted, null, 2)}</pre>
-          </div>
-        )}
       </section>
 
       {/* Modal Preview */}
@@ -390,9 +433,11 @@ export default function AddPlayerPage() {
         <div className="fixed inset-0 z-70 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="w-full max-w-lg bg-slate-900 border border-white/10 rounded-3xl p-8 shadow-2xl relative overflow-hidden">
             <div className="absolute -top-10 -left-10 w-32 h-32 bg-emerald-500/10 rounded-full blur-3xl"></div>
-            
-            <h2 className="text-2xl font-black text-slate-100 mb-6 relative">Konfirmasi Data Pemain</h2>
-            
+
+            <h2 className="text-2xl font-black text-slate-100 mb-6 relative">
+              Konfirmasi Data Pemain
+            </h2>
+
             <div className="space-y-3 text-sm relative z-10 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 flex items-center gap-4">
                 <div className="w-full">
@@ -402,7 +447,7 @@ export default function AddPlayerPage() {
                       src={form.photoUrl}
                       alt="Foto Preview"
                       className="rounded-xl object-cover border border-white/10 mt-1"
-                      style={{ width: 60, height: 60, aspectRatio: '1/1' }}
+                      style={{ width: 60, height: 60, aspectRatio: "1/1" }}
                     />
                   ) : (
                     <span className="text-slate-500">-</span>
@@ -411,7 +456,9 @@ export default function AddPlayerPage() {
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Nama / Panggilan</p>
-                <p className="mt-1 font-semibold text-slate-100">{form.name} ({form.nickname})</p>
+                <p className="mt-1 font-semibold text-slate-100">
+                  {form.name} ({form.nickname})
+                </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Tempat / Tanggal Lahir / Gender</p>
@@ -421,15 +468,21 @@ export default function AddPlayerPage() {
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Alamat</p>
-                <p className="mt-1 font-semibold text-slate-100">Blok {form.houseBlock} / No. {form.houseNumber}</p>
+                <p className="mt-1 font-semibold text-slate-100">
+                  Blok {form.houseBlock} / No. {form.houseNumber}
+                </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
-                  <p className="text-xs text-slate-400">Main Tenis Sejak</p>
-                  <p className="mt-1 font-semibold text-slate-100">{form.startMonth} {form.startYear}</p>
+                <p className="text-xs text-slate-400">Main Tenis Sejak</p>
+                <p className="mt-1 font-semibold text-slate-100">
+                  {form.startMonth} {form.startYear}
+                </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Alasan Main Tenis</p>
-                <p className="mt-1 font-semibold text-slate-100 italic">"{form.reason}"</p>
+                <p className="mt-1 font-semibold text-slate-100 italic">
+                  "{form.reason}"
+                </p>
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Skill (1-10)</p>
@@ -445,17 +498,19 @@ export default function AddPlayerPage() {
             </div>
 
             <div className="flex gap-3 pt-6 relative z-10">
-              <button 
-                type="button" 
+              <button
+                type="button"
                 onClick={() => setIsPreviewOpen(false)}
                 className="flex-1 rounded-xl border border-white/10 px-4 py-3 font-bold text-slate-400 hover:bg-white/5 transition-colors cursor-pointer"
               >
                 Batal
               </button>
-              <button 
+              <button
                 disabled={isSaving}
                 onClick={handleConfirmSave}
-                className={`flex-1 rounded-xl bg-emerald-500 px-4 py-3 font-bold text-slate-950 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer ${isSaving ? 'opacity-50 cursor-not-allowed' : 'hover:bg-emerald-400'}`}
+                className={`flex-1 rounded-xl bg-emerald-500 px-4 py-3 font-bold text-slate-950 transition-all shadow-lg shadow-emerald-500/20 cursor-pointer ${
+                  isSaving ? "opacity-50 cursor-not-allowed" : "hover:bg-emerald-400"
+                }`}
               >
                 {isSaving ? "Menyimpan..." : "OK, Simpan"}
               </button>
