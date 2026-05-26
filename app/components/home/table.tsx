@@ -71,7 +71,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
             ) : (
               players.map((player, index) => (
                 <tr
-                  key={player.name}
+                  key={player.id}
                   className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150"
                 >
                   <td className="p-4 font-extrabold text-slate-500 text-center">

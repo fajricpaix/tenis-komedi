@@ -24,6 +24,10 @@ type NewPlayerForm = {
     loop: number;
   };
   photoUrl?: string;
+  tournament: {
+    willing: boolean;
+    categories: ("single" | "double" | "mixDouble")[];
+  };
 };
 
 const initialForm: NewPlayerForm = {
@@ -46,6 +50,10 @@ const initialForm: NewPlayerForm = {
     loop: 1,
   },
   photoUrl: undefined,
+  tournament: {
+    willing: false,
+    categories: [],
+  },
 };
 
 type Toast = {
@@ -79,6 +87,26 @@ export default function AddPlayerPage() {
       ...prev,
       skills: { ...prev.skills, [field]: value },
     }));
+  };
+
+  const handleTournamentWilling = (willing: boolean) => {
+    setForm((prev) => ({
+      ...prev,
+      tournament: {
+        willing,
+        categories: willing ? prev.tournament.categories : [],
+      },
+    }));
+  };
+
+  const handleTournamentCategory = (category: "single" | "double" | "mixDouble") => {
+    setForm((prev) => {
+      const cats = prev.tournament.categories;
+      const updated = cats.includes(category)
+        ? cats.filter((c) => c !== category)
+        : [...cats, category];
+      return { ...prev, tournament: { ...prev.tournament, categories: updated } };
+    });
   };
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -129,8 +157,6 @@ export default function AddPlayerPage() {
         if (photoInputRef.current) photoInputRef.current.value = "";
 
         showToast("Horee! Pemain baru berhasil ditambahkan.", "success");
-
-        // Redirect ke home setelah 1.5 detik (biar toast sempat kebaca)
         setTimeout(() => router.push("/"), 1500);
       } else {
         setIsPreviewOpen(false);
@@ -145,6 +171,12 @@ export default function AddPlayerPage() {
     }
   };
 
+  const categoryLabels: Record<string, string> = {
+    single: "🎾 Single",
+    double: "👥 Double",
+    mixDouble: "💑 Mix Double",
+  };
+
   return (
     <main className="px-6 py-10 mx-auto max-w-6xl">
 
@@ -157,9 +189,7 @@ export default function AddPlayerPage() {
               : "bg-red-500 text-white shadow-red-500/30"
             }`}
         >
-          <span>
-            {toast.type === "success" ? "✓" : "✕"}
-          </span>
+          <span>{toast.type === "success" ? "✓" : "✕"}</span>
           {toast.message}
           {toast.type === "error" && (
             <button
@@ -189,6 +219,8 @@ export default function AddPlayerPage() {
 
       <section className="max-w-2xl mx-auto">
         <form onSubmit={handleSubmit} className="space-y-6 bg-slate-900/70 border border-white/10 rounded-3xl p-4 md:p-8 shadow-2xl shadow-slate-950/30 mb-10">
+
+          {/* Nama */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="nama">
               Nama Pemain
@@ -197,13 +229,14 @@ export default function AddPlayerPage() {
               id="nama"
               type="text"
               value={form.name}
-              onChange={(event) => handleChange("name", event.target.value)}
+              onChange={(e) => handleChange("name", e.target.value)}
               placeholder="Masukkan nama lengkap"
               className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               required
             />
           </div>
 
+          {/* Panggilan */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="panggilanGokil">
               Panggilan/Gokil (selain nama)
@@ -212,13 +245,14 @@ export default function AddPlayerPage() {
               id="panggilanGokil"
               type="text"
               value={form.nickname}
-              onChange={(event) => handleChange("nickname", event.target.value)}
+              onChange={(e) => handleChange("nickname", e.target.value)}
               placeholder="Contoh: Si Unyil, Kojak, dll"
               className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               required
             />
           </div>
 
+          {/* Tempat & Tanggal Lahir */}
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-300" htmlFor="tempatLahir">
@@ -228,7 +262,7 @@ export default function AddPlayerPage() {
                 id="tempatLahir"
                 type="text"
                 value={form.birthPlace}
-                onChange={(event) => handleChange("birthPlace", event.target.value)}
+                onChange={(e) => handleChange("birthPlace", e.target.value)}
                 placeholder="Contoh: Jakarta"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
@@ -242,17 +276,21 @@ export default function AddPlayerPage() {
                 id="tanggalLahir"
                 type="date"
                 value={form.birthDate}
-                onChange={(event) => handleChange("birthDate", event.target.value)}
+                onChange={(e) => handleChange("birthDate", e.target.value)}
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
               />
             </div>
 
+            {/* Gender */}
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-300">Gender</label>
               <div className="flex gap-4">
                 {(["Pria", "Wanita"] as const).map((value) => (
-                  <label key={value} className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 transition hover:border-emerald-400">
+                  <label
+                    key={value}
+                    className="flex items-center gap-2 rounded-full border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 transition hover:border-emerald-400"
+                  >
                     <input
                       type="radio"
                       name="gender"
@@ -268,6 +306,7 @@ export default function AddPlayerPage() {
             </div>
           </div>
 
+          {/* Blok & Nomor Rumah */}
           <div className="grid gap-6 md:grid-cols-2">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-300" htmlFor="blokRumah">
@@ -277,13 +316,12 @@ export default function AddPlayerPage() {
                 id="blokRumah"
                 type="text"
                 value={form.houseBlock}
-                onChange={(event) => handleChange("houseBlock", event.target.value)}
+                onChange={(e) => handleChange("houseBlock", e.target.value)}
                 placeholder="Contoh: A1"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
               />
             </div>
-
             <div className="space-y-2">
               <label className="text-sm font-semibold text-slate-300" htmlFor="nomorRumah">
                 Nomor Rumah
@@ -292,7 +330,7 @@ export default function AddPlayerPage() {
                 id="nomorRumah"
                 type="text"
                 value={form.houseNumber}
-                onChange={(event) => handleChange("houseNumber", event.target.value)}
+                onChange={(e) => handleChange("houseNumber", e.target.value)}
                 placeholder="Contoh: 12"
                 className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
                 required
@@ -300,33 +338,22 @@ export default function AddPlayerPage() {
             </div>
           </div>
 
+          {/* Main Tenis Sejak */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300">Main Tenis Sejak</label>
             <div className="flex gap-4">
               <select
-                id="mainTenisMonth"
                 value={form.startMonth}
                 onChange={(e) => handleChange("startMonth", e.target.value)}
                 required
                 className="w-2/3 rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20"
               >
                 <option value="">Bulan</option>
-                <option value="Januari">Januari</option>
-                <option value="Februari">Februari</option>
-                <option value="Maret">Maret</option>
-                <option value="April">April</option>
-                <option value="Mei">Mei</option>
-                <option value="Juni">Juni</option>
-                <option value="Juli">Juli</option>
-                <option value="Agustus">Agustus</option>
-                <option value="September">September</option>
-                <option value="Oktober">Oktober</option>
-                <option value="November">November</option>
-                <option value="Desember">Desember</option>
+                {["Januari","Februari","Maret","April","Mei","Juni","Juli","Agustus","September","Oktober","November","Desember"].map((b) => (
+                  <option key={b} value={b}>{b}</option>
+                ))}
               </select>
-
               <input
-                id="mainTenisYear"
                 type="number"
                 value={form.startYear}
                 onChange={(e) => handleChange("startYear", e.target.value)}
@@ -339,6 +366,7 @@ export default function AddPlayerPage() {
             </div>
           </div>
 
+          {/* Alasan */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="kenapa">
               Kenapa Main Tenis?
@@ -346,7 +374,7 @@ export default function AddPlayerPage() {
             <textarea
               id="kenapa"
               value={form.reason}
-              onChange={(event) => handleChange("reason", event.target.value)}
+              onChange={(e) => handleChange("reason", e.target.value)}
               placeholder="Jelaskan motivasi atau alasan Anda bermain tenis..."
               rows={4}
               className="w-full rounded-2xl border border-white/10 bg-slate-950/80 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-2 focus:ring-emerald-500/20 resize-none"
@@ -381,7 +409,7 @@ export default function AddPlayerPage() {
             )}
           </div>
 
-          {/* Input skill tenis */}
+          {/* Skill */}
           <div className="space-y-4 mt-8">
             <label className="text-sm font-semibold text-slate-300 block mb-2">
               Skill (1-10, menurut rasa sendiri)
@@ -405,10 +433,7 @@ export default function AddPlayerPage() {
                   max={10}
                   value={form.skills[item.key as keyof NewPlayerForm["skills"]]}
                   onChange={(e) =>
-                    handleSkillChange(
-                      item.key as keyof NewPlayerForm["skills"],
-                      Number(e.target.value)
-                    )
+                    handleSkillChange(item.key as keyof NewPlayerForm["skills"], Number(e.target.value))
                   }
                   className="flex-1 accent-emerald-500 h-2 rounded-lg appearance-none cursor-pointer bg-slate-700"
                 />
@@ -417,6 +442,86 @@ export default function AddPlayerPage() {
                 </span>
               </div>
             ))}
+          </div>
+
+          {/* Turnamen */}
+          <div className="space-y-4 mt-8 pt-6 border-t border-white/10">
+            <div>
+              <label className="text-sm font-semibold text-slate-300 block">
+                Turnamen Internal Tenis Komedi
+              </label>
+              <p className="text-xs text-slate-400 mt-1">
+                Apakah kamu bersedia ikut turnamen internal Tenis Komedi?
+              </p>
+            </div>
+
+            <div className="flex gap-4">
+              {[
+                { label: "Ya, siap ikut! 🏆", value: true },
+                { label: "Tidak, nonton aja 😅", value: false },
+              ].map(({ label, value }) => (
+                <label
+                  key={String(value)}
+                  className={`flex-1 flex items-center justify-center gap-2 rounded-2xl border px-4 py-3 text-sm font-semibold cursor-pointer transition
+                    ${form.tournament?.willing === value && value === true
+                      ? "border-emerald-400 bg-emerald-500/10 text-emerald-400"
+                      : form.tournament?.willing === value && value === false
+                      ? "border-red-400/60 bg-red-500/10 text-red-400"
+                      : "border-white/10 bg-slate-950/80 text-slate-400 hover:border-white/30"
+                    }`}
+                >
+                  <input
+                    type="radio"
+                    name="tournament_willing"
+                    value={String(value)}
+                    checked={form.tournament?.willing === value}
+                    onChange={() => handleTournamentWilling(value)}
+                    className="sr-only"
+                  />
+                  {label}
+                </label>
+              ))}
+            </div>
+
+            {form.tournament?.willing && (
+              <div className="space-y-3">
+                <p className="text-xs text-slate-400">
+                  Pilih kategori yang diminati (boleh lebih dari satu):
+                </p>
+                <div className="flex flex-col gap-3">
+                  {[
+                    { key: "single" as const, label: "🎾 Single", desc: "1 vs 1" },
+                    { key: "double" as const, label: "👥 Double", desc: "2 vs 2, pasangan sesama gender" },
+                    { key: "mixDouble" as const, label: "💑 Mix Double", desc: "2 vs 2, pasangan campur" },
+                  ].map(({ key, label, desc }) => {
+                    const checked = form.tournament?.categories?.includes(key) ?? false;
+                    return (
+                      <label
+                        key={key}
+                        className={`flex items-center gap-4 rounded-2xl border px-4 py-3 cursor-pointer transition
+                          ${checked
+                            ? "border-emerald-400 bg-emerald-500/10"
+                            : "border-white/10 bg-slate-950/80 hover:border-white/30"
+                          }`}
+                      >
+                        <input
+                          type="checkbox"
+                          checked={checked}
+                          onChange={() => handleTournamentCategory(key)}
+                          className="h-4 w-4 rounded accent-emerald-400"
+                        />
+                        <div>
+                          <span className={`font-semibold text-sm ${checked ? "text-emerald-400" : "text-slate-200"}`}>
+                            {label}
+                          </span>
+                          <p className="text-xs text-slate-500 mt-0.5">{desc}</p>
+                        </div>
+                      </label>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           <button
@@ -439,20 +544,18 @@ export default function AddPlayerPage() {
             </h2>
 
             <div className="space-y-3 text-sm relative z-10 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
-              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3 flex items-center gap-4">
-                <div className="w-full">
-                  <p className="text-xs text-slate-400">Foto</p>
-                  {form.photoUrl ? (
-                    <img
-                      src={form.photoUrl}
-                      alt="Foto Preview"
-                      className="rounded-xl object-cover border border-white/10 mt-1"
-                      style={{ width: 60, height: 60, aspectRatio: "1/1" }}
-                    />
-                  ) : (
-                    <span className="text-slate-500">-</span>
-                  )}
-                </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Foto</p>
+                {form.photoUrl ? (
+                  <img
+                    src={form.photoUrl}
+                    alt="Foto Preview"
+                    className="rounded-xl object-cover border border-white/10 mt-1"
+                    style={{ width: 60, height: 60, aspectRatio: "1/1" }}
+                  />
+                ) : (
+                  <span className="text-slate-500">-</span>
+                )}
               </div>
               <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
                 <p className="text-xs text-slate-400">Nama / Panggilan</p>
@@ -494,6 +597,20 @@ export default function AddPlayerPage() {
                   <span>Slice: {form.skills.slice}</span>
                   <span>Loop: {form.skills.loop}</span>
                 </div>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-slate-950/80 p-3">
+                <p className="text-xs text-slate-400">Turnamen Internal</p>
+                <p className="mt-1 font-semibold text-slate-100">
+                  {form.tournament?.willing ? "Bersedia ikut" : "Tidak bersedia"}
+                </p>
+                {form.tournament.willing && form.tournament.categories.length > 0 && (
+                  <p className="text-xs text-emerald-400 mt-1">
+                    Kategori: {form.tournament?.categories.map((c) => categoryLabels[c]).join(", ")}
+                  </p>
+                )}
+                {form.tournament?.willing && form.tournament.categories.length === 0 && (
+                  <p className="text-xs text-yellow-400 mt-1">Belum memilih kategori</p>
+                )}
               </div>
             </div>
 
