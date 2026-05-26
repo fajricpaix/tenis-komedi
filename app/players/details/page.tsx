@@ -86,12 +86,29 @@ function PlayerDetailContent() {
 
     try {
       const { toPng } = await import("html-to-image");
-      
-      const dataUrl = await toPng(cardElement, { 
+
+      // Simpan style asli
+      const originalWidth = cardElement.style.width;
+      const originalHeight = cardElement.style.height;
+      const originalOverflow = cardElement.style.overflow;
+
+      // Override sementara
+      cardElement.style.width = '560px';
+      cardElement.style.height = '870px';
+      cardElement.style.overflow = 'hidden';
+
+      const dataUrl = await toPng(cardElement, {
         cacheBust: true,
-        backgroundColor: '#0f172a', 
+        backgroundColor: '#0f172a',
+        canvasWidth: 560,
+        canvasHeight: 870,
       });
-      
+
+      // Kembalikan style asli
+      cardElement.style.width = originalWidth;
+      cardElement.style.height = originalHeight;
+      cardElement.style.overflow = originalOverflow;
+
       const link = document.createElement("a");
       link.download = `${player?.name.replace(/\s+/g, '-').toLowerCase()}.png`;
       link.href = dataUrl;
@@ -135,7 +152,7 @@ function PlayerDetailContent() {
         <div className="flex gap-6 relative z-10">
           <div className="w-3/5">
             <p className="text-sm mb-2 italic font-black text-emerald-400">Peringkat #{rank} {player.gender === 'Pria' ? 'Pria' : 'Wanita'}</p>
-            <h2 className="text-4xl font-black text-slate-100 leading-10 mb-1 capitalize">{player.name}</h2>
+            <h2 className="text-4xl font-black text-slate-100 leading-10 mb-1 capitalize overflow-hidden max-h-20">{player.name}</h2>
             <h3 className="text-xl font-semibold text-slate-100 italic"><small>A.K.A</small> <span className="capitalize text-emerald-400">{player.nickname}</span></h3>
             <div className="flex items-center mt-3 gap-x-2">
               <Image 
@@ -166,7 +183,7 @@ function PlayerDetailContent() {
 
         <div className="relative z-10 mt-5 px-4 py-3 rounded-xl text-center bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30">
           <h3 className="font-semibold">Alasan Main Tenis :</h3>
-          <p className="italic capitalize text-sm text-emerald-400">"{player.reason}"</p>
+          <p className="italic capitalize text-sm text-emerald-400 overflow-hidden max-h-10">"{player.reason}"</p>
         </div>
 
         <div className="relative z-10 flex gap-4 mt-5">
@@ -216,7 +233,7 @@ function PlayerDetailContent() {
               value={player.skills.slice}
             />
             <SkillsPlayerDetail 
-              imgUrl="/icons/forehand.webp"
+              imgUrl="/icons/fore.webp"
               skillName="Loop"
               value={player.skills.loop}
             />
