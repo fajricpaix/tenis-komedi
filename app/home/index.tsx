@@ -6,7 +6,7 @@ import HomeTable from "@components/home/table";
 import MatchModal from "@components/match/match-modal";
 import MatchTable from "@components/match/match-table";
 import Link from "next/link";
-import { getTekoData, parseSetScore, type Player, type Match } from "../../utils/fetcher";
+import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
 
 type PlayerStats = {
   matchesPlayed: number;
