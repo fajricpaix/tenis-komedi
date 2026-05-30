@@ -5,6 +5,7 @@ type Player = {
   id: number;
   name: string;
   gender: "Pria" | "Wanita";
+  imgUrl?: string;
 };
 
 type Match = {
@@ -75,10 +76,21 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                   className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150"
                 >
                   <td className="p-4 font-extrabold text-slate-500 text-center">
-                    {index+1}.
+                    {index + 1}.
                   </td>
                   <td className="p-4">
                     <div className="flex items-center gap-3 font-bold text-slate-100 capitalize">
+                      {player.imgUrl ? (
+                        <img
+                          src={player.imgUrl}
+                          alt={player.name}
+                          className="w-8 h-8 rounded-full object-cover border border-white/10 shrink-0"
+                        />
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-slate-700 border border-white/10 shrink-0 flex items-center justify-center text-xs text-slate-400 font-bold">
+                          {player.name?.charAt(0).toUpperCase()}
+                        </div>
+                      )}
                       {player.name}
                     </div>
                   </td>

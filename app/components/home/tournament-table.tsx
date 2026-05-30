@@ -77,7 +77,7 @@ export default function TournamentTable({ tournamentTab, activeGender, players }
                               {player.name?.charAt(0).toUpperCase()}
                             </div>
                           )}
-                          <span className="font-semibold text-slate-100">{player.name}</span>
+                          <span className="font-semibold capitalize text-slate-100">{player.name}</span>
                         </div>
                       </td>
                       <td className="px-5 py-3 text-slate-400">{player.nickname ?? "-"}</td>

@@ -21,7 +21,7 @@ export default function TournamentTab({ activeTab, onSelect }: Props) {
         <button
           key={key}
           onClick={() => onSelect(key)}
-          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all
+          className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-semibold whitespace-nowrap transition-all cursor-pointer
             ${activeTab === key
               ? "bg-emerald-500 text-slate-950 shadow-lg shadow-emerald-500/20"
               : "bg-white/5 border border-white/10 text-slate-400 hover:text-slate-100 hover:border-white/20"
