@@ -15,12 +15,17 @@ const categoryLabel: Record<string, string> = {
 
 export default function TournamentTable({ tournamentTab, activeGender, players }: Props) {
   const tournamentPlayers = players
-    .filter((p) => {
-      if (p?.gender !== activeGender) return false;
-      const willing = p?.tournament?.willing;
-      const cats: string[] = p?.tournament?.categories ?? [];
-      return willing && cats.includes(tournamentTab);
-    });
+  .filter((p) => {
+    if (p?.gender !== activeGender) return false;
+
+    if (tournamentTab === "notJoining") {
+      return p?.tournament?.willing === false;
+    }
+
+    const willing = p?.tournament?.willing;
+    const cats: string[] = p?.tournament?.categories ?? [];
+    return willing && cats.includes(tournamentTab);
+  });
 
   const currentTabConfig = tournamentTabConfig.find((t) => t.key === tournamentTab);
 

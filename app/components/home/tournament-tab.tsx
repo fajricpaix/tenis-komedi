@@ -1,10 +1,11 @@
-export type TournamentTabKey = "ranking" | "single" | "double" | "mixDouble";
+export type TournamentTabKey = "ranking" | "single" | "double" | "mixDouble" | "notJoining";
 
 export const tournamentTabConfig: { key: TournamentTabKey; label: string; emoji: string }[] = [
   { key: "ranking",   label: "Ranking",    emoji: "🏆" },
   { key: "single",    label: "Single",     emoji: "🎾" },
   { key: "double",    label: "Double",     emoji: "👥" },
   { key: "mixDouble", label: "Mix Double", emoji: "💑" },
+  { key: "notJoining", label: "Nonton Aja", emoji: "😅" },
 ];
 
 export type { TournamentTab };
