@@ -9,6 +9,7 @@ import TournamentTab, { type TournamentTabKey } from "@components/home/tournamen
 import TournamentTable from "@components/home/tournament-table";
 import Link from "next/link";
 import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
+import BirthdayCards from "@components/home/birthday-cards";
 
 type PlayerStats = {
   matchesPlayed: number;
@@ -129,6 +130,9 @@ export default function HomeContent() {
 
   return (
     <section className="px-4 py-10">
+
+      <BirthdayCards players={safePlayers} />
+      
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6">
         <HomeTab
           activeTab={activeTab}
