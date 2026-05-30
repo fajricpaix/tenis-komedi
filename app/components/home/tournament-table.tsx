@@ -48,7 +48,7 @@ export default function TournamentTable({ tournamentTab, activeGender, players }
           </div>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="w-175 md:w-full text-sm">
               <thead>
                 <tr className="text-xs text-slate-400 border-b border-white/10">
                   <th className="px-5 py-3 text-left font-semibold w-10">No</th>
