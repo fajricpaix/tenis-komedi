@@ -5,6 +5,8 @@ import HomeTab, { TeamKey } from "@components/home/tab";
 import HomeTable from "@components/home/table";
 import MatchModal from "@components/match/match-modal";
 import MatchTable from "@components/match/match-table";
+import TournamentTab, { type TournamentTabKey } from "@components/home/tournament-tab";
+import TournamentTable from "@components/home/tournament-table";
 import Link from "next/link";
 import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
 
@@ -19,25 +21,19 @@ type PlayerStats = {
 
 function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
-
-  const playersList: Player[] = Array.isArray(players) ? players : [];
-  const matchesList: Match[] = Array.isArray(matches) ? matches : [];
+  const playersList = Array.isArray(players) ? players : [];
+  const matchesList = Array.isArray(matches) ? matches : [];
 
   playersList.forEach((player) => {
     statsByName.set(player.name, {
-      matchesPlayed: 0,
-      wins: 0,
-      losses: 0,
-      setWin: 0,
-      setLose: 0,
-      points: 0,
+      matchesPlayed: 0, wins: 0, losses: 0,
+      setWin: 0, setLose: 0, points: 0,
     });
   });
 
   matchesList.forEach((match) => {
     const [winnerScore, loserScore] = parseSetScore(match.setScore);
     const loserName = match.player1 === match.winner ? match.player2 : match.player1;
-
     const winnerStats = statsByName.get(match.winner);
     const loserStats = statsByName.get(loserName);
 
@@ -47,7 +43,6 @@ function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<st
       winnerStats.setWin += winnerScore;
       winnerStats.setLose += loserScore;
     }
-
     if (loserStats) {
       loserStats.matchesPlayed += 1;
       loserStats.losses += 1;
@@ -67,6 +62,7 @@ function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<st
 
 export default function HomeContent() {
   const [activeTab, setActiveTab] = useState<TeamKey>("Pria");
+  const [tournamentTab, setTournamentTab] = useState<TournamentTabKey>("ranking");
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -77,77 +73,52 @@ export default function HomeContent() {
         setPlayers(Array.isArray(players) ? players : []);
         setMatches(Array.isArray(matches) ? matches : []);
       })
-      .catch((error) => {
-        console.error("Gagal memuat data pemain:", error);
-      });
+      .catch((error) => console.error("Gagal memuat data pemain:", error));
   }, []);
 
   const statsByName = useMemo(() => buildPlayerStats(players, matches), [players, matches]);
-
   const safePlayers = Array.isArray(players) ? players : [];
 
   const currentPlayers = useMemo(() =>
     safePlayers
-      .filter((player) => player?.gender === activeTab)
-      .map((player) => ({
-        ...player,
-        ...(statsByName.get(player.name) ?? {
-          matchesPlayed: 0,
-          wins: 0,
-          losses: 0,
-          setWin: 0,
-          setLose: 0,
-          points: 0,
+      .filter((p) => p?.gender === activeTab)
+      .map((p) => ({
+        ...p,
+        ...(statsByName.get(p.name) ?? {
+          matchesPlayed: 0, wins: 0, losses: 0,
+          setWin: 0, setLose: 0, points: 0,
         }),
       }))
       .sort((a, b) => b.points - a.points),
     [activeTab, safePlayers, statsByName]
   );
 
-  const currentMatches = useMemo(
-    () => {
-      const safeMatches = Array.isArray(matches) ? matches : [];
-      const playerNamesInTab = new Set(
-        safePlayers.filter((p) => p.gender === activeTab).map((p) => p.name)
-      );
+  const currentMatches = useMemo(() => {
+    const safeMatches = Array.isArray(matches) ? matches : [];
+    const playerNamesInTab = new Set(
+      safePlayers.filter((p) => p.gender === activeTab).map((p) => p.name)
+    );
+    return [...safeMatches]
+      .filter((m) => playerNamesInTab.has(m.player1) || playerNamesInTab.has(m.player2))
+      .reverse()
+      .slice(0, 20);
+  }, [matches, safePlayers, activeTab]);
 
-      return [...safeMatches]
-        .filter(
-          (m) => {
-            const p1Match = playerNamesInTab.has(m.player1);
-            const p2Match = playerNamesInTab.has(m.player2);
-            return p1Match || p2Match;
-          }
-        )
-        .reverse()
-        .slice(0, 20);
-    },
-    [matches, safePlayers, activeTab]
-  );
-
-  const handleEdit = (id: number) => {
-    alert(`Edit pemain dengan ID: ${id}`);
-  };
+  const handleEdit = (id: number) => alert(`Edit pemain dengan ID: ${id}`);
 
   const handleSaveMatch = async (newMatch: Omit<Match, "id">) => {
     const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
     const matchWithId: Match = { id, ...newMatch };
-
-    console.log("Payload dikirim:", matchWithId);
-
     try {
       const response = await fetch("/api/matches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(matchWithId),
       });
-
       if (!response.ok) {
         const err = await response.json();
-        console.error("Response error:", err);
         throw new Error(err.message);
       }
-
       setMatches((prev) => [...prev, matchWithId]);
       setIsModalOpen(false);
     } catch (error) {
@@ -158,14 +129,19 @@ export default function HomeContent() {
 
   return (
     <section className="px-4 py-10">
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-8">
-        <HomeTab activeTab={activeTab} onSelect={setActiveTab} />
-        
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6">
+        <HomeTab
+          activeTab={activeTab}
+          onSelect={(tab) => { setActiveTab(tab); setTournamentTab("ranking"); }}
+        />
         <div className="flex gap-x-4">
-          <Link href="/players/add" className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400">
+          <Link
+            href="/players/add"
+            className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400"
+          >
             <span className="text-sm md:text-xl">+</span> Pemain
           </Link>
-          <button 
+          <button
             onClick={() => setIsModalOpen(true)}
             className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400"
           >
@@ -174,27 +150,33 @@ export default function HomeContent() {
         </div>
       </div>
 
-      <div className="grid md:flex grid-cols-1 gap-10 md:gap-x-8">
-        <div className="w-full md:w-3/5">
-          <HomeTable
-            players={currentPlayers}
-            matches={currentMatches}
-            activeTab={activeTab}
-            onEdit={handleEdit}
-          />
-        </div>
+      <TournamentTab activeTab={tournamentTab} onSelect={setTournamentTab} />
 
-        <div className="w-full md:w-2/5">
-          <MatchTable 
-            matches={currentMatches} 
-            activeTab={activeTab} 
-          />
+      {tournamentTab === "ranking" ? (
+        <div className="grid md:flex grid-cols-1 gap-10 md:gap-x-8">
+          <div className="w-full md:w-3/5">
+            <HomeTable
+              players={currentPlayers}
+              matches={currentMatches}
+              activeTab={activeTab}
+              onEdit={handleEdit}
+            />
+          </div>
+          <div className="w-full md:w-2/5">
+            <MatchTable matches={currentMatches} activeTab={activeTab} />
+          </div>
         </div>
-      </div>
+      ) : (
+        <TournamentTable
+          tournamentTab={tournamentTab}
+          activeGender={activeTab}
+          players={safePlayers}
+        />
+      )}
 
       {isModalOpen && (
-        <MatchModal 
-          players={players.filter(p => p.gender === activeTab)}
+        <MatchModal
+          players={players.filter((p) => p.gender === activeTab)}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveMatch}
         />

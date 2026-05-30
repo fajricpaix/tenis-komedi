@@ -3,6 +3,7 @@ import { getDatabase, ref, get } from "firebase/database";
 const db = getDatabase(app);
 
 export type Player = {
+  tournament: any;
 	id: number;
 	name: string;
 	nickname: string;
