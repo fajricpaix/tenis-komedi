@@ -6,12 +6,22 @@ import MatchTable from "@components/match/match-table";
 import { useEffect, useMemo, useState } from "react";
 import { getTekoData, type Player, type Match } from "@utils/fetcher";
 
+type Toast = {
+  message: string;
+  type: "success" | "error";
+};
 
 export default function HomeContent() {
   const [activeTab, setActiveTab] = useState<TeamKey>("Pria");
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   useEffect(() => {
     getTekoData()
@@ -60,9 +70,10 @@ export default function HomeContent() {
     // ✅ Update state lokal setelah berhasil disimpan
     setMatches((prev) => [...prev, matchWithId]);
     setIsModalOpen(false);
+    showToast("Pertandingan berhasil ditambahkan.", "success");
   } catch (error) {
     console.error("Gagal menyimpan pertandingan:", error);
-    alert("Gagal menyimpan pertandingan. Coba lagi.");
+    showToast("Gagal menyimpan pertandingan. Coba lagi.", "error");
   }
 };
 
@@ -81,6 +92,18 @@ export default function HomeContent() {
       {/* Tabs */}
 
 
+      {toast && (
+        <div
+          className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl px-6 py-4 text-sm font-semibold shadow-2xl transition-all duration-300 ${toast.type === "success"
+            ? "bg-emerald-500 text-slate-950 shadow-emerald-500/30"
+            : "bg-red-500 text-white shadow-red-500/30"
+          }`}
+        >
+          <span className="mr-2">{toast.type === "success" ? "✓" : "✕"}</span>
+          {toast.message}
+        </div>
+      )}
+
       {/* Match Table */}
       <MatchTable 
         matches={currentMatches} 
@@ -90,7 +113,7 @@ export default function HomeContent() {
 
       {isModalOpen && (
         <MatchModal 
-          players={players.filter(p => p.gender === activeTab)}
+          players={players}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveMatch}
         />

@@ -20,6 +20,11 @@ type PlayerStats = {
   points: number;
 };
 
+type Toast = {
+  message: string;
+  type: "success" | "error";
+};
+
 function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
   const statsByName = new Map<string, PlayerStats>();
   const playersList = Array.isArray(players) ? players : [];
@@ -67,6 +72,12 @@ export default function HomeContent() {
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [toast, setToast] = useState<Toast | null>(null);
+
+  const showToast = (message: string, type: "success" | "error") => {
+    setToast({ message, type });
+    setTimeout(() => setToast(null), 4000);
+  };
 
   useEffect(() => {
     getTekoData()
@@ -122,9 +133,10 @@ export default function HomeContent() {
       }
       setMatches((prev) => [...prev, matchWithId]);
       setIsModalOpen(false);
+      showToast("Pertandingan berhasil ditambahkan.", "success");
     } catch (error) {
       console.error("Gagal menyimpan pertandingan:", error);
-      alert("Gagal menyimpan pertandingan. Coba lagi.");
+      showToast("Gagal menyimpan pertandingan. Coba lagi.", "error");
     }
   };
 
@@ -156,6 +168,18 @@ export default function HomeContent() {
 
       <TournamentTab activeTab={tournamentTab} onSelect={setTournamentTab} />
 
+      {toast && (
+        <div
+          className={`fixed top-6 left-1/2 z-50 -translate-x-1/2 rounded-2xl px-6 py-4 text-sm font-semibold shadow-2xl transition-all duration-300 ${toast.type === "success"
+            ? "bg-emerald-500 text-slate-950 shadow-emerald-500/30"
+            : "bg-red-500 text-white shadow-red-500/30"
+          }`}
+        >
+          <span className="mr-2">{toast.type === "success" ? "✓" : "✕"}</span>
+          {toast.message}
+        </div>
+      )}
+
       {tournamentTab === "ranking" ? (
         <div className="grid md:flex grid-cols-1 gap-10 md:gap-x-8">
           <div className="w-full md:w-3/5">
@@ -180,7 +204,7 @@ export default function HomeContent() {
 
       {isModalOpen && (
         <MatchModal
-          players={players.filter((p) => p.gender === activeTab)}
+          players={players}
           onClose={() => setIsModalOpen(false)}
           onSave={handleSaveMatch}
         />

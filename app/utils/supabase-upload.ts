@@ -66,10 +66,44 @@ export async function uploadProfilePhoto(base64: string, fileName: string): Prom
   return publicUrlData.publicUrl;
 }
 
-// Tambahkan di bawah fungsi uploadProfilePhoto
+export async function uploadMatchPhoto(base64: string, fileName: string): Promise<string> {
+  const base64Data = base64.split(',')[1];
+  const originalBuffer = Buffer.from(base64Data, 'base64');
+
+  if (originalBuffer.length > MAX_UPLOAD_BYTES) {
+    throw new Error('Ukuran file melebihi 2MB');
+  }
+
+  const compressedBuffer = await compressToTarget(originalBuffer);
+  const safeFileName = fileName.replace(/\.[^.]+$/, '') + '.jpg';
+
+  const { error } = await supabaseAdmin.storage
+    .from('matches')
+    .upload(safeFileName, compressedBuffer, {
+      contentType: 'image/jpeg',
+      upsert: true,
+    });
+
+  if (error) throw error;
+
+  const { data: publicUrlData } = supabaseAdmin.storage
+    .from('matches')
+    .getPublicUrl(safeFileName);
+
+  return publicUrlData.publicUrl;
+}
+
 export async function deleteProfilePhoto(fileName: string): Promise<void> {
   const { error } = await supabaseAdmin.storage
     .from('photo')
+    .remove([fileName]);
+
+  if (error) throw error;
+}
+
+export async function deleteMatchPhoto(fileName: string): Promise<void> {
+  const { error } = await supabaseAdmin.storage
+    .from('matches')
     .remove([fileName]);
 
   if (error) throw error;

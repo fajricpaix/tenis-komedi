@@ -32,6 +32,9 @@ export type Match = {
 	player2: string;
 	winner: string;
 	setScore: string;
+	pointScoresA?: string[];
+	pointScoresB?: string[];
+	photoUrl?: string;
 };
 
 export type TekoData = {
