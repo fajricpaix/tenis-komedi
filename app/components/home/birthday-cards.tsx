@@ -83,6 +83,13 @@ export default function BirthdayCards({ players }: Props) {
               <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${className}`}>
                 {label}
               </span>
+
+              {/* Umur */}
+              <div className="text-center">
+                <p className="text-xs">
+                  Umurnya <span className="font-semibold text-sm text-fuchsia-400">{player.birthDate ? `${new Date().getFullYear() - new Date(player.birthDate).getFullYear() + 1} tahun` : "Umur tidak diketahui"}</span>
+                </p>
+              </div>
             </div>
           );
         })}
