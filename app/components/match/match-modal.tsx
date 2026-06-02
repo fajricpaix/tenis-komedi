@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 
 type Player = {
   id: number;
@@ -23,6 +23,89 @@ type MatchModalProps = {
   // ✅ hapus nextId — ID dibuat di server/parent
 };
 
+function AutocompleteInput({
+  players,
+  value,
+  onChange,
+  placeholder,
+  exclude,
+}: {
+  players: Player[];
+  value: string;
+  onChange: (v: string) => void;
+  placeholder?: string;
+  exclude?: string;
+}) {
+  const [open, setOpen] = useState(false);
+  const [highlight, setHighlight] = useState(-1);
+  const rootRef = useRef<HTMLDivElement | null>(null);
+
+  const filtered = players
+    .filter((p) => (exclude ? p.name !== exclude : true))
+    .filter((p) => p.name.toLowerCase().includes(value.toLowerCase()));
+
+  useEffect(() => {
+    function onDoc(e: MouseEvent) {
+      if (!rootRef.current) return;
+      if (!rootRef.current.contains(e.target as Node)) setOpen(false);
+    }
+    document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, []);
+
+  function handleSelect(name: string) {
+    onChange(name);
+    setOpen(false);
+    setHighlight(-1);
+  }
+
+  function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
+    if (!open) {
+      if (e.key === "ArrowDown") setOpen(true);
+      return;
+    }
+    if (e.key === "ArrowDown") {
+      e.preventDefault();
+      setHighlight((h) => Math.min(h + 1, filtered.length - 1));
+    } else if (e.key === "ArrowUp") {
+      e.preventDefault();
+      setHighlight((h) => Math.max(h - 1, 0));
+    } else if (e.key === "Enter") {
+      e.preventDefault();
+      if (highlight >= 0 && highlight < filtered.length) handleSelect(filtered[highlight].name);
+    } else if (e.key === "Escape") {
+      setOpen(false);
+    }
+  }
+
+  return (
+    <div className="relative" ref={rootRef}>
+      <input
+        value={value}
+        placeholder={placeholder}
+        onChange={(e) => { onChange(e.target.value); setOpen(true); setHighlight(-1); }}
+        onFocus={() => setOpen(true)}
+        onKeyDown={onKeyDown}
+        className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+      />
+
+      {open && filtered.length > 0 && (
+        <div className="absolute z-50 mt-1 w-full max-h-48 overflow-auto rounded-xl border border-white/10 bg-slate-900 shadow-lg">
+          {filtered.map((p, i) => (
+            <div
+              key={p.id}
+              onMouseDown={() => handleSelect(p.name)}
+              className={`px-4 py-2 cursor-pointer ${i === highlight ? "bg-emerald-500/20" : "hover:bg-white/5"}`}
+            >
+              {p.name}
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function MatchModal({ players, onClose, onSave }: MatchModalProps) {
   const [player1, setPlayer1] = useState("");
   const [player2, setPlayer2] = useState("");
@@ -33,6 +116,12 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!player1 || !player2 || !score || !winner) return;
+
+    if (player1 === player2) {
+      // sederhana: beri tahu user dan batalkan
+      alert("Pemain 1 dan Pemain 2 tidak boleh sama");
+      return;
+    }
 
     setLoading(true);
     try {
@@ -52,42 +141,31 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5 relative">
-          {/* Pemain 1 */}
-          <div className="space-y-2">
+          {/* Pemain 1 (autocomplete) */}
+          <div className="space-y-2 capitalize">
             <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
               Pemain 1
             </label>
-            <select
+            <AutocompleteInput
+              players={players}
               value={player1}
-              onChange={(e) => { setPlayer1(e.target.value); setWinner(""); }}
-              className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
-              required
-            >
-              <option value="">Pilih Pemain 1</option>
-              {players.map((p) => (
-                <option key={p.id} value={p.name}>{p.name}</option>
-              ))}
-            </select>
+              onChange={(v) => { setPlayer1(v); setWinner(""); }}
+              placeholder="Pilih Pemain 1"
+            />
           </div>
 
-          {/* Pemain 2 */}
-          <div className="space-y-2">
+          {/* Pemain 2 (autocomplete) */}
+          <div className="space-y-2 capitalize">
             <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
               Pemain 2
             </label>
-            <select
+            <AutocompleteInput
+              players={players}
               value={player2}
-              onChange={(e) => { setPlayer2(e.target.value); setWinner(""); }}
-              className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
-              required
-            >
-              <option value="">Pilih Pemain 2</option>
-              {players
-                .filter((p) => p.name !== player1)
-                .map((p) => (
-                  <option key={p.id} value={p.name}>{p.name}</option>
-                ))}
-            </select>
+              onChange={(v) => { setPlayer2(v); setWinner(""); }}
+              placeholder="Pilih Pemain 2"
+              exclude={player1}
+            />
           </div>
 
           {/* Skor */}
