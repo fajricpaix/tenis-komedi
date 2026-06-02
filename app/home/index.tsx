@@ -140,6 +140,19 @@ export default function HomeContent() {
     }
   };
 
+  const handleMatchDeleted = async () => {
+    // Refetch data setelah pertandingan dihapus
+    try {
+      const { players, matches } = await getTekoData();
+      setPlayers(Array.isArray(players) ? players : []);
+      setMatches(Array.isArray(matches) ? matches : []);
+      showToast("Pertandingan berhasil dihapus.", "success");
+    } catch (error) {
+      console.error("Gagal memuat ulang data:", error);
+      showToast("Gagal memuat ulang data.", "error");
+    }
+  };
+
   return (
     <section className="px-4 py-10">
 
@@ -191,7 +204,7 @@ export default function HomeContent() {
             />
           </div>
           <div className="w-full md:w-2/5">
-            <MatchTable matches={currentMatches} activeTab={activeTab} />
+            <MatchTable matches={currentMatches} activeTab={activeTab} onMatchDeleted={handleMatchDeleted} />
           </div>
         </div>
       ) : (

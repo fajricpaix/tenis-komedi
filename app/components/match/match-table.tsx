@@ -7,16 +7,27 @@ type Match = {
   player2: string;
   winner: string;
   setScore: string;
+  photoUrl?: string;
 };
 
 type MatchTableProps = {
   matches: Match[];
   activeTab: TeamKey;
   fullWidth?: boolean;
+  onMatchDeleted?: () => void;
 };
 
-export default function MatchTable({ matches, activeTab, fullWidth }: MatchTableProps) {
+type DeleteConfirmData = {
+  matchId: number;
+  player1: string;
+  player2: string;
+  photoUrl?: string;
+} | null;
+
+export default function MatchTable({ matches, activeTab, fullWidth, onMatchDeleted }: MatchTableProps) {
   const [searchTerm, setSearchTerm] = useState("");
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const filteredMatches = useMemo(() => {
     if (!searchTerm) {
@@ -29,6 +40,45 @@ export default function MatchTable({ matches, activeTab, fullWidth }: MatchTable
         match.player2.toLowerCase().includes(lowerCaseSearchTerm)
     );
   }, [matches, searchTerm]);
+
+  const handleDeleteClick = (match: Match) => {
+    setDeleteConfirm({
+      matchId: match.id,
+      player1: match.player1,
+      player2: match.player2,
+      photoUrl: match.photoUrl,
+    });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirm) return;
+
+    setIsDeleting(true);
+    try {
+      const response = await fetch("/api/matches", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          matchId: deleteConfirm.matchId,
+          photoUrl: deleteConfirm.photoUrl,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setDeleteConfirm(null);
+        onMatchDeleted?.();
+      } else {
+        alert("Gagal menghapus pertandingan: " + data.message);
+      }
+    } catch (error) {
+      console.error("Error deleting match:", error);
+      alert("Terjadi kesalahan saat menghapus pertandingan");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
     <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
@@ -49,7 +99,7 @@ export default function MatchTable({ matches, activeTab, fullWidth }: MatchTable
         <table className="w-121.5 md:w-full text-xs">
           <thead>
             <tr className="bg-emerald-500/[0.07]">
-              {["Pertandingan", "Skor", "Pemenang"].map((h) => (
+              {["Pertandingan", "Skor", "Pemenang", "Aksi"].map((h) => (
                 <th
                   key={h}
                   className="px-5 py-3.5 text-center text-[0.7rem] font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap"
@@ -97,12 +147,48 @@ export default function MatchTable({ matches, activeTab, fullWidth }: MatchTable
                       {match.winner}
                     </span>
                   </td>
+                  <td className="text-center px-5 py-4">
+                    <button
+                      onClick={() => handleDeleteClick(match)}
+                      className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                    >
+                      Hapus
+                    </button>
+                  </td>
                 </tr>
               ))
             )}
           </tbody>
         </table>
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-100 mb-2">Hapus Pertandingan?</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              Apakah Anda yakin ingin menghapus pertandingan antara <span className="font-semibold text-slate-200">{deleteConfirm.player1}</span> vs <span className="font-semibold text-slate-200">{deleteConfirm.player2}</span>? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 cursor-pointer rounded-lg bg-slate-800 border border-white/10 text-slate-100 font-semibold hover:bg-slate-700 transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 cursor-pointer rounded-lg bg-red-500/20 border border-red-500/50 text-red-400 font-semibold hover:bg-red-500/30 transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? "Menghapus..." : "Hapus"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

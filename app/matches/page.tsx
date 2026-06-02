@@ -77,6 +77,19 @@ export default function HomeContent() {
   }
 };
 
+  const handleMatchDeleted = async () => {
+    // Refetch data setelah pertandingan dihapus
+    try {
+      const { players, matches } = await getTekoData();
+      setPlayers(Array.isArray(players) ? players : []);
+      setMatches(Array.isArray(matches) ? matches : []);
+      showToast("Pertandingan berhasil dihapus.", "success");
+    } catch (error) {
+      console.error("Gagal memuat ulang data:", error);
+      showToast("Gagal memuat ulang data.", "error");
+    }
+  };
+
   return (
     <section className="px-6 py-10">
       
@@ -109,6 +122,7 @@ export default function HomeContent() {
         matches={currentMatches} 
         activeTab={activeTab} 
         fullWidth
+        onMatchDeleted={handleMatchDeleted}
       />
 
       {isModalOpen && (

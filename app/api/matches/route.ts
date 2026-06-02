@@ -84,3 +84,65 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function DELETE(request: Request) {
+  try {
+    const { matchId, photoUrl } = await request.json();
+
+    if (!matchId) {
+      return NextResponse.json(
+        { success: false, message: "ID pertandingan tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    const db = getDatabase(app);
+    const matchesRef = ref(db, "tenis-komedi/1/matches");
+
+    const snapshot = await get(matchesRef);
+    if (!snapshot.exists()) {
+      return NextResponse.json(
+        { success: false, message: "Tidak ada data pertandingan" },
+        { status: 404 }
+      );
+    }
+
+    const val = snapshot.val();
+    const currentMatches = Array.isArray(val) ? val : Object.values(val);
+    const updatedMatches = currentMatches.filter((m) => m.id !== matchId);
+
+    // ✅ Hapus foto dari Supabase jika ada
+    if (photoUrl) {
+      try {
+        // Extract filename dari URL
+        const urlParts = photoUrl.split('/');
+        const fileName = urlParts[urlParts.length - 1];
+        if (fileName) {
+          await deleteMatchPhoto(fileName);
+        }
+      } catch (photoError) {
+        console.error("Error deleting photo:", photoError);
+        // Lanjutkan delete meskipun foto gagal dihapus
+      }
+    }
+
+    // Update Firebase dengan matches yang sudah difilter
+    if (updatedMatches.length === 0) {
+      // Jika tidak ada match lagi, set ke empty array
+      await set(matchesRef, []);
+    } else {
+      await set(matchesRef, updatedMatches);
+    }
+
+    return NextResponse.json({
+      success: true,
+      message: "Pertandingan berhasil dihapus",
+    });
+  } catch (error) {
+    console.error("Error deleting match:", error);
+    return NextResponse.json(
+      { success: false, message: "Gagal menghapus pertandingan" },
+      { status: 500 }
+    );
+  }
+}
