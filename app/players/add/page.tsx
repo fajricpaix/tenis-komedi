@@ -135,6 +135,12 @@ export default function AddPlayerPage() {
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+
+    if (form.tournament.willing && form.tournament.categories.length === 0) {
+      showToast("Isi minimal satu kategori jika ingin ikut turnamen.", "error");
+      return;
+    }
+
     setIsPreviewOpen(true);
   };
 
@@ -520,6 +526,11 @@ export default function AddPlayerPage() {
                     );
                   })}
                 </div>
+                {form.tournament.categories.length === 0 && (
+                  <p className="text-sm text-yellow-400">
+                    Pilih minimal satu kategori untuk ikut turnamen.
+                  </p>
+                )}
               </div>
             )}
           </div>

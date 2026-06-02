@@ -78,7 +78,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                   <td className="p-4 font-extrabold text-slate-500 text-center">
                     {index + 1}.
                   </td>
-                  <td className="p-4">
+                  <td className="p-4 w-60">
                     <div className="flex items-center gap-3 font-bold text-slate-100 capitalize">
                       {player.imgUrl ? (
                         <img

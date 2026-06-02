@@ -69,7 +69,7 @@ export default function TournamentTable({ tournamentTab, activeGender, players }
                       <td className="px-5 py-3 text-slate-500 font-mono text-xs">
                         {index + 1}
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-5 py-3 w-60">
                         <div className="flex items-center gap-3">
                           {player.imgUrl ? (
                             <img
@@ -85,13 +85,13 @@ export default function TournamentTable({ tournamentTab, activeGender, players }
                           <span className="font-semibold capitalize text-slate-100">{player.name}</span>
                         </div>
                       </td>
-                      <td className="px-5 py-3 text-slate-400">{player.nickname ?? "-"}</td>
-                      <td className="px-5 py-3 text-slate-400">
+                      <td className="px-5 py-3 capitalize text-slate-400 w-36 md:w-auto">{player.nickname ?? "-"}</td>
+                      <td className="px-5 py-3 text-slate-400 w-32 md:w-auto">
                         {player.houseBlock && player.houseNumber
                           ? `Blok ${player.houseBlock}/${player.houseNumber}`
                           : "-"}
                       </td>
-                      <td className="px-5 py-3">
+                      <td className="px-5 py-3 w-60 md:w-auto">
                         <div className="flex flex-wrap gap-1.5">
                           {cats.map((cat) => (
                             <span
