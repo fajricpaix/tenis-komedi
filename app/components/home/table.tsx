@@ -1,3 +1,6 @@
+"use client";
+
+import { useMemo, useState } from "react";
 import type { TeamKey } from "@components/home/tab";
 import Link from "next/link";
 
@@ -33,16 +36,32 @@ type HomeTableProps = {
 };
 
 export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps) {
+  const [search, setSearch] = useState("");
+
+  const filteredPlayers = useMemo(
+    () => players.filter((player) =>
+      player.name.toLowerCase().includes(search.trim().toLowerCase()),
+    ),
+    [players, search],
+  );
+
   return (
     <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
-      <div className="flex items-center justify-between px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
-        <h2 className="text-xl font-black text-slate-100">
+      <div className="flex items-center justify-between gap-4 px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
+        <h2 className="text-sm md:text-xl font-black text-slate-100">
           Tenis Komedi {activeTab}
         </h2>
+        <input
+          type="text"
+          placeholder="Cari pemain..."
+          value={search}
+          onChange={(event) => setSearch(event.target.value)}
+          className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+        />
       </div>
 
       <div className="overflow-x-auto">
-        <table className="w-175 md:w-full text-sm">
+        <table className="w-180 md:w-full text-sm">
           <thead>
             <tr className="bg-emerald-500/[0.07]">
               {[
@@ -63,14 +82,16 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
             </tr>
           </thead>
           <tbody>
-            {players.length === 0 ? (
+            {filteredPlayers.length === 0 ? (
               <tr>
                 <td colSpan={6} className="text-center py-16 text-slate-500 text-base">
-                  Tidak ada data pemain 🏜️
+                  {players.length === 0
+                    ? "Tidak ada data pemain 🏜️"
+                    : "Tidak ditemukan pemain dengan nama tersebut."}
                 </td>
               </tr>
             ) : (
-              players.map((player, index) => (
+              filteredPlayers.map((player, index) => (
                 <tr
                   key={player.id}
                   className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150"
