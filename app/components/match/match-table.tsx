@@ -86,7 +86,7 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
             <thead>
               <tr className="bg-emerald-500/[0.07]">
                 {["Pertandingan", "Skor", "Pemenang", "Aksi"].map((h) => (
-                  <th key={h} className="px-5 py-3.5 text-center text-xs font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap">
+                  <th key={h} className="px-5 py-3.5 text-center text-xs md:text-sm font-extrabold capitalize text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
