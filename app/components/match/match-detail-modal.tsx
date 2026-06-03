@@ -215,7 +215,7 @@ export default function MatchDetailModal({ match, onClose }: Props) {
           </button>
           <button
             onClick={handleDownloadImage}
-            className="flex-1 py-3 rounded-xl text-sm font-extrabold tracking-widest cursor-pointer uppercase transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 hover:scale-[1.02] active:scale-[0.98]"
+            className="flex-1 py-3 rounded-xl text-sm font-extrabold tracking-widest cursor-pointer capitalize transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 hover:scale-[1.02] active:scale-[0.98]"
           >
             Buat Jadi Image
           </button>
