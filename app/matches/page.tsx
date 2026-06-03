@@ -95,12 +95,12 @@ export default function HomeContent() {
       
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
         <HomeTab activeTab={activeTab} onSelect={setActiveTab} />
-        <button 
+        {/* <button 
           onClick={() => setIsModalOpen(true)}
           className="font-black px-2 md:px-7 py-2 md:py-2.5 cursor-pointer rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-white"
         >
           <span className="text-xl">+</span> Pertandingan
-        </button>
+        </button> */}
       </div>
       {/* Tabs */}
 
