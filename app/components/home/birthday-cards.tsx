@@ -37,24 +37,24 @@ export default function BirthdayCards({ players }: Props) {
     .filter((p) => !!p.birthDate)
     .map((p) => ({ ...p, daysUntil: getDaysUntilBirthday(p.birthDate) }))
     .sort((a, b) => a.daysUntil - b.daysUntil)
-    .slice(0, 5);
+    .slice(0, 6);
 
   if (upcomingBirthdays.length === 0) return null;
 
   return (
-    <div className="mb-8">
+    <div className="md:order-2 md:w-3/5">
       <div className="flex items-center justify-center gap-2 mb-4">
         <span className="text-lg md:text-3xl">🎂</span>
         <h2 className="font-bold text-slate-100 md:text-xl">Ulang Tahun Terdekat</h2>
       </div>
 
-      <div className="flex gap-3 md:gap-6 overflow-x-auto md:justify-center pb-2">
+      <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:justify-center pb-2">
         {upcomingBirthdays.map((player, index) => {
           const { label, className } = getBirthdayLabel(player.daysUntil);
           return (
             <div
               key={player.id ?? index}
-              className="shrink-0 w-44 rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-white/20 transition-colors"
+              className="shrink-0 w-44 md:w-full rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-white/20 transition-colors"
             >
               {/* Foto */}
               {player.imgUrl ? (
@@ -71,7 +71,7 @@ export default function BirthdayCards({ players }: Props) {
 
               {/* Nama */}
               <div className="text-center">
-                <p className="font-semibold text-slate-100 text-sm leading-tight line-clamp-2">
+                <p className="font-semibold text-slate-100 text-sm leading-tight line-clamp-2 capitalize">
                   {player.name}
                 </p>
                 <p className="text-slate-500 text-xs mt-1">

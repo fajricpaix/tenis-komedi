@@ -17,7 +17,7 @@ type Props = {
 
 export default function TournamentTab({ activeTab, onSelect }: Props) {
   return (
-    <div className="flex gap-2 mb-8 overflow-x-auto pb-1">
+    <div className="flex gap-2 mb-4 md:mb-8 overflow-x-auto pb-1">
       {tournamentTabConfig.map(({ key, label, emoji }) => (
         <button
           key={key}

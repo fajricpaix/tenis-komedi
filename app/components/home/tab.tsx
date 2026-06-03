@@ -22,7 +22,7 @@ export default function HomeTab({ activeTab, onSelect }: HomeTabProps) {
               }`}
           >
             <span>{tab === "Pria" ? "👨" : "👩"}</span>
-            {`TeKo ${tab}`}
+            {`${tab}`}
           </button>
         ))}
         

@@ -10,6 +10,7 @@ import TournamentTable from "@components/home/tournament-table";
 import Link from "next/link";
 import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
 import BirthdayCards from "@components/home/birthday-cards";
+import EventCard from "@components/home/event";
 
 type PlayerStats = {
   matchesPlayed: number;
@@ -103,7 +104,7 @@ export default function HomeContent() {
           setWin: 0, setLose: 0, points: 0,
         }),
       }))
-      .sort((a, b) => b.points - a.points),
+      .sort((a, b) => b.points - a.points || b.wins - a.wins),
     [activeTab, safePlayers, statsByName]
   );
 
@@ -156,22 +157,25 @@ export default function HomeContent() {
   };
 
   return (
-    <section className="px-4 py-10">
+    <section className="p-4 md:py-8">
 
-      <BirthdayCards players={safePlayers} />
-      
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-6">
+      <div className="flex flex-col md:flex-row justify-betweengap-6 md:gap-10 md:mb-8">
+        <BirthdayCards players={safePlayers} />
+        <EventCard />
+      </div>
+
+      <div className="flex flex-row md:items-center justify-between gap-4 md:gap-6 mb-4 md:mb-6">
         <HomeTab
           activeTab={activeTab}
           onSelect={(tab) => { setActiveTab(tab); setTournamentTab("ranking"); }}
         />
         <div className="flex gap-x-4">
-          <Link
+          {/* <Link
             href="/players/add"
             className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400"
           >
             <span className="text-sm md:text-xl">+</span> Pemain
-          </Link>
+          </Link> */}
           <button
             onClick={() => setIsModalOpen(true)}
             className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400"
