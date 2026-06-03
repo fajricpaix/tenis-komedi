@@ -205,6 +205,14 @@ export default function HomeContent() {
           </div>
           <div className="w-full md:w-2/5">
             <MatchTable matches={currentMatches} activeTab={activeTab} onMatchDeleted={handleMatchDeleted} />
+
+            <div className="py-3 mt-2 text-xs text-right text-slate-500">
+              <Link
+                href="/matches"
+                className="text-emerald-300 hover:text-white transition-colors duration-150 text-xs font-semibold uppercase tracking-wide underline">
+                  Lihat Semua Pertandingan
+              </Link>
+            </div>
           </div>
         </div>
       ) : (
