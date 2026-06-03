@@ -43,24 +43,26 @@ function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<st
     const winnerStats = statsByName.get(match.winner);
     const loserStats = statsByName.get(loserName);
 
+    // 3-0 → menang +6, kalah +1
+    // 3-1 → menang +5, kalah +2
+    // 3-2 → menang +4, kalah +3
+    const winnerPoints = 6 - loserScore;
+    const loserPoints = loserScore + 1;
+
     if (winnerStats) {
       winnerStats.matchesPlayed += 1;
       winnerStats.wins += 1;
       winnerStats.setWin += winnerScore;
       winnerStats.setLose += loserScore;
+      winnerStats.points += winnerPoints;
     }
     if (loserStats) {
       loserStats.matchesPlayed += 1;
       loserStats.losses += 1;
       loserStats.setWin += loserScore;
       loserStats.setLose += winnerScore;
+      loserStats.points += loserPoints;
     }
-  });
-
-  statsByName.forEach((stats) => {
-    stats.points = stats.matchesPlayed === 0
-      ? 0
-      : (stats.wins * 113) + 37 + (stats.setLose * 3);
   });
 
   return statsByName;

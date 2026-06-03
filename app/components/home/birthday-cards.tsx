@@ -54,24 +54,24 @@ export default function BirthdayCards({ players }: Props) {
           return (
             <div
               key={player.id ?? index}
-              className="shrink-0 w-36 rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-white/20 transition-colors"
+              className="shrink-0 w-44 rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-white/20 transition-colors"
             >
               {/* Foto */}
               {player.imgUrl ? (
                 <img
                   src={player.imgUrl}
                   alt={player.name}
-                  className="w-14 h-14 rounded-full object-cover border-2 border-white/10"
+                  className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
                 />
               ) : (
-                <div className="w-14 h-14 rounded-full bg-slate-700 border-2 border-white/10 flex items-center justify-center text-xl font-bold text-slate-400">
+                <div className="w-16 h-16 rounded-full bg-slate-700 border-2 border-white/10 flex items-center justify-center text-xl font-bold text-slate-400">
                   {player.name?.charAt(0).toUpperCase()}
                 </div>
               )}
 
               {/* Nama */}
               <div className="text-center">
-                <p className="font-semibold text-slate-100 text-xs leading-tight line-clamp-2">
+                <p className="font-semibold text-slate-100 text-sm leading-tight line-clamp-2">
                   {player.name}
                 </p>
                 <p className="text-slate-500 text-xs mt-1">
