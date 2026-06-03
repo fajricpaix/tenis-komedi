@@ -169,8 +169,8 @@ export default function HomeContent() {
           activeTab={activeTab}
           onSelect={(tab) => { setActiveTab(tab); setTournamentTab("ranking"); }}
         />
-        {/* <div className="flex gap-x-4">
-          <Link
+        <div className="flex gap-x-4">
+          {/* <Link
             href="/players/add"
             className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400"
           >
@@ -181,8 +181,14 @@ export default function HomeContent() {
             className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400"
           >
             <span className="text-sm md:text-xl">+</span> Pertandingan
-          </button>
-        </div> */}
+          </button> */}
+          <Link
+            href="/matches"
+            className="font-black flex items-center justify-center gap-2 text-emerald-400 hover:text-emerald-300 uppercase text-xs underline italic"
+          >
+            Lihat Semua <br className="block md:hidden"/> Pertandingan
+          </Link>
+        </div>
       </div>
 
       <TournamentTab activeTab={tournamentTab} onSelect={setTournamentTab} />

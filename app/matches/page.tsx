@@ -91,9 +91,9 @@ export default function HomeContent() {
   };
 
   return (
-    <section className="px-6 py-10">
+    <section className="p-4 md:py-8">
       
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-4 md:mb-6">
         <HomeTab activeTab={activeTab} onSelect={setActiveTab} />
         {/* <button 
           onClick={() => setIsModalOpen(true)}
