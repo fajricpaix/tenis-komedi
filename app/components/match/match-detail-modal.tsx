@@ -39,24 +39,37 @@ export default function MatchDetailModal({ match, onClose }: Props) {
     const el = document.getElementById("MatchResult");
     if (!el) return;
 
-    // iOS WebKit blocks cross-origin images on canvas.
-    // Pre-fetch all images as base64 so html-to-image never touches the network.
     const imgs = Array.from(el.querySelectorAll<HTMLImageElement>("img"));
     const originalSrcs = imgs.map((img) => img.src);
 
+    async function fetchBase64(url: string): Promise<string> {
+      const res = await fetch(url, { mode: "cors", cache: "force-cache" });
+      const blob = await res.blob();
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(blob);
+      });
+    }
+
+    function waitForLoad(img: HTMLImageElement): Promise<void> {
+      return new Promise((resolve) => {
+        if (img.complete && img.naturalWidth > 0) { resolve(); return; }
+        img.addEventListener("load", () => resolve(), { once: true });
+        img.addEventListener("error", () => resolve(), { once: true });
+      });
+    }
+
     try {
+      // Konversi semua gambar ke base64 dan tunggu sampai ter-load
+      // sebelum html-to-image mencoba menggambar ke canvas (fix iOS CORS)
       await Promise.all(
         imgs.map(async (img) => {
           try {
-            const res = await fetch(img.src, { mode: "cors" });
-            const blob = await res.blob();
-            const base64 = await new Promise<string>((resolve, reject) => {
-              const reader = new FileReader();
-              reader.onload = () => resolve(reader.result as string);
-              reader.onerror = reject;
-              reader.readAsDataURL(blob);
-            });
+            const base64 = await fetchBase64(img.src);
             img.src = base64;
+            await waitForLoad(img);
           } catch {
             // biarkan src asli jika fetch gagal
           }
@@ -88,7 +101,6 @@ export default function MatchDetailModal({ match, onClose }: Props) {
       console.error("Gagal membuat gambar:", err);
       alert("Maaf, terjadi kesalahan saat membuat gambar.");
     } finally {
-      // Selalu restore src asli
       imgs.forEach((img, i) => { img.src = originalSrcs[i]; });
     }
   };
@@ -109,6 +121,7 @@ export default function MatchDetailModal({ match, onClose }: Props) {
               <img
                 src={match.photoUrl}
                 alt={`Pertandingan ${match.player1} vs ${match.player2}`}
+                crossOrigin="anonymous"
                 className="w-full object-cover aspect-square rounded-xl"
               />
             </figure>
