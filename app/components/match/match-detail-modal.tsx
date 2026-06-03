@@ -38,21 +38,48 @@ export default function MatchDetailModal({ match, onClose }: Props) {
   const handleDownloadImage = async () => {
     const el = document.getElementById("MatchResult");
     if (!el) return;
+
+    // iOS WebKit blocks cross-origin images on canvas.
+    // Pre-fetch all images as base64 so html-to-image never touches the network.
+    const imgs = Array.from(el.querySelectorAll<HTMLImageElement>("img"));
+    const originalSrcs = imgs.map((img) => img.src);
+
     try {
+      await Promise.all(
+        imgs.map(async (img) => {
+          try {
+            const res = await fetch(img.src, { mode: "cors" });
+            const blob = await res.blob();
+            const base64 = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+            img.src = base64;
+          } catch {
+            // biarkan src asli jika fetch gagal
+          }
+        })
+      );
+
       const { toPng } = await import("html-to-image");
       const prev = { width: el.style.width, height: el.style.height, overflow: el.style.overflow };
       el.style.width = "750px";
       el.style.height = "750px";
       el.style.overflow = "hidden";
+
       const dataUrl = await toPng(el, {
         cacheBust: true,
         backgroundColor: "#0f172a",
         canvasWidth: 750,
         canvasHeight: 750,
       });
+
       el.style.width = prev.width;
       el.style.height = prev.height;
       el.style.overflow = prev.overflow;
+
       const link = document.createElement("a");
       link.download = `match-${match.player1}-vs-${match.player2}.png`.replace(/\s+/g, "-").toLowerCase();
       link.href = dataUrl;
@@ -60,6 +87,9 @@ export default function MatchDetailModal({ match, onClose }: Props) {
     } catch (err) {
       console.error("Gagal membuat gambar:", err);
       alert("Maaf, terjadi kesalahan saat membuat gambar.");
+    } finally {
+      // Selalu restore src asli
+      imgs.forEach((img, i) => { img.src = originalSrcs[i]; });
     }
   };
 
