@@ -39,15 +39,15 @@ export default function EventCard() {
         <div className="px-5 py-4 grid grid-cols-3 gap-3 border-b border-white/[0.07]">
           <div className="text-center">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Penyisihan</p>
-            <p className="text-xs font-bold text-slate-200">4 – 24 Juni</p>
+            <p className="text-xs font-bold text-slate-200">4 - 24 Juni 2026</p>
           </div>
           <div className="text-center border-x border-white/10">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Semifinal</p>
-            <p className="text-xs font-bold text-slate-200">26 Juni</p>
+            <p className="text-xs font-bold text-slate-200">26 Juni 2026</p>
           </div>
           <div className="text-center">
             <p className="text-[10px] uppercase tracking-widest text-slate-500 mb-1">Final</p>
-            <p className="text-xs font-bold text-emerald-400">27 Juni 🏆</p>
+            <p className="text-xs font-bold text-emerald-400">27 Juni 2026 🏆</p>
           </div>
 
           <button
