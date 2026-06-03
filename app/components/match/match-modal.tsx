@@ -330,8 +330,12 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
 
           <div className="space-y-2">
             <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
-              Upload Foto Pertandingan
+              Upload Foto Pertandingan{" "}
+              <span className="text-rose-400">*</span>
             </label>
+            <p className="text-xs text-slate-500">
+              Wajib diisi sebagai bukti pertandingan. Maks. 5MB.
+            </p>
             <input
               type="file"
               accept="image/*"

@@ -10,8 +10,8 @@ const SUPABASE_SERVICE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 export const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 export const supabaseAdmin = createClient(SUPABASE_URL, SUPABASE_SERVICE_KEY);
 
-const MAX_UPLOAD_BYTES = 2 * 1024 * 1024;  // 2MB — validasi awal
-const TARGET_SIZE_BYTES = 200 * 1024;       // 200KB — target setelah kompresi
+const MAX_UPLOAD_BYTES = 5 * 1024 * 1024;  // 5MB — validasi awal
+const TARGET_SIZE_BYTES = 600 * 1024;       // 600KB — batas atas target kompresi (range 300–400KB)
 
 async function compressToTarget(buffer: Buffer): Promise<Buffer> {
   // Resize dulu ke max 800x800 (cukup untuk foto profil)
@@ -41,7 +41,7 @@ export async function uploadProfilePhoto(base64: string, fileName: string): Prom
 
   // Validasi ukuran original (sebelum kompresi)
   if (originalBuffer.length > MAX_UPLOAD_BYTES) {
-    throw new Error('Ukuran file melebihi 2MB');
+    throw new Error('Ukuran file melebihi 5MB');
   }
 
   // Kompresi
@@ -71,7 +71,7 @@ export async function uploadMatchPhoto(base64: string, fileName: string): Promis
   const originalBuffer = Buffer.from(base64Data, 'base64');
 
   if (originalBuffer.length > MAX_UPLOAD_BYTES) {
-    throw new Error('Ukuran file melebihi 2MB');
+    throw new Error('Ukuran file melebihi 5MB');
   }
 
   const compressedBuffer = await compressToTarget(originalBuffer);

@@ -1,15 +1,8 @@
 import type { TeamKey } from "@components/home/tab";
-import Link from "next/link";
 import { useState, useMemo } from "react";
+import MatchDetailModal, { type MatchForModal } from "@components/match/match-detail-modal";
 
-type Match = {
-  id: number;
-  player1: string;
-  player2: string;
-  winner: string;
-  setScore: string;
-  photoUrl?: string;
-};
+type Match = MatchForModal;
 
 type MatchTableProps = {
   matches: Match[];
@@ -29,16 +22,13 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
   const filteredMatches = useMemo(() => {
-    if (!searchTerm) {
-      return matches;
-    }
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    if (!searchTerm) return matches;
+    const lower = searchTerm.toLowerCase();
     return matches.filter(
-      (match) =>
-        match.player1.toLowerCase().includes(lowerCaseSearchTerm) ||
-        match.player2.toLowerCase().includes(lowerCaseSearchTerm)
+      (m) => m.player1.toLowerCase().includes(lower) || m.player2.toLowerCase().includes(lower)
     );
   }, [matches, searchTerm]);
 
@@ -53,20 +43,14 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
 
   const handleConfirmDelete = async () => {
     if (!deleteConfirm) return;
-
     setIsDeleting(true);
     try {
       const response = await fetch("/api/matches", {
         method: "DELETE",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          matchId: deleteConfirm.matchId,
-          photoUrl: deleteConfirm.photoUrl,
-        }),
+        body: JSON.stringify({ matchId: deleteConfirm.matchId, photoUrl: deleteConfirm.photoUrl }),
       });
-
       const data = await response.json();
-
       if (data.success) {
         setDeleteConfirm(null);
         onMatchDeleted?.();
@@ -102,15 +86,12 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
             <thead>
               <tr className="bg-emerald-500/[0.07]">
                 {["Pertandingan", "Skor", "Pemenang", "Aksi"].map((h) => (
-                  <th
-                    key={h}
-                    className="px-5 py-3.5 text-center text-xs font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap"
-                  >
+                  <th key={h} className="px-5 py-3.5 text-center text-xs font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
               </tr>
-            </thead> 
+            </thead>
             <tbody>
               {matches.length === 0 ? (
                 <tr>
@@ -126,17 +107,14 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
                 </tr>
               ) : (
                 [...filteredMatches].reverse().map((match) => (
-                  <tr
-                    key={match.id}
-                    className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150"
-                  >
+                  <tr key={match.id} className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150">
                     <td className="p-4 text-center w-100">
                       <div className="flex items-center justify-center gap-4">
-                        <span className={`${fullWidth ? 'w-36' : 'w-28' } capitalize font-bold ${match.winner === match.player1 ? 'text-emerald-400' : 'text-slate-300'}`}>
+                        <span className={`${fullWidth ? "w-36" : "w-28"} capitalize font-bold ${match.winner === match.player1 ? "text-emerald-400" : "text-slate-300"}`}>
                           {match.player1}
                         </span>
                         <span className="text-slate-600 font-black italic text-xs">VS</span>
-                        <span className={`${fullWidth ? 'w-36' : 'w-28' } capitalize font-bold ${match.winner === match.player2 ? 'text-emerald-400' : 'text-slate-300'}`}>
+                        <span className={`${fullWidth ? "w-36" : "w-28"} capitalize font-bold ${match.winner === match.player2 ? "text-emerald-400" : "text-slate-300"}`}>
                           {match.player2}
                         </span>
                       </div>
@@ -145,23 +123,25 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
                       {match.setScore}
                     </td>
                     <td className="text-center px-5 py-4 justify-center items-center flex">
-                      <span className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-bold text-xs uppercase tracking-wider">
+                      <span className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-bold text-xs capitalize tracking-wider">
                         {match.winner}
                       </span>
                     </td>
                     <td className="text-center px-5 py-4 w-40">
-                      {/* <button
-                        onClick={() => handleDeleteClick(match)}
-                        className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
-                      >
-                        Hapus
-                      </button> */}
-                      <Link
-                        href={``}
-                        className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
-                      >
-                        Detail →
-                      </Link>
+                      <div className="flex items-center justify-center gap-2">
+                        {/* <button
+                          onClick={() => handleDeleteClick(match)}
+                          className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                        >
+                          🗑️
+                        </button> */}
+                        <button
+                          onClick={() => setSelectedMatch(match)}
+                          className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
+                        >
+                          📖
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))
@@ -169,14 +149,17 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
             </tbody>
           </table>
         </div>
-        
+
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
             <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
               <h3 className="text-lg font-bold text-slate-100 mb-2">Hapus Pertandingan?</h3>
               <p className="text-slate-400 text-sm mb-6">
-                Apakah Anda yakin ingin menghapus pertandingan antara <span className="font-semibold text-slate-200">{deleteConfirm.player1}</span> vs <span className="font-semibold text-slate-200">{deleteConfirm.player2}</span>? Tindakan ini tidak dapat dibatalkan.
+                Apakah Anda yakin ingin menghapus pertandingan antara{" "}
+                <span className="font-semibold text-slate-200">{deleteConfirm.player1}</span> vs{" "}
+                <span className="font-semibold text-slate-200">{deleteConfirm.player2}</span>?
+                Tindakan ini tidak dapat dibatalkan.
               </p>
               <div className="flex gap-3">
                 <button
@@ -198,6 +181,11 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
           </div>
         )}
       </div>
+
+      {/* Match Detail Modal */}
+      {selectedMatch && (
+        <MatchDetailModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />
+      )}
     </>
   );
 }
