@@ -44,7 +44,7 @@ type HomeTableProps = {
   onPlayerDeleted?: () => void;
 };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 6;
 
 export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeTableProps) {
   const isAdmin = useIsAdmin();
@@ -53,6 +53,72 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [detailPlayerId, setDetailPlayerId] = useState<number | null>(null);
+  const [isRendering, setIsRendering] = useState(false);
+
+  const handleRenderTable = async () => {
+    const newTab = window.open("", "_blank");
+    if (!newTab) { alert("Popup diblokir. Izinkan popup di browser ini."); return; }
+
+    const el = document.getElementById("playerTableContainer");
+    if (!el) { newTab.close(); return; }
+
+    setIsRendering(true);
+
+    // Sembunyikan kolom Aksi, search, tombol render, dan pagination
+    const actionCells = Array.from(el.querySelectorAll<HTMLElement>("th:last-child, td:last-child"));
+    const hideEls = Array.from(el.querySelectorAll<HTMLElement>("[data-render-hide]"));
+    actionCells.forEach((cell) => { cell.style.display = "none"; });
+    hideEls.forEach((el) => { el.style.display = "none"; });
+
+    const imgs = Array.from(el.querySelectorAll<HTMLImageElement>("img"));
+    const originalSrcs = imgs.map((img) => img.src);
+
+    try {
+      await Promise.all(
+        imgs.map(async (img) => {
+          try {
+            const res = await fetch(img.src, { mode: "cors", cache: "force-cache" });
+            const blob = await res.blob();
+            img.src = await new Promise<string>((resolve, reject) => {
+              const reader = new FileReader();
+              reader.onload = () => resolve(reader.result as string);
+              reader.onerror = reject;
+              reader.readAsDataURL(blob);
+            });
+          } catch { /* biarkan src asli */ }
+        })
+      );
+
+      const { toPng } = await import("html-to-image");
+      const prev = { w: el.style.width, h: el.style.height, o: el.style.overflow };
+      el.style.width = "800px";
+      el.style.height = "auto";
+      el.style.overflow = "visible";
+      const naturalHeight = el.scrollHeight;
+
+      const dataUrl = await toPng(el, {
+        cacheBust: true,
+        backgroundColor: "#030712",
+        canvasWidth: 800,
+        canvasHeight: naturalHeight,
+      });
+
+      el.style.width = prev.w;
+      el.style.height = prev.h;
+      el.style.overflow = prev.o;
+
+      const blob = await fetch(dataUrl).then((r) => r.blob());
+      newTab.location.href = URL.createObjectURL(blob);
+    } catch {
+      newTab.close();
+      alert("Gagal membuat gambar tabel.");
+    } finally {
+      imgs.forEach((img, i) => { img.src = originalSrcs[i]; });
+      actionCells.forEach((cell) => { cell.style.display = ""; });
+      hideEls.forEach((el) => { el.style.display = ""; });
+      setIsRendering(false);
+    }
+  };
 
   const handleDeleteClick = (player: PlayerWithStats) => {
     setDeleteConfirm({ playerId: player.id, name: player.name, imgUrl: player.imgUrl });
@@ -94,21 +160,35 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
 
   return (
     <>
-    <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+    <div 
+      id="playerTableContainer"
+      className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
       <div className="flex items-center justify-between gap-4 px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
-        <h2 className="text-sm md:text-xl font-black text-slate-100">
-          Tenis Komedi {activeTab}
+        <h2 className="text-sm md:text-base font-black leading-5 text-emerald-400">
+          {activeTab === "Pria" ? "Ranking ATP" : "Ranking WTA"} 
+          <small className="text-xs font-semibold ml-1.5 -mt-2 text-slate-100">{activeTab === "Pria" ? "Aku Teko Pria" : "Wanita Teko Aku"}</small>
         </h2>
-        <input
-          type="text"
-          placeholder="Cari pemain..."
-          value={search}
-          onChange={(event) => setSearch(event.target.value)}
-          className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
-        />
+        <div className="flex items-center gap-2" data-render-hide>
+          <input
+            type="text"
+            placeholder="Cari pemain..."
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+            className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+          />
+          {isAdmin && (
+            <button 
+              onClick={handleRenderTable}
+              disabled={isRendering}
+              title="Buat jadi image"
+              className="p-3 h-8 w-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]">
+                {isRendering ? "⏳" : "🖼️"}
+            </button>
+          )}
+        </div>
       </div>
 
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto" id="playerTableContainer">
         <table className="w-180 md:w-full text-sm">
           <thead>
             <tr className="bg-emerald-500/[0.07]">
@@ -253,7 +333,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
       )}
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.07]">
+        <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.07]" data-render-hide>
           <span className="text-xs text-slate-500">
             Halaman {page} / {totalPages}
           </span>
