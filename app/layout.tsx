@@ -14,13 +14,37 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+const siteUrl = "https://tenis-komedi.vercel.app";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl),
   title: "Tenis Komedi - Serpong Lagoon",
   description: "Tenis Komedi adalah platform resmi untuk melihat ranking dan data pemain tenis komedi. Temukan statistik lengkap, profil pemain, dan hasil pertandingan terkini di sini.",
   icons: {
     icon: "/logo.webp",
     shortcut: "/logo.webp",
     apple: "/logo.webp",
+  },
+  openGraph: {
+    title: "Tenis Komedi - Serpong Lagoon",
+    description: "Tenis Komedi adalah platform resmi untuk melihat ranking dan data pemain tenis komedi. Temukan statistik lengkap, profil pemain, dan hasil pertandingan terkini di sini.",
+    url: siteUrl,
+    siteName: "Tenis Komedi",
+    images: [
+      {
+        url: "/logo.webp",
+        width: 512,
+        height: 512,
+        alt: "Tenis Komedi Lagoon",
+      },
+    ],
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: "Tenis Komedi - Serpong Lagoon",
+    description: "Tenis Komedi adalah platform resmi untuk melihat ranking dan data pemain tenis komedi.",
+    images: ["/logo.webp"],
   },
 };
 
