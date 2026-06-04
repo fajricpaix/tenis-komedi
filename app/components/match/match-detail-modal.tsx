@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { parseSetScore } from "@utils/fetcher";
 
 export type MatchForModal = {
@@ -29,6 +30,24 @@ function winnerOfSet(a: string, b: string): "A" | "B" | null {
 }
 
 export default function MatchDetailModal({ match, onClose }: Props) {
+  const [imagesReady, setImagesReady] = useState(false);
+
+  useEffect(() => {
+    const urls = ["/logo.webp", ...(match.photoUrl ? [match.photoUrl] : [])];
+    Promise.all(
+      urls.map(
+        (src) =>
+          new Promise<void>((resolve) => {
+            const img = new window.Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.crossOrigin = "anonymous";
+            img.src = src;
+          })
+      )
+    ).then(() => setImagesReady(true));
+  }, [match.photoUrl]);
+
   const [setA, setB] = parseSetScore(match.setScore);
   const totalSets = setA + setB;
   const scoresA = match.pointScoresA ?? [];
@@ -78,25 +97,32 @@ export default function MatchDetailModal({ match, onClose }: Props) {
 
       const { toPng } = await import("html-to-image");
       const prev = { width: el.style.width, height: el.style.height, overflow: el.style.overflow };
-      el.style.width = "750px";
-      el.style.height = "750px";
+      el.style.width = "640px";
+      el.style.height = "640px";
       el.style.overflow = "hidden";
 
       const dataUrl = await toPng(el, {
         cacheBust: true,
         backgroundColor: "#0f172a",
-        canvasWidth: 750,
-        canvasHeight: 750,
+        canvasWidth: 640,
+        canvasHeight: 640,
       });
 
       el.style.width = prev.width;
       el.style.height = prev.height;
       el.style.overflow = prev.overflow;
 
-      const link = document.createElement("a");
-      link.download = `match-${match.player1}-vs-${match.player2}.png`.replace(/\s+/g, "-").toLowerCase();
-      link.href = dataUrl;
-      link.click();
+      const newTab = window.open("", "_blank");
+      if (newTab) {
+        const title = `${match.player1} vs ${match.player2}`.replace(/\s+/g, "-").toLowerCase();
+        newTab.document.write(
+          `<html><head><title>${title}</title></head>` +
+          `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
+          `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block">` +
+          `</body></html>`
+        );
+        newTab.document.close();
+      }
     } catch (err) {
       console.error("Gagal membuat gambar:", err);
       alert("Maaf, terjadi kesalahan saat membuat gambar.");
@@ -111,7 +137,7 @@ export default function MatchDetailModal({ match, onClose }: Props) {
       onClick={onClose}
     >
       <div
-        className="w-full max-w-full md:max-w-175 max-h-[90vh] overflow-auto"
+        className="w-full max-w-full md:max-w-160 max-h-[90vh] overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
         <div id="MatchResult" className="p-4 rounded-xl relative overflow-hidden bg-slate-900 border border-white/10 shadow-2xl">
@@ -122,7 +148,7 @@ export default function MatchDetailModal({ match, onClose }: Props) {
                 src={match.photoUrl}
                 alt={`Pertandingan ${match.player1} vs ${match.player2}`}
                 crossOrigin="anonymous"
-                className="w-full object-cover aspect-square rounded-xl"
+                className="w-160 object-cover aspect-square rounded-xl"
               />
             </figure>
           )}
@@ -228,9 +254,10 @@ export default function MatchDetailModal({ match, onClose }: Props) {
           </button>
           <button
             onClick={handleDownloadImage}
-            className="flex-1 py-3 rounded-xl text-sm font-extrabold tracking-widest cursor-pointer capitalize transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 hover:scale-[1.02] active:scale-[0.98]"
+            disabled={!imagesReady}
+            className="flex-1 py-3 rounded-xl text-sm font-extrabold tracking-widest capitalize transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]"
           >
-            Buat Jadi Image
+            {imagesReady ? "Buat Jadi Image" : "Memuat gambar..."}
           </button>
         </div>
       </div>
