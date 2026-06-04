@@ -110,6 +110,21 @@ function AutocompleteInput({
   );
 }
 
+const POINT_STEPS = ["0", "15", "30", "40", "adv"];
+
+function PointStepper({ value, onChange }: { value: string; onChange: (v: string) => void }) {
+  const idx = POINT_STEPS.indexOf(value);
+  const dec = () => onChange(POINT_STEPS[(idx - 1 + POINT_STEPS.length) % POINT_STEPS.length]);
+  const inc = () => onChange(POINT_STEPS[(idx + 1) % POINT_STEPS.length]);
+  return (
+    <div className="flex flex-col items-center gap-1">
+      <button type="button" onClick={inc} className="w-7 h-7 rounded-md bg-emerald-500 hover:bg-emerald-500/30 text-slate-300 text-2xl font-black leading-none cursor-pointer transition-colors">+</button>
+      <span className="w-9 py-0.5 text-center font-black text-slate-100 tabular-nums uppercase">{value}</span>
+      <button type="button" onClick={dec} className="w-7 h-7 rounded-md bg-red-500 hover:bg-red-500/30 text-slate-300 text-2xl font-black leading-none cursor-pointer transition-colors">-</button>
+    </div>
+  );
+}
+
 export default function MatchModal({ players, onClose, onSave }: MatchModalProps) {
   const [player1, setPlayer1] = useState("");
   const [player2, setPlayer2] = useState("");
@@ -132,10 +147,18 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
       setPointScoresB([]);
       return;
     }
-
     setPointScoresA((prev) => Array.from({ length: totalPoints }, (_, i) => prev[i] ?? "0"));
     setPointScoresB((prev) => Array.from({ length: totalPoints }, (_, i) => prev[i] ?? "0"));
   }, [totalPoints]);
+
+  useEffect(() => {
+    const [a, b] = score.split("-").map((v) => Number(v.trim()));
+    if (Number.isFinite(a) && Number.isFinite(b) && a !== b && player1 && player2) {
+      setWinner(a > b ? player1 : player2);
+    } else {
+      setWinner("");
+    }
+  }, [score, player1, player2]);
 
   const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -227,131 +250,122 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
             />
           </div>
 
-          {/* Skor */}
-          <div className="space-y-2">
-            <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
-              Skor (Misal: 4-2)
-            </label>
-            <input
-              type="text"
-              placeholder="0-0"
-              value={score}
-              onChange={(e) => setScore(e.target.value)}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
-              required
-            />
-          </div>
+          {player1 && player2 && (
+            <>
+              {/* Skor */}
+              <div className="space-y-2">
+                <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
+                  Skor (Misal: 4-2)
+                </label>
+                <input
+                  type="text"
+                  placeholder="0-0"
+                  value={score}
+                  onChange={(e) => setScore(e.target.value)}
+                  className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+                  required
+                />
+              </div>
 
-          {totalPoints > 0 && (
-            <div className="overflow-x-auto rounded-2xl border border-white/10 bg-slate-950/70 p-2">
-              <table className="min-w-full table-auto text-left">
-                <thead>
-                  <tr className="text-xs uppercase text-slate-400">
-                    <th className="px-4 py-3 font-semibold">Pemain</th>
-                    <th className="px-4 py-3 font-semibold">Skor Kecil</th>
-                  </tr>
-                </thead>
-                <tbody className="text-sm text-slate-100">
-                  <tr className="border-t border-white/10">
-                    <td className="px-4 py-3 align-top font-bold capitalize text-slate-200">
-                      {player1 || "Pemain A"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2 overflow-x-auto pb-1">
-                        {pointScoresA.map((value, index) => (
-                          <select
-                            key={`a-${index}`}
-                            value={value}
-                            onChange={(e) => {
-                              const next = [...pointScoresA];
-                              next[index] = e.target.value;
-                              setPointScoresA(next);
-                            }}
-                            className="min-w-14 text-xs rounded-xl border border-white/10 bg-slate-900 px-2 py-2 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
-                          >
-                            <option value="0">0</option>
-                            <option value="15">15</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                            <option value="adv">adv</option>
-                          </select>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                  <tr className="border-t border-white/10">
-                    <td className="px-4 py-3 align-top font-bold capitalize text-slate-200">
-                      {player2 || "Pemain B"}
-                    </td>
-                    <td className="px-4 py-3">
-                      <div className="flex gap-2 overflow-x-auto pb-1">
-                        {pointScoresB.map((value, index) => (
-                          <select
-                            key={`b-${index}`}
-                            value={value}
-                            onChange={(e) => {
-                              const next = [...pointScoresB];
-                              next[index] = e.target.value;
-                              setPointScoresB(next);
-                            }}
-                            className="min-w-14 text-xs rounded-xl border border-white/10 bg-slate-900 px-2 py-2 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
-                          >
-                            <option value="0">0</option>
-                            <option value="15">15</option>
-                            <option value="30">30</option>
-                            <option value="40">40</option>
-                            <option value="adv">adv</option>
-                          </select>
-                        ))}
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+              {totalPoints > 0 && (
+                <div className="overflow-x-auto rounded-2xl border border-white/10 bg-slate-950/70 p-2">
+                  <table className="min-w-full table-auto text-left">
+                    <thead>
+                      <tr className="text-xs uppercase text-slate-400">
+                        <th className="px-4 py-3 font-semibold">Pemain</th>
+                        <th className="px-4 py-3 font-semibold">Skor Kecil</th>
+                      </tr>
+                    </thead>
+                    <tbody className="text-sm text-slate-100">
+                      <tr className="border-t border-white/10">
+                        <td className="px-4 py-3 align-middle font-bold capitalize text-slate-200">
+                          {player1}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-3 overflow-x-auto pb-1 pt-1">
+                            {pointScoresA.map((value, index) => (
+                              <PointStepper
+                                key={`a-${index}`}
+                                value={value}
+                                onChange={(v) => {
+                                  const next = [...pointScoresA];
+                                  next[index] = v;
+                                  setPointScoresA(next);
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                      <tr className="border-t border-white/10">
+                        <td className="px-4 py-3 align-middle font-bold capitalize text-slate-200">
+                          {player2}
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex gap-3 overflow-x-auto pb-1 pt-1">
+                            {pointScoresB.map((value, index) => (
+                              <PointStepper
+                                key={`b-${index}`}
+                                value={value}
+                                onChange={(v) => {
+                                  const next = [...pointScoresB];
+                                  next[index] = v;
+                                  setPointScoresB(next);
+                                }}
+                              />
+                            ))}
+                          </div>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              )}
+
+              {/* Pemenang — otomatis dari skor */}
+              <div className="space-y-2">
+                <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
+                  Pemenang
+                </label>
+                {winner ? (
+                  <div className="flex items-center gap-3 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-4 py-3">
+                    <span className="text-emerald-400 font-black capitalize">{winner}</span>
+                  </div>
+                ) : (
+                  <div className="rounded-xl border border-white/10 bg-slate-950/50 px-4 py-3 text-slate-500 text-sm">
+                    Masukkan skor yang valid untuk menentukan pemenang
+                  </div>
+                )}
+              </div>
+            </>
           )}
 
-          {/* Pemenang */}
-          <div className="space-y-2">
-            <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
-              Pemenang
-            </label>
-            <select
-              value={winner}
-              onChange={(e) => setWinner(e.target.value)}
-              className="w-full rounded-xl capitalize border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
-              required
-            >
-              <option value="">Pilih Pemenang</option>
-              {player1 && <option value={player1}>{player1}</option>}
-              {player2 && <option value={player2}>{player2}</option>}
-            </select>
-          </div>
-
-          <div className="space-y-2">
-            <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
-              Upload Foto Pertandingan{" "}
-              <span className="text-rose-400">*</span>
-            </label>
-            <p className="text-xs text-slate-500">
-              Wajib diisi sebagai bukti pertandingan. Maks. 5MB.
-            </p>
-            <input
-              type="file"
-              accept="image/*"
-              onChange={handlePhotoChange}
-              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2 text-slate-100 outline-none file:cursor-pointer file:border-0 file:bg-emerald-500/10 file:px-3 file:py-2 file:text-slate-100 file:rounded-xl"
-            />
-            {photoError && (
-              <p className="text-xs text-rose-400">{photoError}</p>
-            )}
-            {photoPreview && (
-              <div className="mt-3 rounded-2xl border border-white/10 bg-slate-900 p-3">
-                <p className="mb-2 text-xs uppercase tracking-widest text-slate-400">Preview Foto</p>
-                <img src={photoPreview} alt="Preview pertandingan" className="h-40 w-full rounded-2xl object-cover" />
-              </div>
-            )}
-          </div>
+          {totalPoints > 0 && (
+            <div className="space-y-2">
+              <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
+                Upload Foto Pertandingan{" "}
+                <span className="text-rose-400">*</span>
+              </label>
+              <p className="text-xs text-slate-500">
+                Wajib diisi sebagai bukti pertandingan. Maks. 5MB.
+              </p>
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handlePhotoChange}
+                className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-2 text-slate-100 outline-none file:cursor-pointer file:border-0 file:bg-emerald-500/10 file:px-3 file:py-2 file:text-slate-100 file:rounded-xl"
+              />
+              {photoError && (
+                <p className="text-xs text-rose-400">{photoError}</p>
+              )}
+              {photoPreview && (
+                <div className="mt-3 rounded-2xl border border-white/10 bg-slate-900 p-3">
+                  <p className="mb-2 text-xs uppercase tracking-widest text-slate-400">Preview Foto</p>
+                  <img src={photoPreview} alt="Preview pertandingan" className="h-40 w-full rounded-2xl object-cover" />
+                </div>
+              )}
+            </div>
+          )}
 
           <div className="flex gap-3 pt-4">
             <button

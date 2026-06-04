@@ -119,7 +119,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
               ].map((h) => (
                 <th
                   key={h}
-                  className={`p-3 ${h === "Nama Pemain" ? "text-left" : "text-center"} text-xs font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap`}
+                  className={`p-3 ${h === "Nama Pemain" ? "text-left" : "text-center"} text-xs font-extrabold capitalize text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap`}
                 >
                   {h}
                 </th>
