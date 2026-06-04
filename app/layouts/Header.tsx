@@ -1,6 +1,19 @@
+"use client";
+
 import Link from "next/link";
+import { useIsAdmin, logout } from "@utils/auth";
+import { useRouter } from "next/navigation";
 
 export default function Header() {
+  const isAdmin = useIsAdmin();
+  const router = useRouter();
+
+  const handleLogout = () => {
+    logout();
+    router.refresh();
+    window.location.reload();
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-800 border-b-2 border-emerald-500 p-4 md:px-8 md:py-6 overflow-hidden">
       <div className="relative z-10 flex flex-col md:gap-4 lg:flex-row lg:items-center lg:justify-between">
@@ -20,6 +33,17 @@ export default function Header() {
               Ranking &amp; Data Pemain Resmi
             </p>
           </div>
+        </div>
+
+        <div className="absolute right-4 top-1/2 -translate-y-1/2 lg:static lg:translate-y-0">
+          {isAdmin && (
+            <button
+              onClick={handleLogout}
+              className="px-3 py-1.5 rounded-xl text-xs font-bold border border-emerald-500/30 text-emerald-300 hover:bg-red-500/10 hover:border-red-400/40 hover:text-red-400 transition-colors cursor-pointer"
+            >
+              Logout
+            </button>
+          )}
         </div>
       </div>
     </header>

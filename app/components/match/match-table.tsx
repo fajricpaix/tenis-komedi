@@ -1,7 +1,10 @@
+"use client";
+
 import type { TeamKey } from "@components/home/tab";
 import { useState, useMemo } from "react";
 import MatchDetailModal, { type MatchForModal } from "@components/match/match-detail-modal";
 import Link from "next/link";
+import { useIsAdmin } from "@utils/auth";
 
 type Match = MatchForModal;
 
@@ -20,6 +23,7 @@ type DeleteConfirmData = {
 } | null;
 
 export default function MatchTable({ matches, activeTab, fullWidth, onMatchDeleted }: MatchTableProps) {
+  const isAdmin = useIsAdmin();
   const [searchTerm, setSearchTerm] = useState("");
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -130,12 +134,14 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
                     </td>
                     <td className="text-center px-5 py-4 w-40">
                       <div className="flex items-center justify-center gap-2">
-                        {/* <button
-                          onClick={() => handleDeleteClick(match)}
-                          className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
-                        >
-                          🗑️
-                        </button> */}
+                        {isAdmin && (
+                          <button
+                            onClick={() => handleDeleteClick(match)}
+                            className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                          >
+                            🗑️
+                          </button>
+                        )}
                         <button
                           onClick={() => setSelectedMatch(match)}
                           className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"

@@ -11,6 +11,7 @@ import Link from "next/link";
 import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
 import BirthdayCards from "@components/home/birthday-cards";
 import EventCard from "@components/home/event";
+import { useIsAdmin } from "@utils/auth";
 
 type PlayerStats = {
   matchesPlayed: number;
@@ -79,6 +80,7 @@ export default function HomeContent() {
   const [matches, setMatches] = useState<Match[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
+  const isAdmin = useIsAdmin();
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -185,19 +187,23 @@ export default function HomeContent() {
           activeTab={activeTab}
           onSelect={(tab) => { setActiveTab(tab); setTournamentTab("ranking"); }}
         />
-        <div className="flex gap-x-4">
-          {/* <Link
-            href="/players/add"
-            className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400"
-          >
-            <span className="text-sm md:text-xl">+</span> Pemain
-          </Link> */}
-          {/* <button
-            onClick={() => setIsModalOpen(true)}
-            className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400"
-          >
-            <span className="text-sm md:text-xl">+</span> Pertandingan
-          </button> */}
+        <div className="flex items-center gap-x-3">
+          {isAdmin && (
+            <>
+              <Link
+                href="/players/add"
+                className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white text-sm"
+              >
+                <span>+</span> Pemain
+              </Link>
+              <button
+                onClick={() => setIsModalOpen(true)}
+                className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm"
+              >
+                <span>+</span> Pertandingan
+              </button>
+            </>
+          )}
         </div>
       </div>
 

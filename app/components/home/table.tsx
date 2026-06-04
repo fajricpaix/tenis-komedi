@@ -152,12 +152,22 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                     {player.points}
                   </td>
                   <td className="text-center p-3">
-                    <Link
-                      href={`/players/details?id=${player.id}`}
-                      className="flex items-center cursor-pointer px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
-                    >
-                      Detail →
-                    </Link>
+                    <div className="flex items-center justify-center gap-2">
+                      {/* <button
+                        title="Delete Pemain"
+                        className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                      >
+                        🗑️
+                      </button> */}
+                      <Link
+                        title="Lihat Detail Pemain"
+                        onClick={() => onEdit(player.id)}
+                        href={`/players/details?id=${player.id}`}
+                        className="flex items-center cursor-pointer px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
+                      >
+                        📖
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               ))
