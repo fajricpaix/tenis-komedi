@@ -22,6 +22,7 @@ export default function EventCard() {
             src="/events/wimblegoon.jpg"
             alt="TeKo Wimblegoon 2026"
             fill
+            sizes="(max-width: 768px) 100vw, 50vw"
             className="object-cover"
             priority
           />

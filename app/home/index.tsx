@@ -184,9 +184,9 @@ export default function HomeContent() {
           </button> */}
           <Link
             href="/matches"
-            className="font-black flex items-center justify-center gap-2 text-emerald-400 hover:text-emerald-300 uppercase text-xs underline italic"
+            className="font-black flex items-center justify-center gap-2 text-xs md:text-sm text-emerald-400 hover:text-emerald-300 hover:underline transition-colors"
           >
-            Lihat Semua <br className="block md:hidden"/> Pertandingan
+            Semua Pertandingan →
           </Link>
         </div>
       </div>
