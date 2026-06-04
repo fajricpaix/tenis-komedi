@@ -247,8 +247,8 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
               <table className="min-w-full table-auto text-left">
                 <thead>
                   <tr className="text-xs uppercase text-slate-400">
-                    <th className="px-4 py-3 font-semibold text-slate-200">Nama Pemain</th>
-                    <th className="px-4 py-3 font-semibold text-slate-200">Skor dari jumlah point yang di dapat</th>
+                    <th className="px-4 py-3 font-semibold">Pemain</th>
+                    <th className="px-4 py-3 font-semibold">Skor Kecil</th>
                   </tr>
                 </thead>
                 <tbody className="text-sm text-slate-100">

@@ -1,6 +1,7 @@
 import type { TeamKey } from "@components/home/tab";
 import { useState, useMemo } from "react";
 import MatchDetailModal, { type MatchForModal } from "@components/match/match-detail-modal";
+import Link from "next/link";
 
 type Match = MatchForModal;
 
@@ -147,7 +148,7 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
                 ))
               )}
             </tbody>
-          </table>
+          </table>          
         </div>
 
         {/* Delete Confirmation Modal */}

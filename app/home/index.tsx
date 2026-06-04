@@ -39,8 +39,11 @@ function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<st
   });
 
   matchesList.forEach((match) => {
-    const [winnerScore, loserScore] = parseSetScore(match.setScore);
-    const loserName = match.player1 === match.winner ? match.player2 : match.player1;
+    const [s1, s2] = parseSetScore(match.setScore);
+    const isPlayer1Winner = match.winner === match.player1;
+    const winnerScore = isPlayer1Winner ? s1 : s2;
+    const loserScore = isPlayer1Winner ? s2 : s1;
+    const loserName = isPlayer1Winner ? match.player2 : match.player1;
     const winnerStats = statsByName.get(match.winner);
     const loserStats = statsByName.get(loserName);
 
@@ -92,11 +95,13 @@ export default function HomeContent() {
   }, []);
 
   const statsByName = useMemo(() => buildPlayerStats(players, matches), [players, matches]);
+  const prevStatsByName = useMemo(() => buildPlayerStats(players, matches.slice(0, -1)), [players, matches]);
   const safePlayers = Array.isArray(players) ? players : [];
 
-  const currentPlayers = useMemo(() =>
-    safePlayers
-      .filter((p) => p?.gender === activeTab)
+  const currentPlayers = useMemo(() => {
+    const genderPlayers = safePlayers.filter((p) => p?.gender === activeTab);
+
+    const withStats = genderPlayers
       .map((p) => ({
         ...p,
         ...(statsByName.get(p.name) ?? {
@@ -104,9 +109,20 @@ export default function HomeContent() {
           setWin: 0, setLose: 0, points: 0,
         }),
       }))
-      .sort((a, b) => b.points - a.points || b.wins - a.wins),
-    [activeTab, safePlayers, statsByName]
-  );
+      .sort((a, b) => b.points - a.points || b.wins - a.wins);
+
+    const prevRankMap = new Map(
+      genderPlayers
+        .map((p) => ({ name: p.name, ...(prevStatsByName.get(p.name) ?? { points: 0, wins: 0 }) }))
+        .sort((a, b) => b.points - a.points || b.wins - a.wins)
+        .map((p, i) => [p.name, i + 1])
+    );
+
+    return withStats.map((p, i) => ({
+      ...p,
+      rankChange: (prevRankMap.get(p.name) ?? i + 1) - (i + 1),
+    }));
+  }, [activeTab, safePlayers, statsByName, prevStatsByName]);
 
   const currentMatches = useMemo(() => {
     const safeMatches = Array.isArray(matches) ? matches : [];
@@ -175,19 +191,13 @@ export default function HomeContent() {
             className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-yellow-500 hover:bg-yellow-400"
           >
             <span className="text-sm md:text-xl">+</span> Pemain
-          </Link>
-          <button
+          </Link> */}
+          {/* <button
             onClick={() => setIsModalOpen(true)}
             className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400"
           >
             <span className="text-sm md:text-xl">+</span> Pertandingan
           </button> */}
-          <Link
-            href="/matches"
-            className="font-black flex items-center justify-center gap-2 text-xs md:text-sm text-emerald-400 hover:text-emerald-300 hover:underline transition-colors"
-          >
-            Semua Pertandingan →
-          </Link>
         </div>
       </div>
 
@@ -217,6 +227,14 @@ export default function HomeContent() {
           </div>
           <div className="w-full md:w-2/5">
             <MatchTable matches={currentMatches} activeTab={activeTab} onMatchDeleted={handleMatchDeleted} />
+
+            <div className="text-right mt-4">
+              <Link
+                href="/matches"
+                className="font-black p-4 text-sm text-emerald-400 hover:text-emerald-300 hover:underline transition-colors">
+                Semua Pertandingan →
+              </Link>
+            </div>
           </div>
         </div>
       ) : (
