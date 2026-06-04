@@ -31,6 +31,7 @@ function winnerOfSet(a: string, b: string): "A" | "B" | null {
 
 export default function MatchDetailModal({ match, onClose }: Props) {
   const [imagesReady, setImagesReady] = useState(false);
+  const [isRendering, setIsRendering] = useState(false);
 
   useEffect(() => {
     const urls = ["/logo.webp", ...(match.photoUrl ? [match.photoUrl] : [])];
@@ -55,9 +56,18 @@ export default function MatchDetailModal({ match, onClose }: Props) {
   const isPlayer1Winner = match.winner === match.player1;
 
   const handleDownloadImage = async () => {
-    const el = document.getElementById("MatchResult");
-    if (!el) return;
+    // Buka tab dulu sebelum async — iOS Safari hanya izinkan popup dari gesture langsung
+    const newTab = window.open("", "_blank");
+    if (!newTab) { alert("Popup diblokir. Izinkan popup di browser ini."); return; }
+    newTab.document.documentElement.innerHTML =
+      `<head><title>Membuat gambar...</title></head>` +
+      `<body style="margin:0;background:#000;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh">` +
+      `<p>Membuat gambar, harap tunggu...</p></body>`;
 
+    const el = document.getElementById("MatchResult");
+    if (!el) { newTab.close(); return; }
+
+    setIsRendering(true);
     const imgs = Array.from(el.querySelectorAll<HTMLImageElement>("img"));
     const originalSrcs = imgs.map((img) => img.src);
 
@@ -81,8 +91,6 @@ export default function MatchDetailModal({ match, onClose }: Props) {
     }
 
     try {
-      // Konversi semua gambar ke base64 dan tunggu sampai ter-load
-      // sebelum html-to-image mencoba menggambar ke canvas (fix iOS CORS)
       await Promise.all(
         imgs.map(async (img) => {
           try {
@@ -98,36 +106,33 @@ export default function MatchDetailModal({ match, onClose }: Props) {
       const { toPng } = await import("html-to-image");
       const prev = { width: el.style.width, height: el.style.height, overflow: el.style.overflow };
       el.style.width = "640px";
-      el.style.height = "640px";
-      el.style.overflow = "hidden";
+      el.style.height = "auto";
+      el.style.overflow = "visible";
+      const naturalHeight = el.scrollHeight;
 
       const dataUrl = await toPng(el, {
         cacheBust: true,
         backgroundColor: "#0f172a",
         canvasWidth: 640,
-        canvasHeight: 640,
+        canvasHeight: naturalHeight,
       });
 
       el.style.width = prev.width;
       el.style.height = prev.height;
       el.style.overflow = prev.overflow;
 
-      const newTab = window.open("", "_blank");
-      if (newTab) {
-        const title = `${match.player1} vs ${match.player2}`.replace(/\s+/g, "-").toLowerCase();
-        newTab.document.write(
-          `<html><head><title>${title}</title></head>` +
-          `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
-          `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block">` +
-          `</body></html>`
-        );
-        newTab.document.close();
-      }
+      const title = `${match.player1} vs ${match.player2}`.replace(/\s+/g, "-").toLowerCase();
+      newTab.document.documentElement.innerHTML =
+        `<head><title>${title}</title></head>` +
+        `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
+        `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block"></body>`;
     } catch (err) {
       console.error("Gagal membuat gambar:", err);
+      newTab.close();
       alert("Maaf, terjadi kesalahan saat membuat gambar.");
     } finally {
       imgs.forEach((img, i) => { img.src = originalSrcs[i]; });
+      setIsRendering(false);
     }
   };
 
@@ -254,10 +259,10 @@ export default function MatchDetailModal({ match, onClose }: Props) {
           </button>
           <button
             onClick={handleDownloadImage}
-            disabled={!imagesReady}
+            disabled={!imagesReady || isRendering}
             className="flex-1 py-3 rounded-xl text-sm font-extrabold tracking-widest capitalize transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]"
           >
-            {imagesReady ? "Buat Jadi Image" : "Memuat gambar..."}
+            {isRendering ? "Membuat gambar..." : imagesReady ? "Buat Jadi Image" : "Memuat gambar..."}
           </button>
         </div>
       </div>

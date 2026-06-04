@@ -29,6 +29,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
   const [rank, setRank] = useState(0);
   const [loading, setLoading] = useState(true);
   const [imagesReady, setImagesReady] = useState(false);
+  const [isRendering, setIsRendering] = useState(false);
 
   useEffect(() => {
     getTekoData()
@@ -95,8 +96,14 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
   }, [player]);
 
   const handleDownloadImage = async () => {
+    // Buka tab kosong sinkron (iOS Safari hanya izinkan window.open dari gesture langsung)
+    const newTab = window.open("", "_blank");
+    if (!newTab) { alert("Popup diblokir. Izinkan popup di browser ini."); return; }
+
     const card = document.getElementById("cardPlayerModal");
-    if (!card) return;
+    if (!card) { newTab.close(); return; }
+
+    setIsRendering(true);
     try {
       const { toPng } = await import("html-to-image");
       const orig = { w: card.style.width, h: card.style.height, o: card.style.overflow };
@@ -108,18 +115,16 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
       card.style.width = orig.w;
       card.style.height = orig.h;
       card.style.overflow = orig.o;
-      const newTab = window.open("", "_blank");
-      if (newTab) {
-        newTab.document.write(
-          `<html><head><title>${player?.name ?? "player"}</title></head>` +
-          `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
-          `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block">` +
-          `</body></html>`
-        );
-        newTab.document.close();
-      }
+
+      newTab.document.documentElement.innerHTML =
+        `<head><title>${player?.name ?? "player"}</title></head>` +
+        `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
+        `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block"></body>`;
     } catch {
+      newTab.close();
       alert("Maaf, terjadi kesalahan saat mencoba membuat gambar.");
+    } finally {
+      setIsRendering(false);
     }
   };
 
@@ -151,17 +156,17 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
           <>
             <div
               id="cardPlayerModal"
-              className="relative rounded-2xl overflow-hidden p-2 bg-linear-to-r from-[#FFE094] via-[#C59B27] to-[#8A640F]"
+              className="relative rounded-2xl overflow-hidden p-1 md:p-2 bg-linear-to-r from-[#FFE094] via-[#C59B27] to-[#8A640F]"
             >
-              <div className="p-6 rounded-2xl bg-linear-to-tr from-[#0E6F39] to-[#3d0a89]">
+              <div className="p-4 md:p-6 rounded-2xl bg-linear-to-tr from-[#0E6F39] to-[#3d0a89]">
                 {/* Dot pattern */}
                 <>
                   <div
-                    className="absolute top-3 right-4 w-96 h-80 opacity-20 pointer-events-none rounded-bl-full"
+                    className="absolute top-3 right-4 w-56 h-60 md:w-96 md:h-80 opacity-20 pointer-events-none rounded-bl-full"
                     style={{ backgroundImage: "radial-gradient(circle, #00e5a0 2px, transparent 2px)", backgroundSize: "10px 10px" }}
                   />
                   <div
-                    className="absolute bottom-3 left-3 right-3 h-80 opacity-20 pointer-events-none rounded-tr-full"
+                    className="absolute bottom-3 left-3 right-3 h-96 md:h-80 opacity-20 pointer-events-none rounded-tr-full"
                     style={{ backgroundImage: "radial-gradient(circle, #3d0a89 2px, transparent 2px)", backgroundSize: "10px 10px" }}
                   />
                 </>
@@ -199,7 +204,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                     </div>
                   </div>
                   <div className="shrink-0 w-2/5">
-                    <figure className="rounded-xl overflow-hidden border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                    <figure className="rounded-xl overflow-hidden border-2 md:border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
                       <img
                         src={player.imgUrl || (player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg")}
                         alt={player.name}
@@ -212,7 +217,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                 </div>
 
                 {/* Reason */}
-                <div className="relative text-sm z-10 mt-6 px-4 py-3 rounded-xl text-center bg-black/30 border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                <div className="relative text-sm z-10 mt-6 px-4 py-3 rounded-xl text-center bg-black/30 border-2 md:border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
                   <h3 className="font-semibold">Alasan Main Tenis :</h3>
                   <p className="italic capitalize font-semibold text-[#FFE094] mt-1">"{player.reason}"</p>
                 </div>
@@ -239,7 +244,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                 {/* Skills */}
                 <div className="mt-6 relative z-10">
                   <h3 className="mb-3 font-black text-lg text-slate-100 tracking-wide">Skill Pemain</h3>
-                  <div className="p-4 rounded-xl space-y-3 bg-black/30 border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                  <div className="p-4 rounded-xl space-y-3 bg-black/30 border-2 md:border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
                     <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Forehand" value={player.skills.forehand} />
                     <SkillsPlayerDetail imgUrl="/icons/back.webp"    skillName="Backhand" value={player.skills.backhand} />
                     <SkillsPlayerDetail imgUrl="/icons/service.webp" skillName="Service"  value={player.skills.service} />
@@ -256,10 +261,10 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
 
             <button
               onClick={handleDownloadImage}
-              disabled={!imagesReady}
+              disabled={!imagesReady || isRendering}
               className="w-full mt-4 py-4 rounded-xl text-sm font-extrabold tracking-widest uppercase transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]"
             >
-              {imagesReady ? "Buat jadi image" : "Memuat gambar..."}
+              {isRendering ? "Membuat gambar..." : imagesReady ? "Buat jadi image" : "Memuat gambar..."}
             </button>
           </>
         )}
