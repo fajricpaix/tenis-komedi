@@ -132,8 +132,8 @@ function EditPlayerContent() {
       setPhotoError("File harus berupa gambar.");
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      setPhotoError("Ukuran gambar maksimal 2MB.");
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError("Ukuran gambar maksimal 5MB.");
       return;
     }
     const reader = new FileReader();
@@ -337,7 +337,7 @@ function EditPlayerContent() {
 
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="photo">
-              Ganti Foto (1:1, max 2MB) — kosongkan jika tidak ingin mengganti
+              Ganti Foto (1:1, max 5MB) — kosongkan jika tidak ingin mengganti
             </label>
             <input id="photo" name="photo" type="file" accept="image/*"
               ref={photoInputRef} onChange={handlePhotoChange}

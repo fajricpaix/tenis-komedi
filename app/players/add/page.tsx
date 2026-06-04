@@ -133,8 +133,8 @@ export default function AddPlayerPage() {
       setForm((prev) => ({ ...prev, photoUrl: undefined }));
       return;
     }
-    if (file.size > 2 * 1024 * 1024) {
-      setPhotoError("Ukuran gambar maksimal 2MB.");
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError("Ukuran gambar maksimal 5MB.");
       setPhotoPreview(null);
       setForm((prev) => ({ ...prev, photoUrl: undefined }));
       return;
@@ -407,7 +407,7 @@ export default function AddPlayerPage() {
           {/* Upload Foto */}
           <div className="space-y-2">
             <label className="text-sm font-semibold text-slate-300" htmlFor="photo">
-              Upload Foto (1:1, max 2MB)
+              Upload Foto (1:1, max 5MB)
             </label>
             <input
               id="photo"
