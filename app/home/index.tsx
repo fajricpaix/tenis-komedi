@@ -240,7 +240,13 @@ export default function HomeContent() {
             />
           </div>
           <div className="w-full md:w-2/5">
-            <MatchTable matches={currentMatches} activeTab={activeTab} onMatchDeleted={handleMatchDeleted} />
+            <MatchTable
+              matches={currentMatches}
+              players={safePlayers}
+              activeTab={activeTab}
+              onMatchDeleted={handleMatchDeleted}
+              onMatchEdited={handleMatchDeleted}
+            />
           </div>
         </div>
       ) : (

@@ -3,14 +3,23 @@
 import type { TeamKey } from "@components/home/tab";
 import { useState, useMemo } from "react";
 import MatchDetailModal, { type MatchForModal } from "@components/match/match-detail-modal";
+import MatchEditModal from "@components/match/match-edit-modal";
 import { useIsAdmin } from "@utils/auth";
 
 type Match = MatchForModal;
 
+type Player = {
+  id: number;
+  name: string;
+  gender: "Pria" | "Wanita";
+};
+
 type MatchTableProps = {
   matches: Match[];
+  players?: Player[];
   activeTab: TeamKey;
   onMatchDeleted?: () => void;
+  onMatchEdited?: () => void;
 };
 
 type DeleteConfirmData = {
@@ -22,13 +31,14 @@ type DeleteConfirmData = {
 
 const PAGE_SIZE = 10;
 
-export default function MatchTable({ matches, activeTab, onMatchDeleted }: MatchTableProps) {
+export default function MatchTable({ matches, players = [], activeTab, onMatchDeleted, onMatchEdited }: MatchTableProps) {
   const isAdmin = useIsAdmin();
   const [searchTerm, setSearchTerm] = useState("");
   const [page, setPage] = useState(1);
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
+  const [editMatch, setEditMatch] = useState<Match | null>(null);
 
   const filteredMatches = useMemo(() => {
     setPage(1);
@@ -141,20 +151,28 @@ export default function MatchTable({ matches, activeTab, onMatchDeleted }: Match
                     </td>
                     <td className="text-center p-3 w-40">
                       <div className="flex items-center justify-center gap-2">
-                        {isAdmin && (
-                          <button
-                            onClick={() => handleDeleteClick(match)}
-                            className="px-2 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase hover:bg-red-500/20 transition-colors"
-                          >
-                            🗑️
-                          </button>
-                        )}
                         <button
                           onClick={() => setSelectedMatch(match)}
-                          className="flex items-center cursor-pointer gap-1.5 px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
+                          className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs border bg-green-500/10 border-green-500/25 hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 transition-all duration-150"
                         >
                           📖
                         </button>
+                        {isAdmin && (
+                          <>
+                            <button
+                              title="Edit Match"
+                              onClick={() => setEditMatch(match)}
+                              className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs uppercase border bg-blue-500/10 border-blue-500/25 hover:bg-blue-500/20 hover:-translate-y-0.5 transition-all duration-150">
+                              ✏️
+                            </button>
+                            <button
+                              onClick={() => handleDeleteClick(match)}
+                              className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs border bg-red-500/10 border-red-500/25 hover:bg-red-500/20 hover:-translate-y-0.5 transition-all duration-150"
+                            >
+                              🗑️
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>
@@ -236,6 +254,16 @@ export default function MatchTable({ matches, activeTab, onMatchDeleted }: Match
       {/* Match Detail Modal */}
       {selectedMatch && (
         <MatchDetailModal match={selectedMatch} onClose={() => setSelectedMatch(null)} />
+      )}
+
+      {/* Match Edit Modal */}
+      {editMatch && (
+        <MatchEditModal
+          match={editMatch}
+          players={players}
+          onClose={() => setEditMatch(null)}
+          onSaved={() => { setEditMatch(null); onMatchEdited?.(); }}
+        />
       )}
     </>
   );

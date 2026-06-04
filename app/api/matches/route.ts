@@ -85,6 +85,67 @@ export async function POST(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  let newUploadedFileName: string | null = null;
+
+  try {
+    const { matchId, matchData, newPhotoBase64, oldPhotoUrl } = await request.json();
+
+    if (!matchId) {
+      return NextResponse.json({ success: false, message: "ID pertandingan tidak ditemukan" }, { status: 400 });
+    }
+
+    const db = getDatabase(app);
+    const matchesRef = ref(db, "tenis-komedi/1/matches");
+    const snapshot = await get(matchesRef);
+
+    if (!snapshot.exists()) {
+      return NextResponse.json({ success: false, message: "Tidak ada data pertandingan" }, { status: 404 });
+    }
+
+    const val = snapshot.val();
+    const currentMatches = (Array.isArray(val) ? val : Object.values(val)).filter(Boolean);
+
+    let finalPhotoUrl: string | undefined;
+
+    if (newPhotoBase64 && newPhotoBase64.startsWith("data:")) {
+      newUploadedFileName = `match_${matchId}_${Date.now()}.jpg`;
+      finalPhotoUrl = await uploadMatchPhoto(newPhotoBase64, newUploadedFileName);
+
+      if (oldPhotoUrl) {
+        try {
+          const fileName = (oldPhotoUrl as string).split("/").pop();
+          if (fileName) await deleteMatchPhoto(fileName);
+        } catch (e) {
+          console.error("Error deleting old match photo:", e);
+        }
+      }
+    }
+
+    const updatedMatches = currentMatches.map((m) => {
+      if (m.id === matchId) {
+        return {
+          ...m,
+          ...matchData,
+          id: m.id,
+          ...(finalPhotoUrl ? { photoUrl: finalPhotoUrl } : {}),
+        };
+      }
+      return m;
+    });
+
+    await set(matchesRef, updatedMatches);
+
+    return NextResponse.json({ success: true, message: "Pertandingan berhasil diperbarui" });
+  } catch (error) {
+    console.error("Error updating match:", error);
+    if (newUploadedFileName) {
+      try { await deleteMatchPhoto(newUploadedFileName); } catch (_) {}
+    }
+    return NextResponse.json({ success: false, message: "Gagal memperbarui pertandingan" }, { status: 500 });
+  }
+}
+
 export async function DELETE(request: Request) {
   try {
     const { matchId, photoUrl } = await request.json();

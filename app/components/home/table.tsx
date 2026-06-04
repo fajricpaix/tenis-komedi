@@ -115,7 +115,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                 "Set",
                 "Menang - Kalah",
                 "Point",
-                "Details",
+                "Aksi",
               ].map((h) => (
                 <th
                   key={h}
@@ -191,20 +191,22 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                       <Link
                         title="Lihat Detail Pemain"
                         href={`/players/details?id=${player.id}`}
-                        className="flex items-center cursor-pointer px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
+                        className="px-2 py-1 rounded-lg items-center cursor-pointer font-bold text-xs border bg-green-500/10 border-green-500/25 hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 transition-all duration-150"
                         >
                         📖
                       </Link>
                       {isAdmin && (
                         <>
-                          <Link href={`/players/edit?id=${player.id}`} title="Edit Pemain" className="px-2 py-1 rounded-lg cursor-pointer bg-blue-500/10 border border-blue-500/25 text-blue-400 font-bold text-xs uppercase hover:bg-blue-500/20 transition-colors">
+                          <Link 
+                            href={`/players/edit?id=${player.id}`} 
+                            title="Edit Pemain" 
+                            className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs uppercase border bg-blue-500/10 border-blue-500/25 hover:bg-blue-500/20 hover:-translate-y-0.5 transition-all duration-150">
                             ✏️
                           </Link>
                           <button
                             title="Delete Pemain"
                             onClick={() => handleDeleteClick(player)}
-                            className="px-2 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
-                          >
+                            className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs uppercase border bg-red-500/10 border-red-500/25 hover:bg-red-500/20 hover:-translate-y-0.5 transition-all duration-150">
                             🗑️
                           </button>
                         </>
