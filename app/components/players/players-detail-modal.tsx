@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Image from "next/image";
+/* eslint-disable @next/next/no-img-element */
 import BoxPlayerDetail from "@components/players/box";
 import SkillsPlayerDetail from "@components/players/skills";
 import { getTekoData, parseSetScore, type Player } from "@utils/fetcher";
@@ -28,6 +28,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
   const [player, setPlayer] = useState<Player | null>(null);
   const [rank, setRank] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [imagesReady, setImagesReady] = useState(false);
 
   useEffect(() => {
     getTekoData()
@@ -67,23 +68,56 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
       .catch(() => setLoading(false));
   }, [playerId]);
 
+  useEffect(() => {
+    if (!player) return;
+    setImagesReady(false);
+    const urls = [
+      "/logoHD.webp",
+      "/indonesia.png",
+      player.imgUrl || (player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg"),
+      "/icons/fore.webp",
+      "/icons/back.webp",
+      "/icons/service.webp",
+      "/icons/volley.webp",
+      "/icons/slice.webp",
+    ];
+    Promise.all(
+      urls.map(
+        (src) =>
+          new Promise<void>((resolve) => {
+            const img = new window.Image();
+            img.onload = () => resolve();
+            img.onerror = () => resolve();
+            img.src = src;
+          })
+      )
+    ).then(() => setImagesReady(true));
+  }, [player]);
+
   const handleDownloadImage = async () => {
     const card = document.getElementById("cardPlayerModal");
     if (!card) return;
     try {
       const { toPng } = await import("html-to-image");
       const orig = { w: card.style.width, h: card.style.height, o: card.style.overflow };
-      card.style.width = "560px";
-      card.style.height = "950px";
-      card.style.overflow = "hidden";
-      const dataUrl = await toPng(card, { cacheBust: true, backgroundColor: "#071c12", canvasWidth: 560, canvasHeight: 950 });
+      card.style.width = "576px";
+      card.style.height = "auto";
+      card.style.overflow = "visible";
+      const naturalHeight = card.scrollHeight;
+      const dataUrl = await toPng(card, { cacheBust: true, backgroundColor: "#071c12", canvasWidth: 560, canvasHeight: naturalHeight });
       card.style.width = orig.w;
       card.style.height = orig.h;
       card.style.overflow = orig.o;
-      const link = document.createElement("a");
-      link.download = `${player?.name.replace(/\s+/g, "-").toLowerCase()}.png`;
-      link.href = dataUrl;
-      link.click();
+      const newTab = window.open("", "_blank");
+      if (newTab) {
+        newTab.document.write(
+          `<html><head><title>${player?.name ?? "player"}</title></head>` +
+          `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
+          `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block">` +
+          `</body></html>`
+        );
+        newTab.document.close();
+      }
     } catch {
       alert("Maaf, terjadi kesalahan saat mencoba membuat gambar.");
     }
@@ -134,18 +168,18 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
 
                 {/* Watermark */}
                 <figure className="absolute z-0 top-10 left-0 pointer-events-none">
-                  <Image 
-                    src="/logoHD.webp" 
-                    alt={player.name} 
-                    loading="eager" 
-                    width={440} 
-                    height={440} 
-                    className="object-cover opacity-[0.08] grayscale" />
+                  <img
+                    src="/logoHD.webp"
+                    alt={player.name}
+                    width={440}
+                    height={440}
+                    className="object-cover opacity-[0.08] grayscale"
+                  />
                 </figure>
 
                 {/* Header */}
-                <div className="flex gap-4 relative z-10">
-                  <div className="flex-1 min-w-0">
+                <div className="flex gap-4 md:gap-8 relative z-10">
+                  <div className="w-3/5">
                     <p className="mb-2 italic font-black text-emerald-400 tracking-wide">
                       Peringkat #{rank} {player.gender === "Pria" ? "Pria" : "Wanita"}
                     </p>
@@ -156,34 +190,35 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                       A.K.A <span className="capitalize text-emerald-400 font-black text-lg">{player.nickname}</span>
                     </h3>
                     <div className="flex items-center mt-3 gap-x-2">
-                      <Image src="/indonesia.png" alt="Indonesia Flag" width={32} height={32} className="w-auto object-contain" />
+                      <img
+                        src="/indonesia.png"
+                        alt="Indonesia Flag"
+                        className="h-6 w-auto object-contain"
+                      />
                       <span className="font-semibold capitalize text-slate-200">{player.birthPlace}</span>
                     </div>
                   </div>
-                  <div className="shrink-0 w-56">
-                    <figure
-                      className="rounded-xl overflow-hidden border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40"
-                    >
-                      <Image
+                  <div className="shrink-0 w-2/5">
+                    <figure className="rounded-xl overflow-hidden border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                      <img
                         src={player.imgUrl || (player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg")}
                         alt={player.name}
-                        width={200}
-                        height={200}
+                        crossOrigin="anonymous"
                         className="w-full aspect-square object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).src = player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg"; }}
+                        onError={(e) => { (e.currentTarget as HTMLImageElement).src = player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg"; }}
                       />
                     </figure>
                   </div>
                 </div>
 
                 {/* Reason */}
-                <div className="relative text-sm z-10 mt-5 px-4 py-3 rounded-xl text-center bg-white/35 border-4 border-[#C59B27]">
-                  <h3 className="font-semibold text-black">Alasan Main Tenis :</h3>
+                <div className="relative text-sm z-10 mt-6 px-4 py-3 rounded-xl text-center bg-black/30 border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                  <h3 className="font-semibold">Alasan Main Tenis :</h3>
                   <p className="italic capitalize font-semibold text-[#FFE094] mt-1">"{player.reason}"</p>
                 </div>
 
                 {/* Stats */}
-                <div className="relative z-10 flex gap-3 mt-4">
+                <div className="relative z-10 flex gap-6 mt-6">
                   <BoxPlayerDetail 
                     title="Umur"         
                     icon="📅" 
@@ -194,17 +229,17 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                     icon="🎾" 
                     subTitle={`${player.startYear}+`}                   
                     desc={`${calculateAge(player.startYear)}+ Tahun`} />
-                  <BoxPlayerDetail 
+                  {/* <BoxPlayerDetail 
                     title="Alamat Rumah" 
                     icon="🏠" 
                     subTitle="Serpong Lagoon"                           
-                    desc={`${player.houseBlock} No.${player.houseNumber}`} />
+                    desc={`${player.houseBlock} No.${player.houseNumber}`} /> */}
                 </div>
 
                 {/* Skills */}
-                <div className="mt-4 relative z-10">
+                <div className="mt-6 relative z-10">
                   <h3 className="mb-3 font-black text-lg text-slate-100 tracking-wide">Skill Pemain</h3>
-                  <div className="p-4 rounded-xl bg-black/30 border border-emerald-900/40 space-y-3">
+                  <div className="p-4 rounded-xl space-y-3 bg-black/30 border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
                     <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Forehand" value={player.skills.forehand} />
                     <SkillsPlayerDetail imgUrl="/icons/back.webp"    skillName="Backhand" value={player.skills.backhand} />
                     <SkillsPlayerDetail imgUrl="/icons/service.webp" skillName="Service"  value={player.skills.service} />
@@ -221,9 +256,10 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
 
             <button
               onClick={handleDownloadImage}
-              className="w-full mt-4 py-4 rounded-xl text-sm font-extrabold tracking-widest cursor-pointer uppercase transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 hover:scale-[1.02] active:scale-[0.98]"
+              disabled={!imagesReady}
+              className="w-full mt-4 py-4 rounded-xl text-sm font-extrabold tracking-widest uppercase transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]"
             >
-              Download Kartu Pemain
+              {imagesReady ? "Buat jadi image" : "Memuat gambar..."}
             </button>
           </>
         )}

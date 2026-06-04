@@ -44,7 +44,7 @@ type HomeTableProps = {
   onPlayerDeleted?: () => void;
 };
 
-const PAGE_SIZE = 8;
+const PAGE_SIZE = 10;
 
 export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeTableProps) {
   const isAdmin = useIsAdmin();
