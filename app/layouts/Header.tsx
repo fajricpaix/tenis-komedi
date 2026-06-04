@@ -15,8 +15,8 @@ export default function Header() {
   };
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-800 border-b-2 border-emerald-500 p-4 md:px-8 md:py-6 overflow-hidden">
-      <div className="relative z-10 flex flex-col md:gap-4 lg:flex-row lg:items-center lg:justify-between">
+    <header className="fixed top-0 left-0 right-0 z-50 bg-linear-to-r from-emerald-950 via-emerald-900 to-emerald-800 border-b-2 border-emerald-500">
+      <div className="container mx-auto relative p-4 overflow-hidden flex flex-col md:gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div className="flex items-center gap-3 md:gap-5">
           <Link href="/">
             <img
