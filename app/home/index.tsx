@@ -134,7 +134,6 @@ export default function HomeContent() {
     return [...safeMatches]
       .filter((m) => playerNamesInTab.has(m.player1) || playerNamesInTab.has(m.player2))
       .reverse()
-      .slice(0, 20);
   }, [matches, safePlayers, activeTab]);
 
   const handlePlayerDeleted = async () => {
@@ -242,14 +241,6 @@ export default function HomeContent() {
           </div>
           <div className="w-full md:w-2/5">
             <MatchTable matches={currentMatches} activeTab={activeTab} onMatchDeleted={handleMatchDeleted} />
-
-            <div className="text-right mt-4">
-              <Link
-                href="/matches"
-                className="font-black p-4 text-sm text-emerald-400 hover:text-emerald-300 hover:underline transition-colors">
-                Semua Pertandingan →
-              </Link>
-            </div>
           </div>
         </div>
       ) : (

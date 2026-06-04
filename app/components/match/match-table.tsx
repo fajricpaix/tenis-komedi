@@ -22,20 +22,29 @@ type DeleteConfirmData = {
   photoUrl?: string;
 } | null;
 
+const PAGE_SIZE = 10;
+
 export default function MatchTable({ matches, activeTab, fullWidth, onMatchDeleted }: MatchTableProps) {
   const isAdmin = useIsAdmin();
   const [searchTerm, setSearchTerm] = useState("");
+  const [page, setPage] = useState(1);
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
 
   const filteredMatches = useMemo(() => {
-    if (!searchTerm) return matches;
+    setPage(1);
+    const reversed = [...matches].reverse();
+    if (!searchTerm) return reversed;
     const lower = searchTerm.toLowerCase();
-    return matches.filter(
+    return reversed.filter(
       (m) => m.player1.toLowerCase().includes(lower) || m.player2.toLowerCase().includes(lower)
     );
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [matches, searchTerm]);
+
+  const totalPages = Math.ceil(filteredMatches.length / PAGE_SIZE);
+  const pagedMatches = filteredMatches.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   const handleDeleteClick = (match: Match) => {
     setDeleteConfirm({
@@ -111,7 +120,7 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
                   </td>
                 </tr>
               ) : (
-                [...filteredMatches].reverse().map((match) => (
+                pagedMatches.map((match) => (
                   <tr key={match.id} className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150">
                     <td className="p-3 text-center w-100">
                       <div className="flex items-center justify-center gap-4">
@@ -156,6 +165,43 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
             </tbody>
           </table>          
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.07]">
+            <span className="text-xs text-slate-500">
+              Halaman {page} / {totalPages}
+            </span>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setPage((p) => p - 1)}
+                disabled={page === 1}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                ← Prev
+              </button>
+              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+                <button
+                  key={p}
+                  onClick={() => setPage(p)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
+                    p === page
+                      ? "bg-emerald-500 border-emerald-500 text-slate-900"
+                      : "border-white/10 text-slate-400 hover:bg-white/5"
+                  }`}
+                >
+                  {p}
+                </button>
+              ))}
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={page === totalPages}
+                className="px-3 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+              >
+                Next →
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Delete Confirmation Modal */}
         {deleteConfirm && (
