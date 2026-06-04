@@ -82,7 +82,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
               ].map((h) => (
                 <th
                   key={h}
-                  className={`p-3 ${h === "Nama Pemain" ? "text-left" : "text-center"} text-[0.7rem] font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap`}
+                  className={`p-3 ${h === "Nama Pemain" ? "text-left" : "text-center"} text-xs font-extrabold uppercase text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap`}
                 >
                   {h}
                 </th>
@@ -105,22 +105,7 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                   className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150"
                 >
                   <td className="p-3 font-extrabold text-slate-500 text-center">
-                    <div className="flex items-center gap-0.5">
-                      <span>{(page - 1) * PAGE_SIZE + index + 1}.</span>
-                      {player.rankChange !== undefined && player.matchesPlayed > 0 && (
-                        player.rankChange > 0 ? (
-                          <span className="text-[9px] font-black text-emerald-400 leading-none">
-                            ▲{player.rankChange}
-                          </span>
-                        ) : player.rankChange < 0 ? (
-                          <span className="text-[9px] font-black text-red-400 leading-none">
-                            ▼{Math.abs(player.rankChange)}
-                          </span>
-                        ) : (
-                          <span className="text-[9px] font-black text-slate-600 leading-none">—</span>
-                        )
-                      )}
-                    </div>
+                    {(page - 1) * PAGE_SIZE + index + 1}.
                   </td>
                   <td className="p-3 w-60">
                     <div className="flex items-center gap-3 font-bold text-slate-100 capitalize">
@@ -136,6 +121,19 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                         </div>
                       )}
                       {player.name}
+                      {player.rankChange !== undefined && player.matchesPlayed > 0 && (
+                        player.rankChange > 0 ? (
+                          <span className="text-[9px] font-black text-emerald-400 leading-none">
+                            ▲{player.rankChange}
+                          </span>
+                        ) : player.rankChange < 0 ? (
+                          <span className="text-[9px] font-black text-red-400 leading-none">
+                            ▼{Math.abs(player.rankChange)}
+                          </span>
+                        ) : (
+                          <span className="text-[9px] font-black text-slate-600 leading-none">—</span>
+                        )
+                      )}
                     </div>
                   </td>
                   <td className="text-center p-3 font-bold text-slate-200">
