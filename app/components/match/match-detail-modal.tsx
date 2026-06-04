@@ -59,11 +59,6 @@ export default function MatchDetailModal({ match, onClose }: Props) {
     // Buka tab dulu sebelum async — iOS Safari hanya izinkan popup dari gesture langsung
     const newTab = window.open("", "_blank");
     if (!newTab) { alert("Popup diblokir. Izinkan popup di browser ini."); return; }
-    newTab.document.documentElement.innerHTML =
-      `<head><title>Membuat gambar...</title></head>` +
-      `<body style="margin:0;background:#000;color:#fff;font-family:sans-serif;display:flex;align-items:center;justify-content:center;height:100vh">` +
-      `<p>Membuat gambar, harap tunggu...</p></body>`;
-
     const el = document.getElementById("MatchResult");
     if (!el) { newTab.close(); return; }
 
@@ -121,11 +116,9 @@ export default function MatchDetailModal({ match, onClose }: Props) {
       el.style.height = prev.height;
       el.style.overflow = prev.overflow;
 
-      const title = `${match.player1} vs ${match.player2}`.replace(/\s+/g, "-").toLowerCase();
-      newTab.document.documentElement.innerHTML =
-        `<head><title>${title}</title></head>` +
-        `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
-        `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block"></body>`;
+      const blob = await fetch(dataUrl).then((r) => r.blob());
+      const blobUrl = URL.createObjectURL(blob);
+      newTab.location.href = blobUrl;
     } catch (err) {
       console.error("Gagal membuat gambar:", err);
       newTab.close();

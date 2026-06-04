@@ -116,10 +116,9 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
       card.style.height = orig.h;
       card.style.overflow = orig.o;
 
-      newTab.document.documentElement.innerHTML =
-        `<head><title>${player?.name ?? "player"}</title></head>` +
-        `<body style="margin:0;background:#000;display:flex;justify-content:center;align-items:flex-start;min-height:100vh">` +
-        `<img src="${dataUrl}" style="max-width:100%;height:auto;display:block"></body>`;
+      const blob = await fetch(dataUrl).then((r) => r.blob());
+      const blobUrl = URL.createObjectURL(blob);
+      newTab.location.href = blobUrl;
     } catch {
       newTab.close();
       alert("Maaf, terjadi kesalahan saat mencoba membuat gambar.");
