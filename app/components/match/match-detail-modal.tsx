@@ -145,7 +145,7 @@ export default function MatchDetailModal({ match, onClose }: Props) {
         className="w-full max-w-full md:max-w-160 max-h-[90vh] overflow-auto"
         onClick={(e) => e.stopPropagation()}
       >
-        <div id="MatchResult" className="p-4 rounded-xl relative overflow-hidden bg-slate-900 border border-white/10 shadow-2xl">
+        <div id="MatchResult" className="p-4 rounded-xl relative overflow-hidden bg-slate-900 border border-white/10">
           {/* Photo */}
           {match.photoUrl && (
             <figure className="relative">
@@ -160,7 +160,7 @@ export default function MatchDetailModal({ match, onClose }: Props) {
 
           {/* Scoreboard */}
           <div className={match.photoUrl ? "absolute bottom-8 inset-x-8 opacity-90" : ""}>
-            <div className="rounded-xl overflow-hidden border border-white/10 shadow-2xl bg-slate-900">
+            <div className="rounded-xl overflow-hidden border border-white/10 bg-slate-900">
               <div className="p-2 md:px-4 md:py-3 bg-white/3 border-b border-white/10 flex items-center gap-x-2">
                 <img src="/logo.webp" alt="Logo" className="h-6 md:h-8 w-6 md:w-8 object-contain" />
                 <span className="text-[10px] md:text-xs font-black tracking-widest uppercase text-emerald-400">
