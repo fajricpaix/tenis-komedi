@@ -187,12 +187,12 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                     <p className="mb-2 italic font-black text-emerald-400 tracking-wide">
                       Peringkat #{rank} {player.gender === "Pria" ? "Pria" : "Wanita"}
                     </p>
-                    <h2 className="text-4xl font-black text-slate-100 leading-tight mb-1 capitalize overflow-hidden max-h-24 flex items-center">
+                    <h2 className="text-xl md:text-4xl font-black text-slate-100 leading-tight mb-1 capitalize overflow-hidden max-h-24 flex items-center">
                       {player.name}
                     </h2>
-                    <h3 className="text-sm font-semibold text-slate-300 italic">
-                      A.K.A <span className="capitalize text-emerald-400 font-black text-lg">{player.nickname}</span>
-                    </h3>
+                    <p className="text-xs md:text-sm font-semibold text-slate-300 italic">
+                      <small>A.K.A</small> <span className="capitalize text-emerald-400 font-black md:text-lg">{player.nickname}</span>
+                    </p>
                     <div className="flex items-center mt-3 gap-x-2">
                       <img
                         src="/indonesia.png"
