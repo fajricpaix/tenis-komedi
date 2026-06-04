@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useRef, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useIsAdmin } from "@utils/auth";
 
 type NewPlayerForm = {
   name: string;
@@ -63,6 +64,19 @@ type Toast = {
 
 export default function AddPlayerPage() {
   const router = useRouter();
+  const isAdmin = useIsAdmin();
+  const [authChecked, setAuthChecked] = useState(false);
+
+  useEffect(() => {
+    setAuthChecked(true);
+  }, [isAdmin]);
+
+  useEffect(() => {
+    if (authChecked && !isAdmin) {
+      router.replace("/");
+    }
+  }, [authChecked, isAdmin, router]);
+
   const [form, setForm] = useState<NewPlayerForm>(initialForm);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [photoError, setPhotoError] = useState<string | null>(null);
@@ -182,6 +196,8 @@ export default function AddPlayerPage() {
     double: "👥 Double",
     mixDouble: "💑 Mix Double",
   };
+
+  if (!authChecked || !isAdmin) return null;
 
   return (
     <main className="px-6 py-10 mx-auto max-w-6xl">
