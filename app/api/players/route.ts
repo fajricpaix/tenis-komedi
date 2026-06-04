@@ -73,6 +73,74 @@ export async function DELETE(request: Request) {
   }
 }
 
+export async function PATCH(request: Request) {
+  let newUploadedFileName: string | null = null;
+
+  try {
+    const { playerId, playerData, newPhotoBase64, oldImgUrl } = await request.json();
+
+    if (!playerId) {
+      return NextResponse.json({ success: false, message: "ID pemain tidak ditemukan" }, { status: 400 });
+    }
+
+    const db = getDatabase(app);
+    const playersRef = ref(db, 'tenis-komedi/0/players');
+
+    const snapshot = await get(playersRef);
+    if (!snapshot.exists()) {
+      return NextResponse.json({ success: false, message: "Tidak ada data pemain" }, { status: 404 });
+    }
+
+    const val = snapshot.val();
+    const currentPlayers = Array.isArray(val) ? val : Object.values(val);
+
+    let imgUrl: string | undefined = undefined;
+
+    if (newPhotoBase64 && newPhotoBase64.startsWith('data:')) {
+      const safeName = playerData.name.replace(/\s+/g, '_').toLowerCase();
+      newUploadedFileName = `${safeName}_${Date.now()}.jpg`;
+      imgUrl = await uploadProfilePhoto(newPhotoBase64, newUploadedFileName);
+
+      if (oldImgUrl) {
+        try {
+          const fileName = (oldImgUrl as string).split('/').pop();
+          if (fileName) await deleteProfilePhoto(fileName);
+        } catch (e) {
+          console.error("Error deleting old photo:", e);
+        }
+      }
+    }
+
+    const updatedPlayers = currentPlayers.map((p) => {
+      if (p !== null && p !== undefined && String((p as Record<string, unknown>).id) === String(playerId)) {
+        const merged = {
+          ...(p as object),
+          ...playerData,
+          id: (p as Record<string, unknown>).id,
+          ...(imgUrl ? { imgUrl } : {}),
+        };
+        return sanitizeForFirebase(merged);
+      }
+      return p;
+    });
+
+    await set(playersRef, updatedPlayers);
+
+    return NextResponse.json({ success: true, message: "Pemain berhasil diperbarui" });
+  } catch (error) {
+    console.error("Error updating player:", error);
+
+    if (newUploadedFileName) {
+      try { await deleteProfilePhoto(newUploadedFileName); } catch (_) {}
+    }
+
+    return NextResponse.json(
+      { success: false, message: "Gagal memperbarui data pemain" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   let uploadedFileName: string | null = null;
 

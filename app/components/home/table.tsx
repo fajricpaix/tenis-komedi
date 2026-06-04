@@ -187,23 +187,28 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                     {player.points}
                   </td>
                   <td className="text-center p-3">
-                    <div className="flex items-center justify-center gap-2">
-                      {isAdmin && (
-                        <button
-                          title="Delete Pemain"
-                          onClick={() => handleDeleteClick(player)}
-                          className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
-                        >
-                          🗑️
-                        </button>
-                      )}
+                    <div className="flex items-center justify-center gap-1.5">
                       <Link
                         title="Lihat Detail Pemain"
                         href={`/players/details?id=${player.id}`}
-                        className="flex items-center cursor-pointer px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
-                      >
+                        className="flex items-center cursor-pointer px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
+                        >
                         📖
                       </Link>
+                      {isAdmin && (
+                        <>
+                          <Link href={`/players/edit?id=${player.id}`} title="Edit Pemain" className="px-2 py-1 rounded-lg cursor-pointer bg-blue-500/10 border border-blue-500/25 text-blue-400 font-bold text-xs uppercase hover:bg-blue-500/20 transition-colors">
+                            ✏️
+                          </Link>
+                          <button
+                            title="Delete Pemain"
+                            onClick={() => handleDeleteClick(player)}
+                            className="px-2 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                          >
+                            🗑️
+                          </button>
+                        </>
+                      )}
                     </div>
                   </td>
                 </tr>
