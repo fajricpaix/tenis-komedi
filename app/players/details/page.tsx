@@ -168,13 +168,13 @@ function PlayerDetailContent() {
           <div className="w-2/5">
             <figure className="rounded-xl overflow-hidden p-2 border border-emerald-400 shadow-lg shadow-emerald-900/30">
               <Image
-                src={player.imgUrl || '/logoHD.webp'}
+                src={player.imgUrl || (player.gender === 'Pria' ? '/pria.jpg' : '/wanita.jpg')}
                 alt={player.name}
                 width={200}
                 height={200}
                 className="w-full aspect-square object-cover rounded-lg"
                 onError={(e) => {
-                  (e.target as HTMLImageElement).src = '/logoHD.webp';
+                  (e.target as HTMLImageElement).src = player.gender === 'Pria' ? '/pria.jpg' : '/wanita.jpg';
                 }}
               />
             </figure>

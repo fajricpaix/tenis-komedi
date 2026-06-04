@@ -1,4 +1,5 @@
 import { type Player } from "@utils/fetcher";
+import Link from "next/link";
 
 type Props = {
   players: Player[];
@@ -52,22 +53,17 @@ export default function BirthdayCards({ players }: Props) {
         {upcomingBirthdays.map((player, index) => {
           const { label, className } = getBirthdayLabel(player.daysUntil);
           return (
-            <div
+            <Link
+              href={`/players/details?id=${player.id}`}
               key={player.id ?? index}
-              className="shrink-0 w-44 md:w-full rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-white/20 transition-colors"
+              className="shrink-0 w-44 md:w-full rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-blue-400 hover:bg-blue-950 transition-colors"
             >
               {/* Foto */}
-              {player.imgUrl ? (
-                <img
-                  src={player.imgUrl}
-                  alt={player.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
-                />
-              ) : (
-                <div className="w-16 h-16 rounded-full bg-slate-700 border-2 border-white/10 flex items-center justify-center text-xl font-bold text-slate-400">
-                  {player.name?.charAt(0).toUpperCase()}
-                </div>
-              )}
+              <img
+                src={player.imgUrl || (player.gender === 'Pria' ? '/pria.jpg' : '/wanita.jpg')}
+                alt={player.name}
+                className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
+              />
 
               {/* Nama */}
               <div className="text-center">
@@ -90,7 +86,7 @@ export default function BirthdayCards({ players }: Props) {
                   Umurnya <span className="font-semibold text-sm text-fuchsia-400">{player.birthDate ? `${new Date().getFullYear() - new Date(player.birthDate).getFullYear() + 1} tahun` : "Umur tidak diketahui"}</span>
                 </p>
               </div>
-            </div>
+            </Link>
           );
         })}
       </div>
