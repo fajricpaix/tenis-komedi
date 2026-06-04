@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 
 const AUTH_KEY = "teko_admin_session";
-const ADMIN_USERNAME = "teko_admin";
-const ADMIN_PASSWORD = "teniskomedi2025";
+const ADMIN_USERNAME = "teko-lagoon";
+const ADMIN_PASSWORD = "sclagoon2025";
 
 export function login(username: string, password: string): boolean {
   if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
