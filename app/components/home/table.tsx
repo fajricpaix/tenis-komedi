@@ -40,13 +40,12 @@ type HomeTableProps = {
   players: PlayerWithStats[];
   matches: Match[];
   activeTab: TeamKey;
-  onEdit: (id: number) => void;
   onPlayerDeleted?: () => void;
 };
 
 const PAGE_SIZE = 8;
 
-export default function HomeTable({ players, activeTab, onEdit, onPlayerDeleted }: HomeTableProps) {
+export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeTableProps) {
   const isAdmin = useIsAdmin();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
@@ -200,7 +199,6 @@ export default function HomeTable({ players, activeTab, onEdit, onPlayerDeleted 
                       )}
                       <Link
                         title="Lihat Detail Pemain"
-                        onClick={() => onEdit(player.id)}
                         href={`/players/details?id=${player.id}`}
                         className="flex items-center cursor-pointer px-3 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
                       >

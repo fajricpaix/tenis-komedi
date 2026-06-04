@@ -137,8 +137,6 @@ export default function HomeContent() {
       .slice(0, 20);
   }, [matches, safePlayers, activeTab]);
 
-  const handleEdit = (id: number) => alert(`Edit pemain dengan ID: ${id}`);
-
   const handlePlayerDeleted = async () => {
     try {
       const { players, matches } = await getTekoData();
@@ -203,13 +201,13 @@ export default function HomeContent() {
             <>
               <Link
                 href="/players/add"
-                className="font-black px-4 md:px-7 py-2 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white text-sm"
+                className="font-black px-4 md:px-7 py-2 md:py-2.5 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-sm"
               >
-                <span>+</span> Pemain
+                <span>+</span> ATP atau WTA
               </Link>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="font-black px-4 md:px-7 py-2 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm"
+                className="font-black px-4 md:px-7 py-2 md:py-2.5 cursor-pointer rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-sm"
               >
                 <span>+</span> Pertandingan
               </button>
@@ -239,7 +237,6 @@ export default function HomeContent() {
               players={currentPlayers}
               matches={currentMatches}
               activeTab={activeTab}
-              onEdit={handleEdit}
               onPlayerDeleted={handlePlayerDeleted}
             />
           </div>

@@ -87,11 +87,11 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
         </div>
 
         <div className="overflow-x-auto">
-          <table className="w-180 md:w-full text-xs">
+          <table className="w-180 text-xs">
             <thead>
               <tr className="bg-emerald-500/[0.07]">
                 {["Pertandingan", "Skor", "Pemenang", "Aksi"].map((h) => (
-                  <th key={h} className="px-5 py-3.5 text-center text-xs md:text-sm font-extrabold capitalize text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap">
+                  <th key={h} className="p-3 text-center text-xs font-extrabold capitalize text-emerald-400 border-b border-emerald-500/20 whitespace-nowrap">
                     {h}
                   </th>
                 ))}
@@ -113,7 +113,7 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
               ) : (
                 [...filteredMatches].reverse().map((match) => (
                   <tr key={match.id} className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150">
-                    <td className="p-4 text-center w-100">
+                    <td className="p-3 text-center w-100">
                       <div className="flex items-center justify-center gap-4">
                         <span className={`${fullWidth ? "w-36" : "w-28"} capitalize font-bold ${match.winner === match.player1 ? "text-emerald-400" : "text-slate-300"}`}>
                           {match.player1}
@@ -124,27 +124,27 @@ export default function MatchTable({ matches, activeTab, fullWidth, onMatchDelet
                         </span>
                       </div>
                     </td>
-                    <td className="text-center px-5 py-4 font-black text-slate-100 text-lg tracking-tighter italic">
+                    <td className="text-center p-4 font-black text-slate-100 text-lg tracking-tighter italic">
                       {match.setScore}
                     </td>
-                    <td className="text-center px-5 py-4 justify-center items-center flex">
+                    <td className="text-center p-4 justify-center items-center flex">
                       <span className="px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-emerald-400 font-bold text-xs capitalize tracking-wider">
                         {match.winner}
                       </span>
                     </td>
-                    <td className="text-center px-5 py-4 w-40">
+                    <td className="text-center p-4 w-40">
                       <div className="flex items-center justify-center gap-2">
                         {isAdmin && (
                           <button
                             onClick={() => handleDeleteClick(match)}
-                            className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                            className="px-2 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
                           >
                             🗑️
                           </button>
                         )}
                         <button
                           onClick={() => setSelectedMatch(match)}
-                          className="flex items-center cursor-pointer gap-1.5 px-3 py-1.5 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
+                          className="flex items-center cursor-pointer gap-1.5 px-2 py-1 rounded-lg bg-green-500/10 border border-green-500/25 text-green-300 text-xs font-bold tracking-wide hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 hover:shadow-lg hover:shadow-green-900/30 transition-all duration-150"
                         >
                           📖
                         </button>
