@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import type { TeamKey } from "@components/home/tab";
 import Link from "next/link";
+import { useIsAdmin } from "@utils/auth";
 
 type Player = {
   id: number;
@@ -29,18 +30,55 @@ type PlayerWithStats = Player & {
   rankChange?: number;
 };
 
+type DeleteConfirmData = {
+  playerId: number | string;
+  name: string;
+  imgUrl?: string;
+} | null;
+
 type HomeTableProps = {
   players: PlayerWithStats[];
   matches: Match[];
   activeTab: TeamKey;
   onEdit: (id: number) => void;
+  onPlayerDeleted?: () => void;
 };
 
 const PAGE_SIZE = 8;
 
-export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps) {
+export default function HomeTable({ players, activeTab, onEdit, onPlayerDeleted }: HomeTableProps) {
+  const isAdmin = useIsAdmin();
   const [search, setSearch] = useState("");
   const [page, setPage] = useState(1);
+  const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  const handleDeleteClick = (player: PlayerWithStats) => {
+    setDeleteConfirm({ playerId: player.id, name: player.name, imgUrl: player.imgUrl });
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!deleteConfirm) return;
+    setIsDeleting(true);
+    try {
+      const response = await fetch("/api/players", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ playerId: deleteConfirm.playerId, imgUrl: deleteConfirm.imgUrl }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setDeleteConfirm(null);
+        onPlayerDeleted?.();
+      } else {
+        alert("Gagal menghapus pemain: " + data.message);
+      }
+    } catch {
+      alert("Terjadi kesalahan saat menghapus pemain.");
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   const filteredPlayers = useMemo(() => {
     setPage(1);
@@ -151,12 +189,15 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
                   </td>
                   <td className="text-center p-3">
                     <div className="flex items-center justify-center gap-2">
-                      {/* <button
-                        title="Delete Pemain"
-                        className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
-                      >
-                        🗑️
-                      </button> */}
+                      {isAdmin && (
+                        <button
+                          title="Delete Pemain"
+                          onClick={() => handleDeleteClick(player)}
+                          className="px-3 py-1 rounded-lg cursor-pointer bg-red-500/10 border border-red-500/25 text-red-400 font-bold text-xs uppercase tracking-wider hover:bg-red-500/20 transition-colors"
+                        >
+                          🗑️
+                        </button>
+                      )}
                       <Link
                         title="Lihat Detail Pemain"
                         onClick={() => onEdit(player.id)}
@@ -173,6 +214,35 @@ export default function HomeTable({ players, activeTab, onEdit }: HomeTableProps
           </tbody>
         </table>
       </div>
+
+      {deleteConfirm && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+          <div className="bg-slate-900 border border-white/10 rounded-2xl p-6 max-w-sm mx-4 shadow-2xl">
+            <h3 className="text-lg font-bold text-slate-100 mb-2">Hapus Pemain?</h3>
+            <p className="text-slate-400 text-sm mb-6">
+              Apakah Anda yakin ingin menghapus pemain{" "}
+              <span className="font-semibold text-slate-200">{deleteConfirm.name}</span>?
+              Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setDeleteConfirm(null)}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 cursor-pointer rounded-lg bg-slate-800 border border-white/10 text-slate-100 font-semibold hover:bg-slate-700 transition-colors disabled:opacity-50"
+              >
+                Batal
+              </button>
+              <button
+                onClick={handleConfirmDelete}
+                disabled={isDeleting}
+                className="flex-1 px-4 py-2 cursor-pointer rounded-lg bg-red-500/20 border border-red-500/50 text-red-400 font-semibold hover:bg-red-500/30 transition-colors disabled:opacity-50"
+              >
+                {isDeleting ? "Menghapus..." : "Hapus"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {totalPages > 1 && (
         <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.07]">

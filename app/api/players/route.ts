@@ -23,6 +23,56 @@ function sanitizeForFirebase(obj: unknown): unknown {
   return result;
 }
 
+export async function DELETE(request: Request) {
+  try {
+    const { playerId, imgUrl } = await request.json();
+
+    if (!playerId) {
+      return NextResponse.json(
+        { success: false, message: "ID pemain tidak ditemukan" },
+        { status: 400 }
+      );
+    }
+
+    const db = getDatabase(app);
+    const playersRef = ref(db, 'tenis-komedi/0/players');
+
+    const snapshot = await get(playersRef);
+    if (!snapshot.exists()) {
+      return NextResponse.json(
+        { success: false, message: "Tidak ada data pemain" },
+        { status: 404 }
+      );
+    }
+
+    const val = snapshot.val();
+    const currentPlayers = Array.isArray(val) ? val : Object.values(val);
+    const updatedPlayers = currentPlayers.filter(
+      (p) => p !== null && p !== undefined && String(p.id) !== String(playerId)
+    );
+
+    if (imgUrl) {
+      try {
+        const urlParts = (imgUrl as string).split('/');
+        const fileName = urlParts[urlParts.length - 1];
+        if (fileName) await deleteProfilePhoto(fileName);
+      } catch (photoError) {
+        console.error("Error deleting photo:", photoError);
+      }
+    }
+
+    await set(playersRef, updatedPlayers.length > 0 ? updatedPlayers : []);
+
+    return NextResponse.json({ success: true, message: "Pemain berhasil dihapus" });
+  } catch (error) {
+    console.error("Error deleting player:", error);
+    return NextResponse.json(
+      { success: false, message: "Gagal menghapus pemain" },
+      { status: 500 }
+    );
+  }
+}
+
 export async function POST(request: Request) {
   let uploadedFileName: string | null = null;
 

@@ -139,6 +139,17 @@ export default function HomeContent() {
 
   const handleEdit = (id: number) => alert(`Edit pemain dengan ID: ${id}`);
 
+  const handlePlayerDeleted = async () => {
+    try {
+      const { players, matches } = await getTekoData();
+      setPlayers(Array.isArray(players) ? players : []);
+      setMatches(Array.isArray(matches) ? matches : []);
+      showToast("Pemain berhasil dihapus.", "success");
+    } catch {
+      showToast("Gagal memuat ulang data.", "error");
+    }
+  };
+
   const handleSaveMatch = async (newMatch: Omit<Match, "id">) => {
     const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
     const matchWithId: Match = { id, ...newMatch };
@@ -182,7 +193,7 @@ export default function HomeContent() {
         <EventCard />
       </div>
 
-      <div className="flex flex-row md:items-center justify-between gap-4 md:gap-6 mb-4 md:mb-6">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6 mb-4 md:mb-6">
         <HomeTab
           activeTab={activeTab}
           onSelect={(tab) => { setActiveTab(tab); setTournamentTab("ranking"); }}
@@ -192,13 +203,13 @@ export default function HomeContent() {
             <>
               <Link
                 href="/players/add"
-                className="font-black px-4 md:px-7 py-1 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white text-sm"
+                className="font-black px-4 md:px-7 py-2 md:py-2.5 rounded-xl md:rounded-2xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-white text-sm"
               >
                 <span>+</span> Pemain
               </Link>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="font-black px-4 md:px-7 py-1 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm"
+                className="font-black px-4 md:px-7 py-2 md:py-2.5 cursor-pointer rounded-xl md:rounded-2xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-slate-900 text-sm"
               >
                 <span>+</span> Pertandingan
               </button>
@@ -229,6 +240,7 @@ export default function HomeContent() {
               matches={currentMatches}
               activeTab={activeTab}
               onEdit={handleEdit}
+              onPlayerDeleted={handlePlayerDeleted}
             />
           </div>
           <div className="w-full md:w-2/5">
