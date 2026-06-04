@@ -7,7 +7,7 @@ type BoxPlayerDetailProps = {
 
 export default function BoxPlayerDetail({ title, subTitle, desc, icon }: BoxPlayerDetailProps) {
   return (
-    <div className="w-1/2 rounded-xl p-0.5 md:p-1 bg-linear-to-r from-[#FFE094] via-[#C59B27] to-[#8A640F] shadow-lg shadow-[#C59B27]/40">
+    <div className="w-1/2 rounded-xl p-0.5 md:p-1 bg-linear-to-r from-[#FFE094] via-[#C59B27] to-[#8A640F]">
       <div className="flex flex-col justify-between gap-1 bg-emerald-900 p-3 rounded-xl h-full">
         <div>
           <div className="flex items-start justify-between">

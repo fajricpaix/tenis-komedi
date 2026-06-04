@@ -204,7 +204,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                     </div>
                   </div>
                   <div className="shrink-0 w-2/5">
-                    <figure className="rounded-xl overflow-hidden border-2 md:border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                    <figure className="rounded-xl overflow-hidden border-2 md:border-4 border-[#C59B27]">
                       <img
                         src={player.imgUrl || (player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg")}
                         alt={player.name}
@@ -217,7 +217,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                 </div>
 
                 {/* Reason */}
-                <div className="relative text-sm z-10 mt-6 px-4 py-3 rounded-xl text-center bg-black/30 border-2 md:border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                <div className="relative text-sm z-10 mt-6 px-4 py-3 rounded-xl text-center bg-black/30 border-2 md:border-4 border-[#C59B27]">
                   <h3 className="font-semibold">Alasan Main Tenis :</h3>
                   <p className="italic capitalize font-semibold text-[#FFE094] mt-1">"{player.reason}"</p>
                 </div>
@@ -244,7 +244,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                 {/* Skills */}
                 <div className="mt-6 relative z-10">
                   <h3 className="mb-3 font-black text-lg text-slate-100 tracking-wide">Skill Pemain</h3>
-                  <div className="p-4 rounded-xl space-y-3 bg-black/30 border-2 md:border-4 border-[#C59B27] shadow-lg shadow-[#C59B27]/40">
+                  <div className="p-4 rounded-xl space-y-3 bg-black/30 border-2 md:border-4 border-[#C59B27]">
                     <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Forehand" value={player.skills.forehand} />
                     <SkillsPlayerDetail imgUrl="/icons/back.webp"    skillName="Backhand" value={player.skills.backhand} />
                     <SkillsPlayerDetail imgUrl="/icons/service.webp" skillName="Service"  value={player.skills.service} />
