@@ -1,27 +1,27 @@
 import Image from "next/image";
 
 type SkillsPlayerDetailProps = {
-    imgUrl: string;
-    skillName?: string;
-    value: number;
+  imgUrl: string;
+  skillName?: string;
+  value: number;
 };
 
 export default function SkillsPlayerDetail({ imgUrl, skillName, value }: SkillsPlayerDetailProps) {
-    return (
-        <div className="flex gap-x-3 items-center">
-            <Image
-                src={imgUrl} // Use player's image or a generic placeholder
-                alt={'Skill Icon'}
-                width={200}
-                height={200}
-                className="rounded-lg w-10 p-1.5 object-cover bg-black/25 border border-white/10 shadow-lg shadow-emerald-900/30"
-            />
-            <p className="w-18 font-semibold text-sm">{skillName}</p>
-            <div className="flex-1 h-2 bg-emerald-900/30 rounded">
-            <div className="h-2 rounded bg-emerald-400" style={{ width: `${value * 10}%` }} />
-            </div>
-            <span className="text-xs text-slate-300 font-bold">{value}/10</span>
-            
-        </div>
-    );
+  return (
+    <div className="flex gap-x-3 items-center">
+      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#FFE094] border border-[#C59B27] shadow-sm shadow-[#C59B27]/30">
+        <Image src={imgUrl} alt={skillName ?? "skill"} width={24} height={24} className="object-contain" />
+      </div>
+      <p className="w-16 shrink-0 font-semibold text-xs text-slate-200">{skillName}</p>
+      <div className="flex-1 flex gap-0.75">
+        {Array.from({ length: 20 }, (_, i) => (
+          <div
+            key={i}
+            className={`h-3 flex-1 rounded-xs ${i < value * 2 ? "bg-[#FFE094]" : "bg-black/70"}`}
+          />
+        ))}
+      </div>
+      <span className="text-xs text-slate-300 font-bold w-7 text-right shrink-0">{value}/10</span>
+    </div>
+  );
 }

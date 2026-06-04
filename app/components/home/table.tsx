@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import type { TeamKey } from "@components/home/tab";
 import Link from "next/link";
 import { useIsAdmin } from "@utils/auth";
+import PlayerDetailModal from "@components/players/players-detail-modal";
 
 type Player = {
   id: number;
@@ -51,6 +52,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
   const [page, setPage] = useState(1);
   const [deleteConfirm, setDeleteConfirm] = useState<DeleteConfirmData>(null);
   const [isDeleting, setIsDeleting] = useState(false);
+  const [detailPlayerId, setDetailPlayerId] = useState<number | null>(null);
 
   const handleDeleteClick = (player: PlayerWithStats) => {
     setDeleteConfirm({ playerId: player.id, name: player.name, imgUrl: player.imgUrl });
@@ -91,6 +93,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
   const pagedPlayers = filteredPlayers.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
 
   return (
+    <>
     <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
       <div className="flex items-center justify-between gap-4 px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
         <h2 className="text-sm md:text-xl font-black text-slate-100">
@@ -188,13 +191,13 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                   </td>
                   <td className="text-center p-3">
                     <div className="flex items-center justify-center gap-1.5">
-                      <Link
+                      <button
                         title="Lihat Detail Pemain"
-                        href={`/players/details?id=${player.id}`}
+                        onClick={() => setDetailPlayerId(player.id)}
                         className="px-2 py-1 rounded-lg items-center cursor-pointer font-bold text-xs border bg-green-500/10 border-green-500/25 hover:bg-green-500/20 hover:border-green-400/50 hover:-translate-y-0.5 transition-all duration-150"
-                        >
+                      >
                         📖
-                      </Link>
+                      </button>
                       {isAdmin && (
                         <>
                           <Link 
@@ -286,5 +289,13 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
         </div>
       )}
     </div>
+
+    {detailPlayerId !== null && (
+      <PlayerDetailModal
+        playerId={detailPlayerId}
+        onClose={() => setDetailPlayerId(null)}
+      />
+    )}
+    </>
   );
 }
