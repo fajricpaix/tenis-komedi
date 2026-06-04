@@ -153,16 +153,16 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
               id="cardPlayerModal"
               className="relative rounded-2xl overflow-hidden p-2 bg-linear-to-r from-[#FFE094] via-[#C59B27] to-[#8A640F]"
             >
-              <div className="p-4 rounded-2xl bg-linear-to-tr from-[#0E6F39] to-[#3d0a89]">
+              <div className="p-6 rounded-2xl bg-linear-to-tr from-[#0E6F39] to-[#3d0a89]">
                 {/* Dot pattern */}
                 <>
                   <div
-                    className="absolute top-0 right-0 w-96 h-80 opacity-20 pointer-events-none rounded-bl-full"
-                    style={{ backgroundImage: "radial-gradient(circle, #00e5a0 1px, transparent 1px)", backgroundSize: "10px 10px" }}
+                    className="absolute top-3 right-4 w-96 h-80 opacity-20 pointer-events-none rounded-bl-full"
+                    style={{ backgroundImage: "radial-gradient(circle, #00e5a0 2px, transparent 2px)", backgroundSize: "10px 10px" }}
                   />
                   <div
-                    className="absolute bottom-0 left-0 w-100 h-60 opacity-30 pointer-events-none"
-                    style={{ backgroundImage: "radial-gradient(circle, #00e5a0 1px, transparent 1px)", backgroundSize: "10px 10px" }}
+                    className="absolute bottom-3 left-3 right-3 h-80 opacity-20 pointer-events-none rounded-tr-full"
+                    style={{ backgroundImage: "radial-gradient(circle, #3d0a89 2px, transparent 2px)", backgroundSize: "10px 10px" }}
                   />
                 </>
 
@@ -183,7 +183,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                     <p className="mb-2 italic font-black text-emerald-400 tracking-wide">
                       Peringkat #{rank} {player.gender === "Pria" ? "Pria" : "Wanita"}
                     </p>
-                    <h2 className="text-4xl font-black text-slate-100 leading-tight mb-1 capitalize overflow-hidden h-24 flex items-center">
+                    <h2 className="text-4xl font-black text-slate-100 leading-tight mb-1 capitalize overflow-hidden max-h-24 flex items-center">
                       {player.name}
                     </h2>
                     <h3 className="text-sm font-semibold text-slate-300 italic">
@@ -228,7 +228,7 @@ export default function PlayerDetailModal({ playerId, onClose }: Props) {
                     title="Main Sejak"   
                     icon="🎾" 
                     subTitle={`${player.startYear}+`}                   
-                    desc={`${calculateAge(player.startYear)}+ Tahun`} />
+                    desc={`± ${calculateAge(player.startYear)} Tahun`} />
                   {/* <BoxPlayerDetail 
                     title="Alamat Rumah" 
                     icon="🏠" 
