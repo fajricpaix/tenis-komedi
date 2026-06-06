@@ -15,9 +15,9 @@ export default function EventCard() {
         <h2 className="font-bold text-slate-100 md:text-xl">Event Tenis Komedi</h2>
       </div>
 
-      <div className="mb-6 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-emerald-900/20 bg-slate-900">
+      <div className="mb-6 md:mb-0 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-emerald-900/20 bg-slate-900">
         {/* Hero Photo */}
-        <div className="relative w-full aspect-video">
+        <div className="relative w-full aspect-video md:aspect-video">
           <Image
             src="/events/wimblegoon.jpg"
             alt="TeKo Wimblegoon 2026"

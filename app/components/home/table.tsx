@@ -44,7 +44,7 @@ type HomeTableProps = {
   onPlayerDeleted?: () => void;
 };
 
-const PAGE_SIZE = 6;
+const PAGE_SIZE = 10;
 
 export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeTableProps) {
   const isAdmin = useIsAdmin();
@@ -333,8 +333,8 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
       )}
 
       {totalPages > 1 && (
-        <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.07]" data-render-hide>
-          <span className="text-xs text-slate-500">
+        <div className="flex items-center justify-end md:justify-between px-5 py-3 border-t border-white/[0.07]" data-render-hide>
+          <span className="hidden md:block text-xs text-slate-500">
             Halaman {page} / {totalPages}
           </span>
           <div className="flex gap-2">

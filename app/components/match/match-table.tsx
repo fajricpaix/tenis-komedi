@@ -183,8 +183,8 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
         </div>
 
         {totalPages > 1 && (
-          <div className="flex items-center justify-between px-5 py-3 border-t border-white/[0.07]">
-            <span className="text-xs text-slate-500">
+          <div className="flex items-center justify-end md:justify-between px-5 py-3 border-t border-white/[0.07]">
+            <span className="hidden md:block text-xs text-slate-500">
               Halaman {page} / {totalPages}
             </span>
             <div className="flex gap-2">
