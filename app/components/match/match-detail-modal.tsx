@@ -12,6 +12,7 @@ export type MatchForModal = {
   pointScoresA?: string[];
   pointScoresB?: string[];
   photoUrl?: string;
+  matchDate?: string;
 };
 
 type Props = {
@@ -154,11 +155,18 @@ export default function MatchDetailModal({ match, onClose }: Props) {
           {/* Scoreboard */}
           <div className={match.photoUrl ? "absolute bottom-8 inset-x-8 opacity-90" : ""}>
             <div className="rounded-xl overflow-hidden border border-white/10 bg-slate-900">
-              <div className="p-2 md:px-4 md:py-3 bg-white/3 border-b border-white/10 flex items-center gap-x-2">
-                <img src="/logo.webp" alt="Logo" className="h-6 md:h-8 w-6 md:w-8 object-contain" />
-                <span className="text-[10px] md:text-xs font-black tracking-widest uppercase text-emerald-400">
-                  TeKo Wimblegoon 2026
-                </span>
+              <div className="p-2 md:px-4 md:py-3 bg-white/3 border-b border-white/10 flex items-center justify-between gap-x-2">
+                <div className="flex items-center gap-x-2">
+                  <img src="/logo.webp" alt="Logo" className="h-6 md:h-8 w-6 md:w-8 object-contain" />
+                  <span className="text-[10px] md:text-xs font-black tracking-widest uppercase text-emerald-400">
+                    TeKo Wimblegoon 2026
+                  </span>
+                </div>
+                {match.matchDate && (
+                  <span className="text-[10px] md:text-xs text-slate-500 font-semibold shrink-0">
+                    {new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date(match.matchDate))}
+                  </span>
+                )}
               </div>
 
               <div className="overflow-x-auto p-2 md:px-4 md:py-3">

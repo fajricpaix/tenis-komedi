@@ -35,6 +35,7 @@ export type Match = {
 	pointScoresA?: string[];
 	pointScoresB?: string[];
 	photoUrl?: string;
+	matchDate?: string;
 };
 
 export type TekoData = {

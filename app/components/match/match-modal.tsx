@@ -17,6 +17,7 @@ type Match = {
   pointScoresA?: string[];
   pointScoresB?: string[];
   photoUrl?: string;
+  matchDate?: string;
 };
 
 type MatchModalProps = {
@@ -129,6 +130,7 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
   const [player1, setPlayer1] = useState("");
   const [player2, setPlayer2] = useState("");
   const [score, setScore] = useState("");
+  const [matchDate, setMatchDate] = useState(new Date().toISOString().split("T")[0]);
   const [pointScoresA, setPointScoresA] = useState<string[]>([]);
   const [pointScoresB, setPointScoresB] = useState<string[]>([]);
   const [photoPreview, setPhotoPreview] = useState<string | null>(null);
@@ -203,6 +205,7 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
       pointScoresA,
       pointScoresB,
       photoUrl: photoPreview,
+      matchDate,
     };
 
     setLoading(true);
@@ -223,6 +226,20 @@ export default function MatchModal({ players, onClose, onSave }: MatchModalProps
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-5 relative">
+          {/* Tanggal */}
+          <div className="space-y-2">
+            <label className="text-xs font-black tracking-widest text-slate-500 uppercase">
+              Tanggal Pertandingan
+            </label>
+            <input
+              type="date"
+              value={matchDate}
+              onChange={(e) => setMatchDate(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+              required
+            />
+          </div>
+
           {/* Pemain 1 */}
           <div className="space-y-2 capitalize">
             <label className="text-xs font-black tracking-widest text-slate-500 uppercase">

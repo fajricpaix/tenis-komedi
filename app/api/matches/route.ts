@@ -10,7 +10,7 @@ export async function POST(request: Request) {
     const matchData = await request.json();
 
     // ✅ Validasi field wajib
-    const { id, player1, player2, winner, setScore, pointScoresA, pointScoresB, photoUrl } = matchData;
+    const { id, player1, player2, winner, setScore, pointScoresA, pointScoresB, photoUrl, matchDate } = matchData;
     if (!id || !player1 || !player2 || !winner || !setScore) {
       return NextResponse.json(
         { success: false, message: "Data pertandingan tidak lengkap" },
@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       ...(pointScoresA ? { pointScoresA } : {}),
       ...(pointScoresB ? { pointScoresB } : {}),
       ...(finalPhotoUrl ? { photoUrl: finalPhotoUrl } : {}),
+      ...(matchDate ? { matchDate } : {}),
     };
 
     const updatedMatches = [...currentMatches, matchToSave];

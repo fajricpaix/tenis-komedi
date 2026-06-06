@@ -29,7 +29,7 @@ type DeleteConfirmData = {
   photoUrl?: string;
 } | null;
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 15;
 
 export default function MatchTable({ matches, players = [], activeTab, onMatchDeleted, onMatchEdited }: MatchTableProps) {
   const isAdmin = useIsAdmin();
@@ -140,6 +140,11 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
                           {match.player2}
                         </span>
                       </div>
+                      {match.matchDate && (
+                        <p className="text-center text-[10px] text-slate-600 mt-1">
+                          {new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric" }).format(new Date(match.matchDate))}
+                        </p>
+                      )}
                     </td>
                     <td className="text-center p-3 font-black text-slate-100 text-lg tracking-tighter italic">
                       {match.setScore}

@@ -90,6 +90,7 @@ export default function MatchEditModal({ match, players, onClose, onSaved }: Mat
   const [player1, setPlayer1] = useState(match.player1);
   const [player2, setPlayer2] = useState(match.player2);
   const [score, setScore] = useState(match.setScore);
+  const [matchDate, setMatchDate] = useState(match.matchDate ?? new Date().toISOString().split("T")[0]);
   const [winner, setWinner] = useState(match.winner);
   const [pointScoresA, setPointScoresA] = useState<string[]>(match.pointScoresA ?? []);
   const [pointScoresB, setPointScoresB] = useState<string[]>(match.pointScoresB ?? []);
@@ -147,7 +148,7 @@ export default function MatchEditModal({ match, players, onClose, onSaved }: Mat
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           matchId: match.id,
-          matchData: { player1, player2, winner, setScore: score, pointScoresA, pointScoresB },
+          matchData: { player1, player2, winner, setScore: score, pointScoresA, pointScoresB, matchDate },
           newPhotoBase64: newPhotoBase64 ?? undefined,
           oldPhotoUrl: newPhotoBase64 ? (match.photoUrl ?? undefined) : undefined,
         }),
@@ -174,6 +175,17 @@ export default function MatchEditModal({ match, players, onClose, onSaved }: Mat
         <p className="text-xs text-slate-500 mb-5">ID: {match.id}</p>
 
         <form onSubmit={handleSubmit} className="space-y-5 relative">
+
+          <div className="space-y-2">
+            <label className="text-xs font-black tracking-widest text-slate-500 uppercase">Tanggal Pertandingan</label>
+            <input
+              type="date"
+              value={matchDate}
+              onChange={(e) => setMatchDate(e.target.value)}
+              className="w-full rounded-xl border border-white/10 bg-slate-950 px-4 py-3 text-slate-100 outline-none focus:border-emerald-400 focus:ring-1 focus:ring-emerald-400/20"
+              required
+            />
+          </div>
 
           <div className="space-y-2 capitalize">
             <label className="text-xs font-black tracking-widest text-slate-500 uppercase">Pemain 1</label>
