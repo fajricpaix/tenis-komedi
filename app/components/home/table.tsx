@@ -9,6 +9,7 @@ import PlayerDetailModal from "@components/players/players-detail-modal";
 type Player = {
   id: number;
   name: string;
+  nickname?: string;
   gender: "Pria" | "Wanita";
   imgUrl?: string;
 };
@@ -229,31 +230,42 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                   </td>
                   <td className="p-3 w-60">
                     <div className="flex items-center gap-3 font-bold text-slate-100 capitalize">
-                      {player.imgUrl ? (
-                        <img
-                          src={player.imgUrl}
-                          alt={player.name}
-                          className="w-8 h-8 rounded-full object-cover border border-white/10 shrink-0"
-                        />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-slate-700 border border-white/10 shrink-0 flex items-center justify-center text-xs text-slate-400 font-bold">
-                          {player.name?.charAt(0).toUpperCase()}
-                        </div>
-                      )}
-                      {player.name}
-                      {player.rankChange !== undefined && player.matchesPlayed > 0 && (
-                        player.rankChange > 0 ? (
-                          <span className="text-[9px] font-black text-emerald-400 leading-none">
-                            ▲{player.rankChange}
-                          </span>
-                        ) : player.rankChange < 0 ? (
-                          <span className="text-[9px] font-black text-red-400 leading-none">
-                            ▼{Math.abs(player.rankChange)}
-                          </span>
+                      <div>
+                        {player.imgUrl ? (
+                          <img
+                            src={player.imgUrl}
+                            alt={player.name}
+                            className="w-8 h-8 rounded-full object-cover border border-white/10 shrink-0"
+                          />
                         ) : (
-                          <span className="text-[9px] font-black text-slate-600 leading-none">—</span>
-                        )
-                      )}
+                          <div className="w-8 h-8 rounded-full bg-slate-700 border border-white/10 shrink-0 flex items-center justify-center text-xs text-slate-400 font-bold">
+                            {player.name?.charAt(0).toUpperCase()}
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex flex-col gap-0.5">
+                        <div className="flex gap-x-2 items-center">
+                          {player.name}
+                          {player.rankChange !== undefined && player.matchesPlayed > 0 && (
+                            player.rankChange > 0 ? (
+                              <span className="text-[9px] font-black text-emerald-400 leading-none">
+                                ▲{player.rankChange}
+                              </span>
+                            ) : player.rankChange < 0 ? (
+                              <span className="text-[9px] font-black text-red-400 leading-none">
+                                ▼{Math.abs(player.rankChange)}
+                              </span>
+                            ) : (
+                              <span className="text-[9px] font-black text-slate-600 leading-none">—</span>
+                            )
+                          )}
+                        </div>
+                        {player.nickname && (
+                          <span className="text-[10px] font-semibold text-slate-500 italic normal-case leading-none">
+                            {player.nickname}
+                          </span>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="text-center p-3 font-bold text-slate-200">
