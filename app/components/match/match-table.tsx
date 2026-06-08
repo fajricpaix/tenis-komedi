@@ -4,6 +4,7 @@ import type { TeamKey } from "@components/home/tab";
 import { useState, useMemo } from "react";
 import MatchDetailModal, { type MatchForModal } from "@components/match/match-detail-modal";
 import MatchEditModal from "@components/match/match-edit-modal";
+import DownloadMatchesModal from "@components/match/download-matches-modal";
 import { useIsAdmin } from "@utils/auth";
 
 type Match = MatchForModal;
@@ -39,6 +40,12 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
   const [isDeleting, setIsDeleting] = useState(false);
   const [selectedMatch, setSelectedMatch] = useState<Match | null>(null);
   const [editMatch, setEditMatch] = useState<Match | null>(null);
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
+
+  const hasDownloadableDates = useMemo(
+    () => matches.some((m) => m.matchDate && m.photoUrl),
+    [matches]
+  );
 
   const filteredMatches = useMemo(() => {
     setPage(1);
@@ -94,13 +101,24 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
           <h2 className="text-sm md:text-xl font-black text-slate-100">
             Pertandingan {activeTab}
           </h2>
-          <input
-            type="text"
-            placeholder="Cari pemain..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
-          />
+          <div className="flex items-center gap-2">
+            <input
+              type="text"
+              placeholder="Cari pemain..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+            />
+            {(hasDownloadableDates && isAdmin) && (
+              <button
+                onClick={() => setIsDownloadOpen(true)}
+                title="Download foto pertandingan harian"
+                className="p-2 h-8 w-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 bg-amber-500/10 border border-amber-500/25 hover:bg-amber-500/20 hover:-translate-y-0.5 cursor-pointer"
+              >
+                📥
+              </button>
+            )}
+          </div>
         </div>
 
         <div className="overflow-x-auto">
@@ -268,6 +286,14 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
           players={players}
           onClose={() => setEditMatch(null)}
           onSaved={() => { setEditMatch(null); onMatchEdited?.(); }}
+        />
+      )}
+
+      {/* Download Hasil Pertandingan Modal */}
+      {isDownloadOpen && (
+        <DownloadMatchesModal
+          matches={matches}
+          onClose={() => setIsDownloadOpen(false)}
         />
       )}
     </>
