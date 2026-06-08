@@ -5,6 +5,7 @@ import type { TeamKey } from "@components/home/tab";
 import Link from "next/link";
 import { useIsAdmin } from "@utils/auth";
 import PlayerDetailModal from "@components/players/players-detail-modal";
+import DownloadPlayersModal from "@components/players/download-players-modal";
 
 type Player = {
   id: number;
@@ -12,6 +13,18 @@ type Player = {
   nickname?: string;
   gender: "Pria" | "Wanita";
   imgUrl?: string;
+  birthDate?: string;
+  birthPlace?: string;
+  startYear?: string;
+  reason?: string;
+  skills?: {
+    forehand: number;
+    backhand: number;
+    service: number;
+    volley: number;
+    slice: number;
+    loop: number;
+  };
 };
 
 type Match = {
@@ -55,6 +68,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
   const [isDeleting, setIsDeleting] = useState(false);
   const [detailPlayerId, setDetailPlayerId] = useState<number | null>(null);
   const [isRendering, setIsRendering] = useState(false);
+  const [isDownloadCardsOpen, setIsDownloadCardsOpen] = useState(false);
 
   const handleRenderTable = async () => {
     const newTab = window.open("", "_blank");
@@ -178,13 +192,23 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
             className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
           />
           {isAdmin && (
-            <button 
-              onClick={handleRenderTable}
-              disabled={isRendering}
-              title="Buat jadi image"
-              className="p-3 h-8 w-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]">
-                {isRendering ? "⏳" : "🖼️"}
-            </button>
+            <>
+              <button
+                onClick={() => setIsDownloadCardsOpen(true)}
+                title="Download semua kartu pemain"
+                disabled={players.length === 0}
+                className="p-3 h-8 w-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 bg-emerald-500/10 border border-emerald-500/25 hover:bg-emerald-500/20 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
+              >
+                📥
+              </button>
+              <button
+                onClick={handleRenderTable}
+                disabled={isRendering}
+                title="Buat jadi image"
+                className="p-3 h-8 w-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 bg-linear-to-r from-emerald-600 to-emerald-500 text-white shadow-lg shadow-emerald-900/50 disabled:opacity-50 disabled:cursor-not-allowed enabled:cursor-pointer enabled:hover:scale-[1.02] enabled:active:scale-[0.98]">
+                  {isRendering ? "⏳" : "🖼️"}
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -386,6 +410,13 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
       <PlayerDetailModal
         playerId={detailPlayerId}
         onClose={() => setDetailPlayerId(null)}
+      />
+    )}
+
+    {isDownloadCardsOpen && (
+      <DownloadPlayersModal
+        players={players}
+        onClose={() => setIsDownloadCardsOpen(false)}
       />
     )}
     </>
