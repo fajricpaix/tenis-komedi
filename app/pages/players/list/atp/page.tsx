@@ -138,7 +138,7 @@ export default function AtpRankingPage() {
                       </div>
                     )}
                     <div className="min-w-0">
-                      <p className="font-bold text-sm text-slate-100 capitalize leading-tight truncate">{player.name}</p>
+                      <p className="font-bold text-sm text-slate-100 capitalize leading-tight truncate line-clamp-1">{player.name}</p>
                       {player.nickname && (
                         <p className="text-[11px] text-sky-400/60 italic leading-none mt-0.5 truncate capitalize">{player.nickname}</p>
                       )}
@@ -187,7 +187,7 @@ export default function AtpRankingPage() {
                     </div>
 
                     {/* Name */}
-                    <h3 className="text-center font-black text-slate-100 capitalize leading-snug mt-1 mb-1 group-hover:text-sky-300 transition-colors max-h-6 overflow-hidden">
+                    <h3 className="text-center font-black text-slate-100 capitalize leading-snug mt-1 mb-1 group-hover:text-sky-300 transition-colors line-clamp-1">
                       {player.name}
                     </h3>
 

@@ -49,7 +49,7 @@ export default function BirthdayCards({ players }: Props) {
           <h2 className="font-bold text-slate-100 md:text-xl">Ulang Tahun Terdekat</h2>
         </div>
 
-        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:justify-center pb-2">
+        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:justify-center pb-2 md:pb-0">
           {upcomingBirthdays.map((player, index) => {
             const { label, className } = getBirthdayLabel(player.daysUntil);
             return (
@@ -64,7 +64,7 @@ export default function BirthdayCards({ players }: Props) {
                   className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
                 />
                 <div className="text-center">
-                  <p className="font-semibold text-slate-100 text-sm leading-tight line-clamp-2 capitalize">{player.name}</p>
+                  <p className="font-semibold text-slate-100 text-sm leading-tight line-clamp-1 capitalize">{player.name}</p>
                   <p className="text-slate-500 text-xs mt-1">{formatBirthDate(player.birthDate)}</p>
                 </div>
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full border ${className}`}>{label}</span>

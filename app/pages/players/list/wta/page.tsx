@@ -143,7 +143,7 @@ export default function WtaRankingPage() {
                     </div>
                   )}
                   <div className="min-w-0">
-                    <p className="font-bold text-sm text-slate-100 capitalize leading-tight truncate">{player.name}</p>
+                    <p className="font-bold text-sm text-slate-100 capitalize leading-tight truncate line-clamp-1">{player.name}</p>
                     {player.nickname && (
                       <p className="text-[11px] text-pink-400/60 italic leading-none mt-0.5 truncate capitalize">{player.nickname}</p>
                     )}
@@ -204,7 +204,7 @@ export default function WtaRankingPage() {
                 {/* Info area */}
                 <div className="px-3 pt-3 pb-3.5 bg-linear-to-b from-slate-900 to-slate-950">
                   {/* Name */}
-                  <h3 className="font-black text-slate-100 text-sm capitalize leading-snug group-hover:text-pink-300 transition-colors max-h-5 overflow-hidden">
+                  <h3 className="font-black text-slate-100 text-sm capitalize leading-snug group-hover:text-pink-300 transition-colors line-clamp-1">
                     {player.name}
                   </h3>
 

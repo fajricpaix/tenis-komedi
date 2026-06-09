@@ -215,7 +215,7 @@ export default function HomeContent() {
         </div>
       </div>
 
-      <TournamentTab activeTab={tournamentTab} onSelect={setTournamentTab} />
+      {/* <TournamentTab activeTab={tournamentTab} onSelect={setTournamentTab} /> */}
 
       {toast && (
         <div
