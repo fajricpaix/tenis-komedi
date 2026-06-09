@@ -56,7 +56,7 @@ export default function BirthdayCards({ players }: Props) {
               <button
                 key={player.id ?? index}
                 onClick={() => setSelectedPlayerId(player.id)}
-                className="shrink-0 w-44 md:w-full rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 hover:border-blue-400 hover:bg-blue-950 transition-colors cursor-pointer text-left"
+                className={`shrink-0 w-44 md:w-full rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 ${player.gender === 'Pria' ? 'hover:border-blue-400 hover:bg-blue-950' : 'hover:border-pink-400 hover:bg-pink-900' } transition-colors cursor-pointer text-left`}
               >
                 <img
                   src={player.imgUrl || (player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg")}
