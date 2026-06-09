@@ -152,7 +152,7 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
                 </tr>
               ) : (
                 pagedMatches.map((match) => (
-                  <tr key={match.id} className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150">
+                  <tr key={match.id} className={`border-b border-white/5 last:border-0 ${activeTab === "Pria" ? 'hover:bg-sky-950' : 'hover:bg-pink-950' } transition-colors duration-150`}>
                     <td className="p-3 w-80 md:w-56">
                       <div className="flex items-center justify-center gap-x-4">
                         <span className={`w-32 capitalize font-semibold text-right ${match.winner === match.player1 ? "text-emerald-400" : "text-slate-300"}`}>

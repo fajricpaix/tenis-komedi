@@ -247,7 +247,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
               pagedPlayers.map((player, index) => (
                 <tr
                   key={player.id}
-                  className="border-b border-white/5 last:border-0 hover:bg-emerald-500/5 transition-colors duration-150"
+                  className={`border-b border-white/5 last:border-0 ${activeTab === "Pria" ? 'hover:bg-sky-950' : 'hover:bg-pink-950' } transition-colors duration-150`}
                 >
                   <td className="p-3 font-extrabold text-slate-500 text-center">
                     {(page - 1) * PAGE_SIZE + index + 1}.
