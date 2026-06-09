@@ -17,8 +17,8 @@ const navItems: NavItem[] = [
     label: "Daftar Pemain",
     accentColor: "sky",
     children: [
-      { label: "ATP Ranking",  href: "/players/list/atp", badge: "Pria",   color: "sky"  },
-      { label: "WTA Ranking",  href: "/players/list/wta", badge: "Wanita", color: "pink" },
+      { label: "ATP Ranking",  href: "/players/list/atp", color: "sky"  },
+      { label: "WTA Ranking",  href: "/players/list/wta", color: "pink" },
     ],
   },
   {
@@ -42,9 +42,9 @@ const subHoverClass: Record<SubItem["color"], string> = {
   emerald: "hover:bg-emerald-500/8 hover:text-emerald-300",
 };
 const subBadgeClass: Record<SubItem["color"], string> = {
-  sky:     "bg-sky-500/15 border-sky-500/25 text-sky-400",
-  pink:    "bg-pink-500/15 border-pink-500/25 text-pink-400",
-  emerald: "bg-emerald-500/15 border-emerald-500/25 text-emerald-300",
+  sky:     "text-sky-400",
+  pink:    "text-pink-400",
+  emerald: "text-emerald-300",
 };
 
 export default function Header() {
@@ -132,7 +132,7 @@ export default function Header() {
                             className={`flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-bold transition-colors ${
                               pathname === sub.href
                                 ? subActiveClass[sub.color]
-                                : `text-slate-300 hover:bg-white/5 ${subHoverClass[sub.color]}`
+                                : `${subBadgeClass[sub.color]} ${subHoverClass[sub.color]}`
                             }`}
                           >
                             {sub.label}
