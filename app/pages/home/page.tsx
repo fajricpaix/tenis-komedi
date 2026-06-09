@@ -8,7 +8,7 @@ import MatchTable from "@components/match/match-table";
 import TournamentTab, { type TournamentTabKey } from "@components/home/tournament-tab";
 import TournamentTable from "@components/home/tournament-table";
 import Link from "next/link";
-import { getTekoData, parseSetScore, type Player, type Match } from "../utils/fetcher";
+import { getTekoData, parseSetScore, type Player, type Match } from "@utils/fetcher";
 import BirthdayCards from "@components/home/birthday-cards";
 import EventCard from "@components/home/event";
 import { useIsAdmin } from "@utils/auth";
