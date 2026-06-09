@@ -193,14 +193,14 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
           />
           {isAdmin && (
             <>
-              <button
+              {/* <button
                 onClick={() => setIsDownloadCardsOpen(true)}
                 title="Download semua kartu pemain"
                 disabled={players.length === 0}
                 className="p-3 h-8 w-8 flex items-center justify-center rounded-lg text-sm transition-all duration-200 bg-emerald-500/10 border border-emerald-500/25 hover:bg-emerald-500/20 hover:-translate-y-0.5 disabled:opacity-40 disabled:cursor-not-allowed cursor-pointer"
               >
                 📥
-              </button>
+              </button> */}
               <button
                 onClick={handleRenderTable}
                 disabled={isRendering}
