@@ -10,13 +10,14 @@ export default function WimblegoonEvent() {
   const [rulesOpen, setRulesOpen] = useState(false);
 
   return (
-    <div className="md:w-1/3 md:mb-6 mx-auto px-6">
+    <div className="md:w-1/2 md:mb-6 mx-auto p-6">
 
-      <Link 
-        href="/"
-        className="mb-4 block text-emerald-500 hover:text-emerald-200 transition-colors cursor-pointer">
+      <Link
+          href="/"
+          className="inline-flex items-center mb-3 font-semibold text-white transition hover:text-emerald-400"
+        >
           ← Kembali
-      </Link>
+        </Link>
 
       <div className="mb-6 md:mb-0 rounded-2xl overflow-hidden border border-white/10 shadow-2xl shadow-emerald-900/20 bg-slate-900">
         {/* Hero Photo */}

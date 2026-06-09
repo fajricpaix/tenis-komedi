@@ -200,7 +200,7 @@ export default function AddPlayerPage() {
   if (!authChecked || !isAdmin) return null;
 
   return (
-    <main className="px-6 py-10 mx-auto max-w-6xl">
+    <main className="p-6 mx-auto max-w-6xl">
 
       {/* Sticky Toast Notification */}
       {toast && (

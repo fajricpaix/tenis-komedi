@@ -181,7 +181,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
       <div className="flex items-center justify-between gap-4 px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
         <h2 className="text-sm md:text-base font-black leading-5 text-emerald-400">
           {activeTab === "Pria" ? "Ranking ATP" : "Ranking WTA"} 
-          <small className="text-xs font-semibold ml-1.5 -mt-2 text-slate-100">{activeTab === "Pria" ? "Aku Teko Pria" : "Wanita Teko Aku"}</small>
+          <small className="hidden md:blocktext-xs font-semibold ml-1.5 -mt-2 text-slate-100">{activeTab === "Pria" ? "Aku Teko Pria" : "Wanita Teko Aku"}</small>
         </h2>
         <div className="flex items-center gap-2" data-render-hide>
           <input
