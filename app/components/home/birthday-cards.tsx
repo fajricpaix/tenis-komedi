@@ -72,7 +72,7 @@ export default function BirthdayCards({ players }: Props) {
                   <p className="text-xs">
                     Umurnya{" "}
                     <span className="font-semibold text-sm text-fuchsia-400">
-                      {player.birthDate ? `${new Date().getFullYear() - new Date(player.birthDate).getFullYear() + 1} tahun` : "Umur tidak diketahui"}
+                      {player.birthDate ? `${new Date().getFullYear() - new Date(player.birthDate).getFullYear()} tahun` : "Umur tidak diketahui"}
                     </span>
                   </p>
                 </div>
