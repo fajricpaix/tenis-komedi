@@ -83,10 +83,10 @@ export default function WtaRankingPage() {
   const rankedPlayers = useMemo(() => buildRankedPlayers(players, matches), [players, matches]);
 
   return (
-    <div className="px-4 py-8 max-w-7xl mx-auto">
+    <div className="px-4 py-6 max-w-7xl mx-auto">
 
       {/* Page Header */}
-      <div className="mb-8 flex items-end justify-between">
+      <div className="mb-6 flex items-end justify-between">
         <div>
           <div className="flex items-center gap-3 mb-1.5">
             <div className="w-1 h-9 rounded-full bg-linear-to-b from-pink-400 to-fuchsia-600" />

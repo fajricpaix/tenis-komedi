@@ -6,44 +6,55 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useIsAdmin, logout } from "@utils/auth";
 
-type SubItem = { label: string; href: string; badge?: string; color: "sky" | "pink" };
+type SubItem = { label: string; href: string; badge?: string; color: "sky" | "pink" | "emerald" };
 type NavItem =
   | { label: string; href: string; children?: never }
-  | { label: string; href?: never; children: SubItem[] };
+  | { label: string; href?: never; children: SubItem[]; accentColor: SubItem["color"] };
 
 const navItems: NavItem[] = [
   { label: "Beranda", href: "/" },
   {
     label: "Daftar Pemain",
+    accentColor: "sky",
     children: [
-      { label: "ATP Ranking", href: "/players/list/atp", badge: "Pria",   color: "sky"  },
-      { label: "WTA Ranking", href: "/players/list/wta", badge: "Wanita", color: "pink" },
+      { label: "ATP Ranking",  href: "/players/list/atp", badge: "Pria",   color: "sky"  },
+      { label: "WTA Ranking",  href: "/players/list/wta", badge: "Wanita", color: "pink" },
     ],
   },
-  { label: "Event", href: "/events" },
+  {
+    label: "Event",
+    accentColor: "emerald",
+    children: [
+      { label: "Wimblegoon",        href: "/events/wimblegoon",  color: "emerald" },
+      // { label: "Ulang Tahun TeKo",  href: "/events/ultah-teko",  color: "emerald" },
+    ],
+  },
 ];
 
 const subActiveClass: Record<SubItem["color"], string> = {
-  sky:  "bg-sky-500/15 text-sky-300 border border-sky-500/25",
-  pink: "bg-pink-500/15 text-pink-400 border border-pink-500/25",
+  sky:     "bg-sky-500/15 text-sky-300 border border-sky-500/25",
+  pink:    "bg-pink-500/15 text-pink-400 border border-pink-500/25",
+  emerald: "bg-emerald-500/15 text-emerald-300 border border-emerald-500/25",
 };
 const subHoverClass: Record<SubItem["color"], string> = {
-  sky:  "hover:bg-sky-500/8 hover:text-sky-300",
-  pink: "hover:bg-pink-500/8 hover:text-pink-400",
+  sky:     "hover:bg-sky-500/8 hover:text-sky-300",
+  pink:    "hover:bg-pink-500/8 hover:text-pink-400",
+  emerald: "hover:bg-emerald-500/8 hover:text-emerald-300",
 };
 const subBadgeClass: Record<SubItem["color"], string> = {
-  sky:  "bg-sky-500/15 border-sky-500/25 text-sky-400",
-  pink: "bg-pink-500/15 border-pink-500/25 text-pink-400",
+  sky:     "bg-sky-500/15 border-sky-500/25 text-sky-400",
+  pink:    "bg-pink-500/15 border-pink-500/25 text-pink-400",
+  emerald: "bg-emerald-500/15 border-emerald-500/25 text-emerald-300",
 };
 
 export default function Header() {
   const isAdmin = useIsAdmin();
   const router = useRouter();
   const pathname = usePathname();
-  const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
-  const [sidebarSubOpen, setSidebarSubOpen] = useState(false);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const [sidebarOpen, setSidebarOpen]       = useState(false);
+  const [openDropdown, setOpenDropdown]     = useState<string | null>(null);
+  const [openSidebarSub, setOpenSidebarSub] = useState<string | null>(null);
+  const navRef = useRef<HTMLElement>(null);
 
   const handleLogout = () => {
     logout();
@@ -53,32 +64,22 @@ export default function Header() {
 
   const closeSidebar = () => {
     setSidebarOpen(false);
-    setSidebarSubOpen(false);
+    setOpenSidebarSub(null);
   };
 
-  // Tutup dropdown desktop saat klik di luar
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
-        setDropdownOpen(false);
+      if (navRef.current && !navRef.current.contains(e.target as Node)) {
+        setOpenDropdown(null);
       }
     };
     document.addEventListener("mousedown", handleClick);
     return () => document.removeEventListener("mousedown", handleClick);
   }, []);
 
-  // Tutup dropdown saat pindah halaman
   useEffect(() => {
-    setDropdownOpen(false);
+    setOpenDropdown(null);
   }, [pathname]);
-
-  const isPlayersActive = pathname.startsWith("/players");
-  const activeSubColor = pathname === "/players/list/wta" ? "pink" : "sky";
-  const parentActiveClass = isPlayersActive
-    ? activeSubColor === "pink"
-      ? "bg-pink-500/15 text-pink-300 border border-pink-500/25"
-      : "bg-sky-500/15 text-sky-300 border border-sky-500/25"
-    : "";
 
   return (
     <>
@@ -95,31 +96,33 @@ export default function Header() {
           </Link>
 
           {/* Desktop Nav */}
-          <nav className="hidden md:flex items-center gap-1">
+          <nav ref={navRef} className="hidden md:flex items-center gap-1">
             {navItems.map((item) => {
               if (item.children) {
+                const isOpen      = openDropdown === item.label;
+                const activeChild = item.children.find((sub) => pathname === sub.href);
+                const parentColor = activeChild?.color ?? item.accentColor;
+                const parentClass = activeChild || isOpen
+                  ? subActiveClass[parentColor]
+                  : "text-slate-300 hover:text-emerald-300 hover:bg-white/5";
+
                 return (
-                  <div key={item.label} className="relative" ref={dropdownRef}>
+                  <div key={item.label} className="relative">
                     <button
-                      onClick={() => setDropdownOpen((v) => !v)}
-                      className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer ${
-                        isPlayersActive || dropdownOpen
-                          ? parentActiveClass
-                          : "text-slate-300 hover:text-emerald-300 hover:bg-white/5"
-                      }`}
+                      onClick={() => setOpenDropdown((v) => v === item.label ? null : item.label)}
+                      className={`flex items-center gap-1.5 px-4 py-2 rounded-xl text-sm font-bold transition-colors cursor-pointer ${parentClass}`}
                     >
                       {item.label}
                       <svg
-                        className={`w-3.5 h-3.5 transition-transform duration-200 ${dropdownOpen ? "rotate-180" : ""}`}
+                        className={`w-3.5 h-3.5 transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                         fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
                       >
                         <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                       </svg>
                     </button>
 
-                    {/* Dropdown panel */}
                     <div className={`absolute top-full right-0 mt-2 w-52 rounded-xl bg-slate-900 border border-white/10 shadow-2xl shadow-black/50 overflow-hidden transition-all duration-200 origin-top ${
-                      dropdownOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"
+                      isOpen ? "opacity-100 scale-y-100 pointer-events-auto" : "opacity-0 scale-y-95 pointer-events-none"
                     }`}>
                       <div className="p-1.5">
                         {item.children.map((sub) => (
@@ -220,28 +223,29 @@ export default function Header() {
         <nav className="flex-1 px-4 py-6 flex flex-col gap-1 overflow-y-auto">
           {navItems.map((item) => {
             if (item.children) {
+              const isSubOpen   = openSidebarSub === item.label;
+              const activeChild = item.children.find((sub) => pathname === sub.href);
+              const parentColor = activeChild?.color ?? item.accentColor;
+              const parentClass = activeChild
+                ? subActiveClass[parentColor]
+                : "text-slate-300 hover:text-emerald-300 hover:bg-white/5";
+
               return (
                 <div key={item.label}>
-                  {/* Parent toggle */}
                   <button
-                    onClick={() => setSidebarSubOpen((v) => !v)}
-                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-colors cursor-pointer ${
-                      isPlayersActive
-                        ? parentActiveClass
-                        : "text-slate-300 hover:text-emerald-300 hover:bg-white/5"
-                    }`}
+                    onClick={() => setOpenSidebarSub((v) => v === item.label ? null : item.label)}
+                    className={`w-full flex items-center justify-between px-4 py-3.5 rounded-xl text-sm font-bold transition-colors cursor-pointer ${parentClass}`}
                   >
                     {item.label}
                     <svg
-                      className={`w-4 h-4 transition-transform duration-200 ${sidebarSubOpen ? "rotate-180" : ""}`}
+                      className={`w-4 h-4 transition-transform duration-200 ${isSubOpen ? "rotate-180" : ""}`}
                       fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}
                     >
                       <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
                     </svg>
                   </button>
 
-                  {/* Sub-items accordion */}
-                  <div className={`overflow-hidden transition-all duration-300 ${sidebarSubOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
+                  <div className={`overflow-hidden transition-all duration-300 ${isSubOpen ? "max-h-40 opacity-100" : "max-h-0 opacity-0"}`}>
                     <div className="ml-4 mt-1 pl-4 border-l-2 border-emerald-500/30 flex flex-col gap-1 pb-1">
                       {item.children.map((sub) => (
                         <Link

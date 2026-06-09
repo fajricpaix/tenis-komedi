@@ -3,9 +3,10 @@
 import { useState } from "react";
 import Image from "next/image";
 import RulesModal from "@components/home/rule-of-wimblegoon";
+import Link from "next/link";
 
 export default function EventCard() {
-  const [expanded, setExpanded] = useState(false);
+
   const [rulesOpen, setRulesOpen] = useState(false);
 
   return (
@@ -19,7 +20,7 @@ export default function EventCard() {
         {/* Hero Photo */}
         <div className="relative w-full aspect-video md:aspect-video">
           <Image
-            src="/events/wimblegoon2026.jpg"
+            src="https://fjmioptzuenhifplfiii.supabase.co/storage/v1/object/public/events/wimblegoon.jpg"
             alt="TeKo Wimblegoon 2026"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
@@ -51,77 +52,15 @@ export default function EventCard() {
             <p className="text-xs font-bold text-emerald-400">27 Juni 2026 🏆</p>
           </div>
 
-          <button
-            onClick={() => setRulesOpen(true)}
-            className="col-span-3 mt-2 text-xs text-center text-emerald-400 hover:text-emerald-300 transition-colors capitalize flex gap-x-1 justify-center cursor-pointer"
-          >
-            ℹ️ <span className="underline">Aturan main wimblegoon</span>
-          </button>
         </div>
 
-        {/* Toggle Detail */}
-        <button
-          onClick={() => setExpanded((v) => !v)}
+        {/* Link Detail */}
+        <Link
+          href="/events/wimblegoon"
           className="w-full px-5 py-3 text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2 cursor-pointer capitalize"
         >
-          {expanded ? "Sembunyikan detail ▲" : "Lihat detail event ▼"}
-        </button>
-
-        {expanded && (
-          <div className="px-5 pb-5 space-y-4 text-sm text-slate-300">
-            <p>
-              Siapkan raket terbaikmu dan bergabung di turnamen tenis paling seru tahun ini!
-              Bukan cuma soal menang dan kalah, tapi juga soal kebersamaan, sportivitas, dan tentunya banyak tawa di lapangan. 😆
-            </p>
-
-            <div className="rounded-xl bg-white/3 border border-white/10 p-4 space-y-2">
-              <p className="text-xs font-black uppercase tracking-widest text-emerald-400">📅 Jadwal Turnamen</p>
-              <div className="space-y-1.5 text-xs">
-                <div className="flex gap-3">
-                  <span className="text-slate-500 shrink-0">🎾 Penyisihan & Poin</span>
-                  <span className="font-bold text-slate-200">4 – 24 Juni 2026</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="text-slate-500 shrink-0">🎾 Semifinal</span>
-                  <span className="font-bold text-slate-200">26 Juni 2026</span>
-                </div>
-                <div className="flex gap-3">
-                  <span className="text-slate-500 shrink-0">🏆 Final</span>
-                  <span className="font-bold text-emerald-400">27 Juni 2026</span>
-                </div>
-              </div>
-              <p className="text-[10px] text-slate-500 italic pt-1">
-                Final bersamaan dengan acara Ulang Tahun & Launching Jersey Tenis Komedi
-              </p>
-            </div>
-
-            <div className="rounded-xl bg-white/3 border border-white/10 p-4 space-y-2">
-              <p className="text-xs font-black uppercase tracking-widest text-emerald-400">👥 Kategori</p>
-              <div className="flex gap-2 flex-wrap">
-                <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-bold">Single Bapak-Bapak</span>
-                <span className="px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-300 text-xs font-bold">Single Ibu-Ibu</span>
-              </div>
-            </div>
-
-            <div className="rounded-xl bg-white/3 border border-white/10 p-4 space-y-1.5 text-xs">
-              <p className="font-black uppercase tracking-widest text-emerald-400 mb-2">🔥 Format Liga</p>
-              <p>Kumpulkan poin sebanyak-banyaknya untuk mengamankan tempat di babak semifinal!</p>
-              <div className="pt-2 space-y-1 text-slate-300">
-                <p>✅ Main serius boleh</p>
-                <p>✅ Ngakak lebih boleh</p>
-                <p>✅ Persahabatan nomor satu</p>
-              </div>
-            </div>
-
-            <p className="text-center text-xs text-slate-500 italic">
-              🎾😄 Siap Raket, Siap Ketawa!
-            </p>
-
-            <p className="text-[10px] text-slate-600 leading-relaxed">
-              #TeKoWimblegoon2026 #TenisKomedi #SedikitKompetisiBanyakinHahaHihi #GameSetHaha #SingleBapakBapak #SingleIbuIbu #TenisLagoon #FunTournament #TennisCommunity #TenisIndonesia
-            </p>
-          </div>
-        )}
+          Lihat detail event
+        </Link>
       </div>
 
       {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
