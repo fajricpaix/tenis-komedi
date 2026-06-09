@@ -268,7 +268,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                         )}
                       </div>
                       <div className="flex flex-col gap-0.5">
-                        <div className="flex gap-x-2 items-center">
+                        <div className="flex gap-x-2 items-center capitalize">
                           {player.name}
                           {player.rankChange !== undefined && player.matchesPlayed > 0 && (
                             player.rankChange > 0 ? (
@@ -285,7 +285,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                           )}
                         </div>
                         {player.nickname && (
-                          <span className="text-[10px] font-semibold text-slate-500 italic normal-case leading-none">
+                          <span className="text-[10px] font-semibold text-slate-500 italic leading-none capitalize">
                             {player.nickname}
                           </span>
                         )}

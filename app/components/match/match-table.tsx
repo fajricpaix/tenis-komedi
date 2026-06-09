@@ -49,10 +49,15 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
 
   const filteredMatches = useMemo(() => {
     setPage(1);
-    const reversed = [...matches].reverse();
-    if (!searchTerm) return reversed;
+    const sorted = [...matches].sort((a, b) => {
+      const da = a.matchDate ?? "";
+      const db = b.matchDate ?? "";
+      if (db !== da) return db < da ? -1 : 1;
+      return b.id - a.id;
+    });
+    if (!searchTerm) return sorted;
     const lower = searchTerm.toLowerCase();
-    return reversed.filter(
+    return sorted.filter(
       (m) => m.player1.toLowerCase().includes(lower) || m.player2.toLowerCase().includes(lower)
     );
   // eslint-disable-next-line react-hooks/exhaustive-deps
