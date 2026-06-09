@@ -19,11 +19,11 @@ export default function EventCard() {
         {/* Hero Photo */}
         <div className="relative w-full aspect-video md:aspect-video">
           <Image
-            src="/events/wimblegoon.jpg"
+            src="/events/wimblegoon2026.jpg"
             alt="TeKo Wimblegoon 2026"
             fill
             sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
+            className="object-top object-cover"
             priority
           />
           <div className="absolute inset-0 bg-linear-to-t from-slate-900 via-slate-900/40 to-transparent" />
