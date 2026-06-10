@@ -152,6 +152,46 @@ export default function WtaRankingPage() {
         <div className="text-center py-20 text-slate-500">Belum ada data pemain wanita 🏜️</div>
       ) : (
         <>
+          {/* ── Race to Champions 2026 ─────────────────────────── */}
+          <div className="mb-7 rounded-2xl border border-pink-500/20 bg-pink-500/5 overflow-hidden">
+            {/* Header */}
+            <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-pink-500/10">
+              <div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-pink-400 mb-0.5">🏁 Race to Champions 2026</p>
+                <p className="text-xs text-slate-400">8 besar akan adu kekuatan memperebutkan gelar</p>
+              </div>
+              <span className="shrink-0 text-xs font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2.5 py-1 rounded-full whitespace-nowrap">
+                🏆 PALING KOMEDI
+              </span>
+            </div>
+
+            {/* 8 pemain */}
+            <div className="p-4 grid grid-cols-4 gap-x-2 gap-y-4">
+              {rankedPlayers.slice(0, 8).map((player) => (
+                <div key={player.id} className="flex flex-col items-center gap-1">
+                  <div className="relative">
+                    {player.imgUrl ? (
+                      <img src={player.imgUrl} alt={player.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-pink-500/40 shadow-md"
+                      />
+                    ) : (
+                      <div className="w-12 h-12 rounded-full bg-pink-500/10 border-2 border-pink-500/30 flex items-center justify-center">
+                        <span className="text-pink-400 font-black text-base">{player.name.charAt(0).toUpperCase()}</span>
+                      </div>
+                    )}
+                    <span className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center border-2 border-slate-950 bg-pink-500 text-white`}>
+                      {player.rank}
+                    </span>
+                  </div>
+                  <p className="text-[10px] font-bold text-slate-300 capitalize text-center truncate w-full leading-tight px-1">
+                    {player.name.split(" ")[0]}
+                  </p>
+                  <p className="text-[10px] font-black text-pink-400 tabular-nums">{(player.points * 100).toLocaleString()}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* ── MOBILE: Table ────────────────────────────────────── */}
           <div className="md:hidden rounded-2xl overflow-hidden border border-white/8 bg-slate-900/60 shadow-xl">
             {/* Header */}
