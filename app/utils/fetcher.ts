@@ -40,6 +40,7 @@ export type Match = {
 
 export type Champion = {
 	category: "atp" | "wta";
+	position: 1 | 2;
 	idPlayer: string;
 	name: string;
 };
