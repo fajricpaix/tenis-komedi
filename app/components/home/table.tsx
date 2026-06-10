@@ -322,12 +322,12 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
                             className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs uppercase border bg-blue-500/10 border-blue-500/25 hover:bg-blue-500/20 hover:-translate-y-0.5 transition-all duration-150">
                             ✏️
                           </Link>
-                          <button
+                          {/* <button
                             title="Delete Pemain"
                             onClick={() => handleDeleteClick(player)}
                             className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs uppercase border bg-red-500/10 border-red-500/25 hover:bg-red-500/20 hover:-translate-y-0.5 transition-all duration-150">
                             🗑️
-                          </button>
+                          </button> */}
                         </>
                       )}
                     </div>

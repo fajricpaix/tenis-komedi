@@ -30,7 +30,7 @@ type DeleteConfirmData = {
   photoUrl?: string;
 } | null;
 
-const PAGE_SIZE = 15;
+const PAGE_SIZE = 10;
 
 export default function MatchTable({ matches, players = [], activeTab, onMatchDeleted, onMatchEdited }: MatchTableProps) {
   const isAdmin = useIsAdmin();
@@ -193,12 +193,12 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
                               className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs uppercase border bg-blue-500/10 border-blue-500/25 hover:bg-blue-500/20 hover:-translate-y-0.5 transition-all duration-150">
                               ✏️
                             </button>
-                            <button
+                            {/* <button
                               onClick={() => handleDeleteClick(match)}
                               className="px-2 py-1 rounded-lg cursor-pointer font-bold text-xs border bg-red-500/10 border-red-500/25 hover:bg-red-500/20 hover:-translate-y-0.5 transition-all duration-150"
                             >
                               🗑️
-                            </button>
+                            </button> */}
                           </>
                         )}
                       </div>
