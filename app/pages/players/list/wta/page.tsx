@@ -158,7 +158,7 @@ export default function WtaRankingPage() {
             <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-pink-500/10">
               <div>
                 <p className="text-[10px] font-black uppercase tracking-widest text-pink-400 mb-0.5">🏁 Race to Champions 2026</p>
-                <p className="text-xs text-slate-400">8 besar akan adu kekuatan memperebutkan gelar</p>
+                <p className="text-xs text-slate-400">4 besar akan adu kekuatan memperebutkan gelar</p>
               </div>
               <span className="shrink-0 text-xs font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2.5 py-1 rounded-full whitespace-nowrap">
                 🏆 PALING KOMEDI
@@ -167,7 +167,7 @@ export default function WtaRankingPage() {
 
             {/* 8 pemain */}
             <div className="p-4 grid grid-cols-4 gap-x-2 gap-y-4">
-              {rankedPlayers.slice(0, 8).map((player) => (
+              {rankedPlayers.slice(0, 4).map((player) => (
                 <div key={player.id} className="flex flex-col items-center gap-1">
                   <div className="relative">
                     {player.imgUrl ? (
@@ -184,7 +184,7 @@ export default function WtaRankingPage() {
                     </span>
                   </div>
                   <p className="text-[10px] font-bold text-slate-300 capitalize text-center truncate w-full leading-tight px-1">
-                    {player.name.split(" ")[0]}
+                    {player.name}
                   </p>
                   <p className="text-[10px] font-black text-pink-400 tabular-nums">{(player.points * 100).toLocaleString()}</p>
                 </div>
