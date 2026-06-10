@@ -29,7 +29,7 @@ export async function POST(request: Request) {
     }
 
     const db = getDatabase(app);
-    const matchesRef = ref(db, "tenis-komedi/1/matches");
+    const matchesRef = ref(db, "tenis-komedi/1/tournaments/0/matches");
 
     const snapshot = await get(matchesRef);
     let currentMatches: typeof matchData[] = [];
@@ -97,7 +97,7 @@ export async function PATCH(request: Request) {
     }
 
     const db = getDatabase(app);
-    const matchesRef = ref(db, "tenis-komedi/1/matches");
+    const matchesRef = ref(db, "tenis-komedi/1/tournaments/0/matches");
     const snapshot = await get(matchesRef);
 
     if (!snapshot.exists()) {
@@ -159,7 +159,7 @@ export async function DELETE(request: Request) {
     }
 
     const db = getDatabase(app);
-    const matchesRef = ref(db, "tenis-komedi/1/matches");
+    const matchesRef = ref(db, "tenis-komedi/1/tournaments/0/matches");
 
     const snapshot = await get(matchesRef);
     if (!snapshot.exists()) {

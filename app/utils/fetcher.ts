@@ -38,9 +38,22 @@ export type Match = {
 	matchDate?: string;
 };
 
+export type Champion = {
+	category: "atp" | "wta";
+	idPlayer: string;
+	name: string;
+};
+
+export type Tournament = {
+	title: string;
+	matches: Match[];
+	champion?: Champion[];
+};
+
 export type TekoData = {
 	players: Player[];
 	matches: Match[];
+	tournaments: Tournament[];
 };
 
 export function parseSetScore(value: string): [number, number] {
@@ -48,27 +61,36 @@ export function parseSetScore(value: string): [number, number] {
 	return Number.isFinite(s1) && Number.isFinite(s2) ? [s1, s2] : [0, 0];
 }
 
+function toArray<T>(raw: unknown): T[] {
+	if (!raw) return [];
+	if (Array.isArray(raw)) return (raw as T[]).filter(Boolean);
+	return (Object.values(raw) as T[]).filter(Boolean);
+}
+
 export async function getTekoData(): Promise<TekoData> {
 	try {
 		const dbRef = ref(db, 'tenis-komedi');
 		const snapshot = await get(dbRef);
-		
+
 		if (snapshot.exists()) {
 			const data = snapshot.val();
-			
-			const rawPlayers = data["0"]?.players;
-			const rawMatches = data["1"]?.matches;
 
-			// Firebase RTD sering mengubah array dengan numeric keys/holes menjadi object.
-			// Kita harus memastikan data dikembalikan sebagai array asli.
-			return {
-				players: Array.isArray(rawPlayers) ? rawPlayers.filter(Boolean) : (rawPlayers ? Object.values(rawPlayers) : []),
-				matches: Array.isArray(rawMatches) ? rawMatches.filter(Boolean) : (rawMatches ? Object.values(rawMatches) : []),
-			};
+			const players = toArray<Player>(data["0"]?.players);
+
+			const rawTournaments = toArray<{ title: string; matches: unknown }>(data["1"]?.tournaments);
+			const tournaments: Tournament[] = rawTournaments.map((t) => ({
+				title: t.title,
+				matches: toArray<Match>(t.matches),
+				champion: toArray<Champion>((t as Record<string, unknown>).champion),
+			}));
+
+			const matches = tournaments.flatMap((t) => t.matches);
+
+			return { players, matches, tournaments };
 		}
-		return { players: [], matches: [] };
+		return { players: [], matches: [], tournaments: [] };
 	} catch (error) {
 		console.error("Error fetching data from Firebase:", error);
-		return { players: [], matches: [] };
+		return { players: [], matches: [], tournaments: [] };
 	}
 }
