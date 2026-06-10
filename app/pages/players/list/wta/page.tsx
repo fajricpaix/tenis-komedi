@@ -86,7 +86,7 @@ export default function WtaRankingPage() {
     <div className="px-4 py-6 max-w-7xl mx-auto">
 
       {/* Page Header */}
-      <div className="mb-6 flex items-end justify-between">
+      <div className="mb-4 flex items-end justify-between">
         <div>
           <div className="flex items-center gap-3 mb-1.5">
             <div className="w-1 h-9 rounded-full bg-linear-to-b from-pink-400 to-fuchsia-600" />
@@ -94,11 +94,54 @@ export default function WtaRankingPage() {
               <div className="flex items-center gap-2">
                 <h1 className="text-2xl md:text-3xl font-black text-pink-400 tracking-wide">WTA Ranking</h1>
               </div>
-              <p className="text-xs font-semibold mt-0.5">Wanita Teko Aku · {rankedPlayers.length} pemain</p>
+              <p className="text-xs font-semibold text-slate-500 mt-0.5">{rankedPlayers.length} pemain terdaftar</p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Info Poin */}
+      <details className="mb-6 group rounded-2xl border border-pink-500/20 bg-pink-500/5 overflow-hidden">
+        <summary className="flex items-center justify-between px-4 py-3 cursor-pointer select-none list-none">
+          <div className="flex items-center gap-2">
+            <span className="text-pink-400 text-sm">ℹ️</span>
+            <span className="text-xs font-black uppercase tracking-widest text-pink-400">Cara Perhitungan Poin</span>
+          </div>
+          <svg className="w-4 h-4 text-pink-400/60 transition-transform duration-200 group-open:rotate-180"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M19 9l-7 7-7-7" />
+          </svg>
+        </summary>
+
+        <div className="px-4 pb-4 space-y-3">
+          <p className="text-xs text-slate-400 leading-relaxed">
+            Poin diperoleh dari hasil setiap pertandingan dalam turnamen, kemudian dikalikan <span className="font-bold text-pink-300">× 100</span>.
+          </p>
+
+          <div className="rounded-xl overflow-hidden border border-pink-500/15">
+            <div className="grid grid-cols-3 bg-pink-500/10 px-4 py-2">
+              <span className="text-[10px] font-black uppercase tracking-widest text-pink-400">Hasil Set</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-pink-400 text-center">Poin Menang</span>
+              <span className="text-[10px] font-black uppercase tracking-widest text-pink-400 text-right">Poin Kalah</span>
+            </div>
+            {[
+              { set: "3 – 0", win: 600, lose: 100 },
+              { set: "3 – 1", win: 500, lose: 200 },
+              { set: "3 – 2", win: 400, lose: 300 },
+            ].map((row) => (
+              <div key={row.set} className="grid grid-cols-3 px-4 py-2.5 border-t border-pink-500/10 bg-slate-900/40">
+                <span className="text-xs font-bold text-slate-300">{row.set}</span>
+                <span className="text-xs font-black text-pink-400 text-center">+{row.win}</span>
+                <span className="text-xs font-bold text-slate-500 text-right">+{row.lose}</span>
+              </div>
+            ))}
+          </div>
+
+          <p className="text-[11px] text-slate-600 italic">
+            Semakin besar selisih set, semakin banyak poin yang didapat pemenang.
+          </p>
+        </div>
+      </details>
 
       {loading ? (
         <div className="flex flex-col items-center justify-center py-24 gap-3">
