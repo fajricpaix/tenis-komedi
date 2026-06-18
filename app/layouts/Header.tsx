@@ -91,7 +91,7 @@ export default function Header() {
             <img src="/logo.webp" alt="Logo Tenis Komedi" className="h-10 w-10 object-contain select-none" />
             <div>
               <h1 className="text-base font-black text-white leading-none">Tenis Komedi</h1>
-              <p className="text-[10px] tracking-wide text-emerald-300 font-semibold mt-0.5">Club Tenis Komedi</p>
+              <p className="text-[10px] tracking-wide text-emerald-300 font-semibold mt-0.5">Club Tenis Serpong Lagoon</p>
             </div>
           </Link>
 

@@ -157,36 +157,36 @@ export default function WtaRankingPage() {
             {/* Header */}
             <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-pink-500/10">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-pink-400 mb-0.5">🏁 Race to Champions {new Date().getFullYear()}</p>
-                <p className="text-xs text-slate-400">4 besar akan adu kekuatan memperebutkan gelar</p>
+                <p className="text-[10px] md:text-base  font-black uppercase tracking-widest text-pink-400 mb-0.5">🏁 Race to Champions {new Date().getFullYear()}</p>
+                <p className="text-xs md:text-sm text-slate-400">8 besar mungkin akan diadu kekuatan memperebutkan gelar di akhir tahun {new Date().getFullYear()}</p>
               </div>
-              <span className="shrink-0 text-xs font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2.5 py-1 rounded-full whitespace-nowrap">
+              <span className="shrink-0 text-xs md:text-base font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2.5 py-1 rounded-full whitespace-nowrap">
                 🏆 PALING KOMEDI
               </span>
             </div>
 
             {/* 8 pemain */}
             <div className="p-4 grid grid-cols-4 gap-x-2 gap-y-4">
-              {rankedPlayers.slice(0, 4).map((player) => (
+              {rankedPlayers.slice(0, 8).map((player) => (
                 <div key={player.id} className="flex flex-col items-center gap-1">
                   <div className="relative">
                     {player.imgUrl ? (
                       <img src={player.imgUrl} alt={player.name}
-                        className="w-12 h-12 rounded-full object-cover border-2 border-pink-500/40 shadow-md"
+                        className="w-12 md:w-24 h-12 md:h-24 rounded-full object-cover border-2 border-pink-500/40 shadow-md"
                       />
                     ) : (
-                      <div className="w-12 h-12 rounded-full bg-pink-500/10 border-2 border-pink-500/30 flex items-center justify-center">
-                        <span className="text-pink-400 font-black text-base">{player.name.charAt(0).toUpperCase()}</span>
+                      <div className="w-12 md:w-24 h-12 md:h-24 rounded-full bg-pink-500/10 border-2 border-pink-500/30 flex items-center justify-center">
+                        <span className="text-pink-400 font-black text-base md:text-4xl">{player.name.charAt(0).toUpperCase()}</span>
                       </div>
                     )}
-                    <span className={`absolute -bottom-1 -right-1 w-5 h-5 rounded-full text-[10px] font-black flex items-center justify-center border-2 border-slate-950 bg-pink-500 text-white`}>
+                    <span className={`absolute -bottom-1 -right-1 w-5 md:w-8 h-5 md:h-8 rounded-full text-[10px] md:text-base font-black flex items-center justify-center border-2 border-slate-950 bg-pink-500 text-white`}>
                       {player.rank}
                     </span>
                   </div>
-                  <p className="text-[10px] font-bold text-slate-300 capitalize text-center truncate w-full leading-tight px-1">
+                  <p className="text-[10px] md:text-sm font-bold text-slate-300 capitalize text-center truncate w-full leading-tight px-1">
                     {player.name}
                   </p>
-                  <p className="text-[10px] font-black text-pink-400 tabular-nums">{(player.points * 100).toLocaleString()}</p>
+                  <p className="text-[10px] md:text-sm font-black text-pink-400 tabular-nums">{(player.points * 100).toLocaleString()}</p>
                 </div>
               ))}
             </div>
