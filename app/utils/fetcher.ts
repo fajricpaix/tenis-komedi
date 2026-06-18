@@ -45,10 +45,14 @@ export type Champion = {
 	name: string;
 };
 
+export type Spectator = { name: string; imgUrl?: string };
+
 export type Tournament = {
 	title: string;
 	matches: Match[];
 	champion?: Champion[];
+	spectators?: Spectator[];
+	featuredMatches?: { atp: number[]; wta: number[] };
 };
 
 export type TekoData = {
@@ -78,12 +82,33 @@ export async function getTekoData(): Promise<TekoData> {
 
 			const players = toArray<Player>(data["0"]?.players);
 
-			const rawTournaments = toArray<{ title: string; matches: unknown }>(data["1"]?.tournaments);
-			const tournaments: Tournament[] = rawTournaments.map((t) => ({
-				title: t.title,
-				matches: toArray<Match>(t.matches),
-				champion: toArray<Champion>((t as Record<string, unknown>).champion),
-			}));
+			const rawTournaments = toArray<Record<string, unknown>>(data["1"]?.tournaments);
+			const tournaments: Tournament[] = rawTournaments.map((t) => {
+				const rawChampions = toArray<Record<string, unknown>>(t.champion);
+				const champion: Champion[] = rawChampions.flatMap((c) => {
+					const cat = c.category as "atp" | "wta";
+					const entries: Champion[] = [];
+					if (c.first && typeof c.first === "object") {
+						const f = c.first as Record<string, string>;
+						entries.push({ category: cat, position: 1, idPlayer: f.idPlayer ?? "", name: f.name ?? "" });
+					}
+					if (c.second && typeof c.second === "object") {
+						const s = c.second as Record<string, string>;
+						entries.push({ category: cat, position: 2, idPlayer: s.idPlayer ?? "", name: s.name ?? "" });
+					}
+					if (typeof c.position === "number") {
+						entries.push({ category: cat, position: c.position as 1 | 2, idPlayer: String(c.idPlayer ?? ""), name: String(c.name ?? "") });
+					}
+					return entries;
+				});
+				return {
+					title: String(t.title ?? ""),
+					matches: toArray<Match>(t.matches),
+					champion,
+					spectators: toArray<Spectator>(t.spectators),
+					featuredMatches: t.featuredMatches as { atp: number[]; wta: number[] } | undefined,
+				};
+			});
 
 			const matches = tournaments.flatMap((t) => t.matches);
 
