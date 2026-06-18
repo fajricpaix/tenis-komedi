@@ -10,11 +10,12 @@ type Props = {
 
 function getDaysUntilBirthday(birthDate: string): number {
   if (!birthDate) return 999;
-  const today = new Date();
+  const now = new Date();
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate());
   const birth = new Date(birthDate);
-  const next = new Date(today.getFullYear(), birth.getMonth(), birth.getDate());
-  if (next < today) next.setFullYear(today.getFullYear() + 1);
-  return Math.ceil((next.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  const next = new Date(now.getFullYear(), birth.getMonth(), birth.getDate());
+  if (next < todayMidnight) next.setFullYear(now.getFullYear() + 1);
+  return Math.round((next.getTime() - todayMidnight.getTime()) / (1000 * 60 * 60 * 24));
 }
 
 function formatBirthDate(birthDate: string): string {
@@ -52,16 +53,24 @@ export default function BirthdayCards({ players }: Props) {
         <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:justify-center pb-2 md:pb-0">
           {upcomingBirthdays.map((player, index) => {
             const { label, className } = getBirthdayLabel(player.daysUntil);
+            const isToday = player.daysUntil === 0;
             return (
               <button
                 key={player.id ?? index}
                 onClick={() => setSelectedPlayerId(player.id)}
-                className={`shrink-0 w-44 md:w-full rounded-2xl border border-white/10 bg-slate-900/70 p-4 flex flex-col items-center gap-3 ${player.gender === 'Pria' ? 'hover:border-blue-400 hover:bg-blue-950' : 'hover:border-pink-400 hover:bg-pink-900' } transition-colors cursor-pointer text-left`}
+                className={`shrink-0 w-44 md:w-full rounded-2xl border p-4 flex flex-col items-center gap-3 transition-colors cursor-pointer text-left relative overflow-hidden
+                  ${isToday
+                    ? "border-yellow-400/60 bg-yellow-500/10 shadow-lg shadow-yellow-500/10 hover:bg-yellow-500/15"
+                    : `border-white/10 bg-slate-900/70 ${player.gender === "Pria" ? "hover:border-blue-400 hover:bg-blue-950" : "hover:border-pink-400 hover:bg-pink-900"}`
+                  }`}
               >
+                {isToday && (
+                  <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-transparent via-yellow-400 to-transparent" />
+                )}
                 <img
                   src={player.imgUrl || (player.gender === "Pria" ? "/pria.jpg" : "/wanita.jpg")}
                   alt={player.name}
-                  className="w-16 h-16 rounded-full object-cover border-2 border-white/10"
+                  className={`w-16 h-16 rounded-full object-cover border-2 ${isToday ? "border-yellow-400/60 ring-2 ring-yellow-400/30" : "border-white/10"}`}
                 />
                 <div className="text-center">
                   <p className="font-semibold text-slate-100 text-sm leading-tight line-clamp-1 capitalize">{player.name}</p>

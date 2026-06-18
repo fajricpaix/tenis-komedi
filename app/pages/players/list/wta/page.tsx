@@ -152,12 +152,12 @@ export default function WtaRankingPage() {
         <div className="text-center py-20 text-slate-500">Belum ada data pemain wanita 🏜️</div>
       ) : (
         <>
-          {/* ── Race to Champions 2026 ─────────────────────────── */}
+          {/* ── Race to Champions {new Date().getFullYear()} ─────────────────────────── */}
           <div className="mb-7 rounded-2xl border border-pink-500/20 bg-pink-500/5 overflow-hidden">
             {/* Header */}
             <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-pink-500/10">
               <div>
-                <p className="text-[10px] font-black uppercase tracking-widest text-pink-400 mb-0.5">🏁 Race to Champions 2026</p>
+                <p className="text-[10px] font-black uppercase tracking-widest text-pink-400 mb-0.5">🏁 Race to Champions {new Date().getFullYear()}</p>
                 <p className="text-xs text-slate-400">4 besar akan adu kekuatan memperebutkan gelar</p>
               </div>
               <span className="shrink-0 text-xs font-black text-yellow-400 bg-yellow-400/10 border border-yellow-400/20 px-2.5 py-1 rounded-full whitespace-nowrap">

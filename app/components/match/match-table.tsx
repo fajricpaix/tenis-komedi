@@ -32,6 +32,17 @@ type DeleteConfirmData = {
 
 const PAGE_SIZE = 10;
 
+function getPageNumbers(current: number, total: number): (number | "…")[] {
+  const vis = new Set([1, total, current - 1, current, current + 1].filter((p) => p >= 1 && p <= total));
+  const sorted = Array.from(vis).sort((a, b) => a - b);
+  const result: (number | "…")[] = [];
+  sorted.forEach((p, i) => {
+    if (i > 0 && p - sorted[i - 1] > 1) result.push("…");
+    result.push(p);
+  });
+  return result;
+}
+
 export default function MatchTable({ matches, players = [], activeTab, onMatchDeleted, onMatchEdited }: MatchTableProps) {
   const isAdmin = useIsAdmin();
   const [searchTerm, setSearchTerm] = useState("");
@@ -215,33 +226,42 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
             <span className="hidden md:block text-xs text-slate-500">
               Halaman {page} / {totalPages}
             </span>
-            <div className="flex gap-2">
-              <button
-                onClick={() => setPage((p) => p - 1)}
-                disabled={page === 1}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                ← Prev
+            <div className="flex gap-1 items-center">
+              {/* First */}
+              <button onClick={() => setPage(1)} disabled={page === 1}
+                className="px-2 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                «
               </button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
-                <button
-                  key={p}
-                  onClick={() => setPage(p)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
-                    p === page
-                      ? "bg-emerald-500 border-emerald-500 text-slate-900"
-                      : "border-white/10 text-slate-400 hover:bg-white/5"
-                  }`}
-                >
-                  {p}
-                </button>
-              ))}
-              <button
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page === totalPages}
-                className="px-3 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                Next →
+              {/* Prev */}
+              <button onClick={() => setPage((p) => p - 1)} disabled={page === 1}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                ‹
+              </button>
+
+              {getPageNumbers(page, totalPages).map((p, i) =>
+                p === "…" ? (
+                  <span key={`e${i}`} className="px-1.5 text-xs text-slate-600 select-none">…</span>
+                ) : (
+                  <button key={p} onClick={() => setPage(p)}
+                    className={`min-w-8 px-2 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
+                      p === page
+                        ? "bg-emerald-500 border-emerald-500 text-slate-900"
+                        : "border-white/10 text-slate-400 hover:bg-white/5"
+                    }`}>
+                    {p}
+                  </button>
+                )
+              )}
+
+              {/* Next */}
+              <button onClick={() => setPage((p) => p + 1)} disabled={page === totalPages}
+                className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                ›
+              </button>
+              {/* Last */}
+              <button onClick={() => setPage(totalPages)} disabled={page === totalPages}
+                className="px-2 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer">
+                »
               </button>
             </div>
           </div>
