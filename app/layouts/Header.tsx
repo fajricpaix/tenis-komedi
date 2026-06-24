@@ -274,7 +274,7 @@ export default function Header() {
             {pathname === "/" && (
               <span className="absolute w-1 h-1 rounded-full bg-emerald-400 -mt-3 mb-0.5 opacity-80" />
             )}
-            <IconHome className="w-[22px] h-[22px]" />
+            <IconHome className="w-5.5 h-5.5" />
             <span
               className={`text-[10px] font-bold tracking-wide transition-all ${
                 pathname === "/" ? "text-emerald-400" : "text-slate-600"
@@ -291,7 +291,7 @@ export default function Header() {
               isPlayersActive ? "text-sky-400" : "text-slate-600"
             }`}
           >
-            <IconUsers className="w-[22px] h-[22px]" />
+            <IconUsers className="w-5.5 h-5.5" />
             <span
               className={`text-[10px] font-bold tracking-wide transition-all ${
                 isPlayersActive ? "text-sky-400" : "text-slate-600"
@@ -308,7 +308,7 @@ export default function Header() {
               isEventActive ? "text-emerald-400" : "text-slate-600"
             }`}
           >
-            <IconTrophy className="w-[22px] h-[22px]" />
+            <IconTrophy className="w-5.5 h-5.5" />
             <span
               className={`text-[10px] font-bold tracking-wide transition-all ${
                 isEventActive ? "text-emerald-400" : "text-slate-600"
