@@ -58,7 +58,7 @@ type HomeTableProps = {
   onPlayerDeleted?: () => void;
 };
 
-const PAGE_SIZE = 10;
+const PAGE_SIZE = 12;
 
 function getPageNumbers(current: number, total: number): (number | "…")[] {
   const vis = new Set([1, total, current - 1, current, current + 1].filter((p) => p >= 1 && p <= total));
@@ -176,6 +176,7 @@ export default function HomeTable({ players, activeTab, onPlayerDeleted }: HomeT
   const filteredPlayers = useMemo(() => {
     setPage(1);
     return players.filter((player) =>
+      player.matchesPlayed > 0 &&
       player.name.toLowerCase().includes(search.trim().toLowerCase()),
     );
   // eslint-disable-next-line react-hooks/exhaustive-deps

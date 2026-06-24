@@ -296,7 +296,7 @@ export default function WimblegoonEvent() {
                     <div>
                       <span className="text-xs font-bold text-slate-200 capitalize">{atpWinRatio.name}</span>
                       <span className="text-xs md:text-sm block text-right font-black text-sky-400 whitespace-nowrap">
-                        {Math.round(atpWinRatio.ratio * 100)}%
+                        {Math.round(atpWinRatio.ratio * 100)}% ({atpWinRatio.wins}/{atpWinRatio.total})
                       </span>
                     </div>
                   </div>
