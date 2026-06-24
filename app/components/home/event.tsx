@@ -55,12 +55,14 @@ export default function EventCard() {
         </div>
 
         {/* Link Detail */}
-        <Link
-          href="/events/wimblegoon"
-          className="w-full px-5 py-3 text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2 cursor-pointer capitalize"
-        >
-          Lihat detail event
-        </Link>
+        <div>
+          <Link
+            href="/events/wimblegoon"
+            className="w-full px-5 py-3 text-xs font-bold text-slate-400 hover:text-emerald-400 transition-colors flex items-center justify-center gap-2 cursor-pointer capitalize"
+          >
+            Lihat detail event
+          </Link>
+        </div>
       </div>
 
       {rulesOpen && <RulesModal onClose={() => setRulesOpen(false)} />}
