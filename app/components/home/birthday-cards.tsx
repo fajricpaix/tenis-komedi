@@ -59,7 +59,7 @@ export default function BirthdayCards({ players }: Props) {
           <h2 className="font-bold text-slate-100 md:text-xl">Ulang Tahun Terdekat</h2>
         </div>
 
-        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto md:justify-center pb-2 md:pb-0">
+        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto overflow-y-hidden md:overflow-visible md:justify-center pb-2 md:pb-0">
           {upcomingBirthdays.map((player, index) => {
             const { label, className } = getBirthdayLabel(player.daysUntil);
             const isToday = player.daysUntil === 0;

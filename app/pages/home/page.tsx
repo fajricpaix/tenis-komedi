@@ -294,7 +294,7 @@ export default function HomeContent() {
                 "0 0 60px rgba(16,185,129,0.35), 0 0 20px rgba(16,185,129,0.15), 0 2px 8px rgba(0,0,0,0.9)",
             }}
           >
-            🎾 Tenis Komedi
+            🎾 Tenis Komedi 🎾
           </h1>
           <p className="text-slate-400 text-sm md:text-base font-medium tracking-wide">
             Peringkat &amp; Statistik Pemain
