@@ -147,7 +147,7 @@ export default function AtpRankingPage() {
       ) : (
         <>
           {/* ── Race to Champions {new Date().getFullYear()} ─────────────────────────── */}
-          <div className="mb-7 rounded-2xl border border-sky-500/20 bg-sky-500/5 overflow-hidden">
+          <div className="mb-7 rounded-2xl border border-sky-500/20 bg-sky-500/20 overflow-hidden">
             {/* Header */}
             <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-sky-500/10">
               <div>

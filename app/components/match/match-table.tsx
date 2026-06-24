@@ -112,7 +112,7 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
 
   return (
     <>
-      <div className="bg-white/3 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
+      <div className="bg-black/40 border border-white/10 rounded-2xl overflow-hidden shadow-2xl">
         <div className="flex items-center justify-between gap-4 px-6 py-2 h-16 bg-white/3 border-b border-white/[0.07]">
           <h2 className="text-sm md:text-xl font-black text-slate-100">
             Pertandingan {activeTab}
@@ -123,7 +123,7 @@ export default function MatchTable({ matches, players = [], activeTab, onMatchDe
               placeholder="Cari pemain..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-slate-800 border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
+              className="px-4 py-1 w-32 md:w-auto md:py-2 rounded-xl bg-transparent border border-white/10 text-slate-100 placeholder-slate-500 focus:outline-none focus:border-emerald-400"
             />
             {(hasDownloadableDates && isAdmin) && (
               <button

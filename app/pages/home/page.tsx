@@ -245,7 +245,7 @@ export default function HomeContent() {
         >
           {/* Court grid */}
           <div
-            className="absolute inset-0 bg-slate-950"
+            className="absolute inset-0"
             style={{
               backgroundImage: `
                 linear-gradient(rgba(16,185,129,0.10) 1px, transparent 1px),
@@ -267,10 +267,6 @@ export default function HomeContent() {
           <div className="absolute top-1/4 left-1/5 w-64 h-64 bg-blue-500/4 rounded-full blur-2xl" />
           <div className="absolute bottom-1/4 right-1/5 w-56 h-56 bg-emerald-600/6 rounded-full blur-2xl" />
         </div>
-
-        {/* Top + bottom fade overlays */}
-        <div className="absolute inset-x-0 top-0 h-20 bg-linear-to-b from-slate-950/80 to-transparent z-10 pointer-events-none" />
-        <div className="absolute inset-x-0 bottom-0 h-36 bg-linear-to-t from-slate-950 to-transparent z-10 pointer-events-none" />
 
         {/* Hero text — moves at 0.2× scroll speed */}
         <div

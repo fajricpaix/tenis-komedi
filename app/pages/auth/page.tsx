@@ -34,7 +34,7 @@ export default function AuthPage() {
   };
 
   return (
-    <main className="min-h-screen bg-slate-950 flex items-center justify-center p-4">
+    <main className="min-h-[88vh] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-14 h-14 rounded-2xl bg-emerald-500/10 border border-emerald-500/25 mb-4">

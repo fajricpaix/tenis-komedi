@@ -59,6 +59,37 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-slate-950 text-slate-200">
+
+        {/* ── Fixed background image ── */}
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: -2,
+            backgroundImage: "url('/backgrounds/background-home.jpg')",
+            backgroundSize: "cover",
+            backgroundPosition: "center center",
+          }}
+        />
+
+        {/* ── Elegant dark overlay ──
+            Layer 1: deep navy/slate gradient dari atas-bawah
+            Layer 2: radial vignette di sudut (gelap di pinggir)
+            Layer 3: subtle emerald glow di atas untuk sentuhan sporty */}
+        <div
+          style={{
+            position: "fixed",
+            inset: 0,
+            zIndex: -1,
+            background: `
+              radial-gradient(ellipse at 50% -10%, rgba(16,185,129,0.08) 0%, transparent 60%),
+              radial-gradient(ellipse at 0% 100%, rgba(0,0,0,0.5) 0%, transparent 60%),
+              radial-gradient(ellipse at 100% 100%, rgba(0,0,0,0.5) 0%, transparent 60%),
+              linear-gradient(170deg, rgba(5,14,28,0.90) 0%, rgba(4,18,20,0.85) 50%, rgba(5,14,28,0.92) 100%)
+            `,
+          }}
+        />
+
         <Header />
         <main className="container mx-auto min-h-screen pt-4 md:pt-20 pb-20 md:pb-4">
           {children}

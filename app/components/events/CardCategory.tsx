@@ -14,8 +14,8 @@ type CategoryCardProps = {
 
 export function CategoryCard({ label, groupName, color, totalMatches, totalPlayers, champ1, champ2, spirited, playerImgMap }: CategoryCardProps) {
   const c = color === "sky"
-    ? { border: "border-sky-500/20", bg: "bg-sky-500/5", hdr: "bg-sky-500/10", badge: "bg-sky-500", text: "text-sky-400", divider: "border-sky-500/10" }
-    : { border: "border-pink-500/20", bg: "bg-pink-500/5", hdr: "bg-pink-500/10", badge: "bg-pink-500", text: "text-pink-400", divider: "border-pink-500/10" };
+    ? { border: "border-sky-500/20", bg: "bg-sky-500/10", hdr: "bg-sky-500/10", badge: "bg-sky-500", text: "text-sky-400", divider: "border-sky-500/10" }
+    : { border: "border-pink-500/20", bg: "bg-pink-500/10", hdr: "bg-pink-500/10", badge: "bg-pink-500", text: "text-pink-400", divider: "border-pink-500/10" };
 
   return (
     <div className={`rounded-2xl border overflow-hidden ${c.border} ${c.bg}`}>
@@ -27,11 +27,11 @@ export function CategoryCard({ label, groupName, color, totalMatches, totalPlaye
         </div>
         <div className="flex items-center gap-4 text-right">
           <div>
-            <p className="text-xs md:text-sm text-slate-500 leading-none">Pertandingan</p>
+            <p className="text-xs md:text-sm text-white-500 leading-none">Pertandingan</p>
             <p className={`text-sm font-black ${c.text}`}>{totalMatches}</p>
           </div>
           <div>
-            <p className="text-xs md:text-sm text-slate-500 leading-none">Pemain</p>
+            <p className="text-xs md:text-sm text-white-500 leading-none">Pemain</p>
             <p className={`text-sm font-black ${c.text}`}>{totalPlayers}</p>
           </div>
         </div>
@@ -43,7 +43,7 @@ export function CategoryCard({ label, groupName, color, totalMatches, totalPlaye
           <div key={pos} className={`flex items-center gap-3 px-5 py-3 ${pos === 2 ? `border-t ${c.divider}` : ""}`}>
             <span className="text-xl shrink-0">{icon}</span>
             <div>
-              <p className="text-xs md:text-sm uppercase tracking-widest text-slate-600 leading-none mb-0.5">Juara {pos}</p>
+              <p className="text-xs md:text-sm uppercase tracking-widest text-white-600 leading-none mb-0.5">Juara {pos}</p>
               <p className={`text-sm font-black capitalize ${champ?.name ? "text-slate-100" : "text-slate-600 italic"}`}>
                 {champ?.name || "Belum ditentukan"}
               </p>

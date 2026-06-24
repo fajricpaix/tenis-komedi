@@ -153,7 +153,7 @@ export default function WtaRankingPage() {
       ) : (
         <>
           {/* ── Race to Champions {new Date().getFullYear()} ─────────────────────────── */}
-          <div className="mb-7 rounded-2xl border border-pink-500/20 bg-pink-500/5 overflow-hidden">
+          <div className="mb-7 rounded-2xl border border-pink-500/20 bg-pink-500/20 overflow-hidden">
             {/* Header */}
             <div className="px-5 pt-4 pb-3 flex items-start justify-between gap-3 border-b border-pink-500/10">
               <div>

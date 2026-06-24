@@ -271,7 +271,7 @@ export default function WimblegoonEvent() {
 
             {/* ── Info Turnamen ─────────────────────────────────── */}
             <div className="rounded-2xl border border-white/10 bg-slate-900/60 overflow-hidden">
-              <div className="px-5 py-3.5 bg-emerald-500/8 border-b border-emerald-500/15">
+              <div className="px-5 py-3.5 bg-emerald-500/80 border-b border-emerald-500/15">
                 <p className="text-xs md:text-sm font-black uppercase tracking-widest text-emerald-400">📊 Info Turnamen</p>
               </div>
 
