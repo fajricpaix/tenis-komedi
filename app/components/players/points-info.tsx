@@ -50,9 +50,9 @@ export default function PointsInfo({ accent }: Props) {
             <span className={`text-[10px] font-black uppercase tracking-widest text-right ${c.text}`}>Poin Kalah</span>
           </div>
           {[
-            { set: "3 – 0", win: 600, lose: 100 },
-            { set: "3 – 1", win: 500, lose: 200 },
-            { set: "3 – 2", win: 400, lose: 300 },
+            { set: "3 – 0", win: 6, lose: 1 },
+            { set: "3 – 1", win: 5, lose: 2 },
+            { set: "3 – 2", win: 4, lose: 3 },
           ].map((row) => (
             <div key={row.set} className={`grid grid-cols-3 px-4 py-2.5 border-t bg-slate-900/40 ${c.rowBorder}`}>
               <span className="text-xs font-bold text-slate-300">{row.set}</span>
