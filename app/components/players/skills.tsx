@@ -7,7 +7,7 @@ type SkillsPlayerDetailProps = {
 export default function SkillsPlayerDetail({ imgUrl, skillName, value }: SkillsPlayerDetailProps) {
   return (
     <div className="flex gap-x-3 items-center">
-      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-[#FFE094] border border-[#C59B27]">
+      <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-purple-400/20 border border-purple-500">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={imgUrl} alt={skillName ?? "skill"} width={24} height={24} className="object-contain" />
       </div>
@@ -16,7 +16,7 @@ export default function SkillsPlayerDetail({ imgUrl, skillName, value }: SkillsP
         {Array.from({ length: 20 }, (_, i) => (
           <div
             key={i}
-            className={`h-3 flex-1 rounded-xs ${i < value * 2 ? "bg-[#FFE094]" : "bg-black/70"}`}
+            className={`h-3 flex-1 rounded-xs ${i < value * 2 ? "bg-purple-500" : "bg-emerald-950"}`}
           />
         ))}
       </div>
