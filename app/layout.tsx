@@ -91,7 +91,7 @@ export default function RootLayout({
         />
 
         <Header />
-        <main className="container mx-auto min-h-screen pt-4 md:pt-20 pb-20 md:pb-4">
+        <main className="container mx-auto min-h-screen pt-0 md:pt-20 pb-20 md:pb-4">
           {children}
         </main>
         <Analytics />

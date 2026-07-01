@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useIsAdmin, logout } from "@utils/auth";
+import { getTekoData, slugifyTournamentTitle } from "@utils/fetcher";
 
 // ── Inline SVG Icons ───────────────────────────────────────────────────────────
 
@@ -36,6 +37,14 @@ function IconTrophy({ className }: { className?: string }) {
       <path d="M7 4H17l-1 7H8L7 4z" />
       <path d="M5 4H3c0 3 2 5 4 6" />
       <path d="M19 4h2c0 3-2 5-4 6" />
+    </svg>
+  );
+}
+
+function IconTour({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
     </svg>
   );
 }
@@ -85,10 +94,25 @@ export default function Header() {
   const router = useRouter();
   const pathname = usePathname();
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
+  const [tourList, setTourList] = useState<{ title: string; slug: string }[]>([]);
   const pillRef = useRef<HTMLDivElement>(null);
+  const mobileNavRef = useRef<HTMLDivElement>(null);
 
   const isPlayersActive = pathname.startsWith("/players");
   const isEventActive   = pathname.startsWith("/events");
+  const isTourActive    = pathname.startsWith("/tour");
+
+  useEffect(() => {
+    getTekoData()
+      .then(({ tournaments }) => {
+        setTourList(
+          tournaments
+            .filter((t) => t.title)
+            .map((t) => ({ title: t.title, slug: slugifyTournamentTitle(t.title) }))
+        );
+      })
+      .catch(() => setTourList([]));
+  }, []);
 
   const handleLogout = () => {
     logout();
@@ -98,7 +122,10 @@ export default function Header() {
 
   useEffect(() => {
     const handle = (e: MouseEvent) => {
-      if (pillRef.current && !pillRef.current.contains(e.target as Node)) {
+      const target = e.target as Node;
+      const insidePill = pillRef.current && pillRef.current.contains(target);
+      const insideMobileNav = mobileNavRef.current && mobileNavRef.current.contains(target);
+      if (!insidePill && !insideMobileNav) {
         setOpenDropdown(null);
       }
     };
@@ -148,6 +175,51 @@ export default function Header() {
           >
             Beranda
           </Link>
+
+          {/* Tour dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setOpenDropdown((v) => (v === "tour" ? null : "tour"))}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                isTourActive || openDropdown === "tour"
+                  ? "bg-emerald-500/15 text-emerald-300"
+                  : "text-slate-400 hover:text-white hover:bg-white/6"
+              }`}
+            >
+              Tour
+              <IconChevron
+                className={`w-3 h-3 transition-transform duration-200 ${
+                  openDropdown === "tour" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            <div
+              className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-44 rounded-xl p-1.5 transition-all duration-200 origin-top ${
+                openDropdown === "tour"
+                  ? "opacity-100 scale-100 pointer-events-auto"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }`}
+              style={{
+                background: "rgba(9,15,28,0.95)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 16px 40px rgba(0,0,0,0.6)",
+                backdropFilter: "blur(24px)",
+              }}
+            >
+              {tourList.length > 0 ? (
+                tourList.map(({ title, slug }) => (
+                  <DropdownLink key={slug} href={`/tour/${slug}`} label={title}
+                    active={pathname === `/tour/${slug}`}
+                    activeClass="bg-emerald-500/15 text-emerald-300"
+                    hoverClass="hover:bg-emerald-500/8 hover:text-emerald-300"
+                  />
+                ))
+              ) : (
+                <span className="block px-3 py-2 text-sm text-slate-500">Belum ada tour</span>
+              )}
+            </div>
+          </div>
 
           {/* Pemain dropdown */}
           <div className="relative">
@@ -253,6 +325,7 @@ export default function Header() {
           MOBILE — fixed bottom tab bar
           ══════════════════════════════════════════ */}
       <nav
+        ref={mobileNavRef}
         className="md:hidden fixed bottom-0 left-0 right-0 z-50"
         style={{
           background: "rgba(9,15,28,0.92)",
@@ -262,7 +335,7 @@ export default function Header() {
           paddingBottom: "env(safe-area-inset-bottom, 8px)",
         }}
       >
-        <div className="flex items-center justify-around h-16 px-4">
+        <div className="relative flex items-center justify-around h-16 px-4">
 
           {/* Beranda */}
           <Link
@@ -284,22 +357,94 @@ export default function Header() {
             </span>
           </Link>
 
-          {/* Pemain */}
-          <Link
-            href="/players/list/atp"
-            className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all ${
-              isPlayersActive ? "text-sky-400" : "text-slate-600"
-            }`}
-          >
-            <IconUsers className="w-5.5 h-5.5" />
-            <span
-              className={`text-[10px] font-bold tracking-wide transition-all ${
-                isPlayersActive ? "text-sky-400" : "text-slate-600"
+          {/* Tour — with dynamic tournament submenu */}
+          <div className="relative">
+            <button
+              onClick={() => setOpenDropdown((v) => (v === "tour-mobile" ? null : "tour-mobile"))}
+              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all cursor-pointer ${
+                isTourActive || openDropdown === "tour-mobile" ? "text-emerald-400" : "text-slate-600"
               }`}
             >
-              Pemain
-            </span>
-          </Link>
+              <IconTour className="w-5.5 h-5.5" />
+              <span
+                className={`text-[10px] font-bold tracking-wide transition-all ${
+                  isTourActive || openDropdown === "tour-mobile" ? "text-emerald-400" : "text-slate-600"
+                }`}
+              >
+                Tour
+              </span>
+            </button>
+
+            <div
+              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-44 rounded-xl p-1.5 transition-all duration-200 origin-bottom ${
+                openDropdown === "tour-mobile"
+                  ? "opacity-100 scale-100 pointer-events-auto"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }`}
+              style={{
+                background: "rgba(9,15,28,0.95)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 -8px 32px rgba(0,0,0,0.6)",
+                backdropFilter: "blur(24px)",
+              }}
+            >
+              {tourList.length > 0 ? (
+                tourList.map(({ title, slug }) => (
+                  <DropdownLink key={slug} href={`/tour/${slug}`} label={title}
+                    active={pathname === `/tour/${slug}`}
+                    activeClass="bg-emerald-500/15 text-emerald-300"
+                    hoverClass="hover:bg-emerald-500/8 hover:text-emerald-300"
+                  />
+                ))
+              ) : (
+                <span className="block px-3 py-2 text-sm text-slate-500">Belum ada tour</span>
+              )}
+            </div>
+          </div>
+
+          {/* Pemain — with ATP/WTA submenu */}
+          <div className="relative">
+            <button
+              onClick={() => setOpenDropdown((v) => (v === "pemain-mobile" ? null : "pemain-mobile"))}
+              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all cursor-pointer ${
+                isPlayersActive || openDropdown === "pemain-mobile" ? "text-sky-400" : "text-slate-600"
+              }`}
+            >
+              <IconUsers className="w-5.5 h-5.5" />
+              <span
+                className={`text-[10px] font-bold tracking-wide transition-all ${
+                  isPlayersActive || openDropdown === "pemain-mobile" ? "text-sky-400" : "text-slate-600"
+                }`}
+              >
+                Pemain
+              </span>
+            </button>
+
+            <div
+              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 rounded-xl p-1.5 transition-all duration-200 origin-bottom ${
+                openDropdown === "pemain-mobile"
+                  ? "opacity-100 scale-100 pointer-events-auto"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }`}
+              style={{
+                background: "rgba(9,15,28,0.95)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 -8px 32px rgba(0,0,0,0.6)",
+                backdropFilter: "blur(24px)",
+              }}
+            >
+              <DropdownLink href="/players/list/atp" label="ATP Ranking"
+                active={pathname === "/players/list/atp"}
+                activeClass="bg-sky-500/15 text-sky-300"
+                hoverClass="hover:bg-sky-500/8 hover:text-sky-300"
+              />
+              <DropdownLink href="/players/list/wta" label="WTA Ranking"
+                active={pathname === "/players/list/wta"}
+                activeClass="bg-pink-500/15 text-pink-300"
+                hoverClass="hover:bg-pink-500/8 hover:text-pink-300"
+              />
+            </div>
+          </div>
 
           {/* Event */}
           <Link

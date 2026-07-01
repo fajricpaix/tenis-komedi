@@ -66,6 +66,14 @@ export function parseSetScore(value: string): [number, number] {
 	return Number.isFinite(s1) && Number.isFinite(s2) ? [s1, s2] : [0, 0];
 }
 
+export function slugifyTournamentTitle(title: string): string {
+	return title
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/(^-+|-+$)/g, "");
+}
+
 function toArray<T>(raw: unknown): T[] {
 	if (!raw) return [];
 	if (Array.isArray(raw)) return (raw as T[]).filter(Boolean);
