@@ -47,7 +47,6 @@ export default function PlayerDetailPage() {
   const [mounted, setMounted] = useState(false);
   const [showCard, setShowCard] = useState(false);
 
-  const bgRef = useRef<HTMLDivElement>(null);
   const tiltRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -118,19 +117,6 @@ export default function PlayerDetailPage() {
     return () => mql.removeEventListener("change", update);
   }, []);
 
-  // Parallax background (desktop / non-touch only)
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isTouch = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    if (prefersReducedMotion || isTouch) return;
-
-    const handleScroll = () => {
-      if (bgRef.current) bgRef.current.style.transform = `translateY(${window.scrollY * 0.35}px)`;
-    };
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
-
   // 3D tilt on pointer move (desktop / non-touch only)
   useEffect(() => {
     const isTouch = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
@@ -189,8 +175,8 @@ export default function PlayerDetailPage() {
 
   return (
     <div className="relative overflow-hidden">
-      {/* ── Parallax ambient background ── */}
-      <div ref={bgRef} className="absolute inset-x-0 top-0 h-125 pointer-events-none" style={{ willChange: "transform" }}>
+      {/* ── Ambient background ── */}
+      <div className="absolute inset-x-0 top-0 h-125 pointer-events-none">
         <div className={`absolute -top-10 left-1/2 -translate-x-1/2 w-150 h-150 rounded-full blur-3xl bg-linear-to-b ${accent.grad}`} />
       </div>
 

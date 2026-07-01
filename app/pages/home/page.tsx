@@ -22,9 +22,6 @@ export default function HomeContent() {
   const [toast, setToast] = useState<Toast | null>(null);
   const isAdmin = useIsAdmin();
 
-  const heroRef = useRef<HTMLDivElement>(null);
-  const heroBgRef = useRef<HTMLDivElement>(null);
-  const heroTextRef = useRef<HTMLDivElement>(null);
   const fabRef = useRef<HTMLDivElement>(null);
 
   const showToast = (message: string, type: "success" | "error") => {
@@ -39,36 +36,6 @@ export default function HomeContent() {
         setMatches(Array.isArray(matches) ? matches : []);
       })
       .catch((error) => console.error("Gagal memuat data pemain:", error));
-  }, []);
-
-  // Parallax + 3D tilt scroll effect (desktop/non-touch only)
-  useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const isTouch = window.matchMedia("(hover: none) and (pointer: coarse)").matches;
-    if (prefersReducedMotion || isTouch) return;
-
-    const handleScroll = () => {
-      const y = window.scrollY;
-
-      // Background moves at half scroll speed (further away layer)
-      if (heroBgRef.current) {
-        heroBgRef.current.style.transform = `translateY(${y * 0.5}px)`;
-      }
-
-      // Text moves at 20% scroll speed (mid layer)
-      if (heroTextRef.current) {
-        heroTextRef.current.style.transform = `translateY(${y * 0.2}px)`;
-      }
-
-      // Hero section slowly rotates away as you scroll (3D depth sensation)
-      if (heroRef.current) {
-        const rotateX = Math.min(y * 0.025, 10);
-        heroRef.current.style.transform = `perspective(1400px) rotateX(${rotateX}deg)`;
-      }
-    };
-
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   // Close the floating action menu when clicking outside of it
@@ -107,7 +74,7 @@ export default function HomeContent() {
   };
 
   return (
-    <section className="overflow-x-hidden">
+    <>
       {/* ── Toast ── */}
       {toast && (
         <div
@@ -122,18 +89,10 @@ export default function HomeContent() {
         </div>
       )}
 
-      {/* ── Hero Section — parallax + 3D tilt ── */}
-      <div
-        ref={heroRef}
-        className="relative overflow-hidden h-52 md:h-60 mb-8"
-        style={{ transformOrigin: "center bottom" }}
-      >
-        {/* Parallax background layer — moves at 0.5× scroll speed */}
-        <div
-          ref={heroBgRef}
-          className="absolute left-0 right-0"
-          style={{ top: "-30%", height: "160%", willChange: "transform" }}
-        >
+      {/* ── Hero Section ── */}
+      <div className="relative overflow-hidden h-52 md:h-60 mb-8">
+        {/* Background layer */}
+        <div className="absolute inset-0">
           {/* Court grid */}
           <div
             className="absolute inset-0"
@@ -159,12 +118,8 @@ export default function HomeContent() {
           <div className="absolute bottom-1/4 right-1/5 w-56 h-56 bg-emerald-600/6 rounded-full blur-2xl" />
         </div>
 
-        {/* Hero text — moves at 0.2× scroll speed */}
-        <div
-          ref={heroTextRef}
-          className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4"
-          style={{ willChange: "transform" }}
-        >
+        {/* Hero text */}
+        <div className="relative z-20 h-full flex flex-col items-center justify-center text-center px-4">
           {/* Live badge */}
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 text-xs font-semibold tracking-widest uppercase mb-3">
             <span
@@ -260,6 +215,6 @@ export default function HomeContent() {
           onSave={handleSaveMatch}
         />
       )}
-    </section>
+    </>
   );
 }
