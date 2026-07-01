@@ -55,10 +55,27 @@ export type Tournament = {
 	featuredMatches?: { atp: number[]; wta: number[] };
 };
 
+export type GalleryPhoto = {
+	id: string;
+	caption?: string;
+	createdAt: number;
+	width: number;
+	height: number;
+	imgUrl: string;
+	path?: string;
+};
+
+export type Gallery = {
+	title: string;
+	desc: string;
+	photos: GalleryPhoto[];
+};
+
 export type TekoData = {
 	players: Player[];
 	matches: Match[];
 	tournaments: Tournament[];
+	gallery: Gallery;
 };
 
 export function parseSetScore(value: string): [number, number] {
@@ -78,6 +95,11 @@ function toArray<T>(raw: unknown): T[] {
 	if (!raw) return [];
 	if (Array.isArray(raw)) return (raw as T[]).filter(Boolean);
 	return (Object.values(raw) as T[]).filter(Boolean);
+}
+
+function toEntriesWithId<T>(raw: unknown): (T & { id: string })[] {
+	if (!raw || typeof raw !== "object") return [];
+	return Object.entries(raw as Record<string, T>).map(([id, value]) => ({ ...value, id }));
 }
 
 export async function getTekoData(): Promise<TekoData> {
@@ -120,11 +142,19 @@ export async function getTekoData(): Promise<TekoData> {
 
 			const matches = tournaments.flatMap((t) => t.matches);
 
-			return { players, matches, tournaments };
+			const photos = toEntriesWithId<Omit<GalleryPhoto, "id">>(data["2"]?.photos)
+				.sort((a, b) => b.createdAt - a.createdAt);
+			const gallery: Gallery = {
+				title: String(data["2"]?.title ?? ""),
+				desc: String(data["2"]?.desc ?? ""),
+				photos,
+			};
+
+			return { players, matches, tournaments, gallery };
 		}
-		return { players: [], matches: [], tournaments: [] };
+		return { players: [], matches: [], tournaments: [], gallery: { title: "", desc: "", photos: [] } };
 	} catch (error) {
 		console.error("Error fetching data from Firebase:", error);
-		return { players: [], matches: [], tournaments: [] };
+		return { players: [], matches: [], tournaments: [], gallery: { title: "", desc: "", photos: [] } };
 	}
 }

@@ -1,90 +1,31 @@
 "use client";
 
-import { useEffect, useRef, useMemo, useState } from "react";
-import HomeTab, { TeamKey } from "@components/home/tab";
-import HomeTable from "@components/home/table";
+import { useEffect, useRef, useState } from "react";
 import MatchModal from "@components/match/match-modal";
-import MatchTable from "@components/match/match-table";
-import TournamentTab, { type TournamentTabKey } from "@components/home/tournament-tab";
-import TournamentTable from "@components/home/tournament-table";
 import Link from "next/link";
-import { getTekoData, parseSetScore, type Player, type Match } from "@utils/fetcher";
+import { getTekoData, type Player, type Match } from "@utils/fetcher";
 import BirthdayCards from "@components/home/birthday-cards";
 import EventCard from "@components/home/event";
+import Gallery from "@components/home/gallery";
 import { useIsAdmin } from "@utils/auth";
-
-type PlayerStats = {
-  matchesPlayed: number;
-  wins: number;
-  losses: number;
-  setWin: number;
-  setLose: number;
-  points: number;
-};
 
 type Toast = {
   message: string;
   type: "success" | "error";
 };
 
-function buildPlayerStats(players: Player[] = [], matches: Match[] = []): Map<string, PlayerStats> {
-  const statsByName = new Map<string, PlayerStats>();
-  const playersList = Array.isArray(players) ? players : [];
-  const matchesList = Array.isArray(matches) ? matches : [];
-
-  playersList.forEach((player) => {
-    statsByName.set(player.name, {
-      matchesPlayed: 0, wins: 0, losses: 0,
-      setWin: 0, setLose: 0, points: 0,
-    });
-  });
-
-  matchesList.forEach((match) => {
-    const [s1, s2] = parseSetScore(match.setScore);
-    const isPlayer1Winner = match.winner === match.player1;
-    const winnerScore = isPlayer1Winner ? s1 : s2;
-    const loserScore = isPlayer1Winner ? s2 : s1;
-    const loserName = isPlayer1Winner ? match.player2 : match.player1;
-    const winnerStats = statsByName.get(match.winner);
-    const loserStats = statsByName.get(loserName);
-
-    // 3-0 → menang +6, kalah +1
-    // 3-1 → menang +5, kalah +2
-    // 3-2 → menang +4, kalah +3
-    const winnerPoints = 6 - loserScore;
-    const loserPoints = loserScore + 1;
-
-    if (winnerStats) {
-      winnerStats.matchesPlayed += 1;
-      winnerStats.wins += 1;
-      winnerStats.setWin += winnerScore;
-      winnerStats.setLose += loserScore;
-      winnerStats.points += winnerPoints;
-    }
-    if (loserStats) {
-      loserStats.matchesPlayed += 1;
-      loserStats.losses += 1;
-      loserStats.setWin += loserScore;
-      loserStats.setLose += winnerScore;
-      loserStats.points += loserPoints;
-    }
-  });
-
-  return statsByName;
-}
-
 export default function HomeContent() {
-  const [activeTab, setActiveTab] = useState<TeamKey>("Pria");
-  const [tournamentTab, setTournamentTab] = useState<TournamentTabKey>("ranking");
   const [players, setPlayers] = useState<Player[]>([]);
   const [matches, setMatches] = useState<Match[]>([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isFabOpen, setIsFabOpen] = useState(false);
   const [toast, setToast] = useState<Toast | null>(null);
   const isAdmin = useIsAdmin();
 
   const heroRef = useRef<HTMLDivElement>(null);
   const heroBgRef = useRef<HTMLDivElement>(null);
   const heroTextRef = useRef<HTMLDivElement>(null);
+  const fabRef = useRef<HTMLDivElement>(null);
 
   const showToast = (message: string, type: "success" | "error") => {
     setToast({ message, type });
@@ -130,56 +71,18 @@ export default function HomeContent() {
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const statsByName = useMemo(() => buildPlayerStats(players, matches), [players, matches]);
-  const prevStatsByName = useMemo(() => buildPlayerStats(players, matches.slice(0, -1)), [players, matches]);
+  // Close the floating action menu when clicking outside of it
+  useEffect(() => {
+    const handle = (e: MouseEvent) => {
+      if (fabRef.current && !fabRef.current.contains(e.target as Node)) {
+        setIsFabOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handle);
+    return () => document.removeEventListener("mousedown", handle);
+  }, []);
+
   const safePlayers = Array.isArray(players) ? players : [];
-
-  const currentPlayers = useMemo(() => {
-    const genderPlayers = safePlayers.filter((p) => p?.gender === activeTab);
-
-    const withStats = genderPlayers
-      .map((p) => ({
-        ...p,
-        ...(statsByName.get(p.name) ?? {
-          matchesPlayed: 0, wins: 0, losses: 0,
-          setWin: 0, setLose: 0, points: 0,
-        }),
-      }))
-      .sort((a, b) => b.points - a.points || b.wins - a.wins);
-
-    const prevRankMap = new Map(
-      genderPlayers
-        .map((p) => ({ name: p.name, ...(prevStatsByName.get(p.name) ?? { points: 0, wins: 0 }) }))
-        .sort((a, b) => b.points - a.points || b.wins - a.wins)
-        .map((p, i) => [p.name, i + 1])
-    );
-
-    return withStats.map((p, i) => ({
-      ...p,
-      rankChange: (prevRankMap.get(p.name) ?? i + 1) - (i + 1),
-    }));
-  }, [activeTab, safePlayers, statsByName, prevStatsByName]);
-
-  const currentMatches = useMemo(() => {
-    const safeMatches = Array.isArray(matches) ? matches : [];
-    const playerNamesInTab = new Set(
-      safePlayers.filter((p) => p.gender === activeTab).map((p) => p.name)
-    );
-    return [...safeMatches]
-      .filter((m) => playerNamesInTab.has(m.player1) || playerNamesInTab.has(m.player2))
-      .reverse();
-  }, [matches, safePlayers, activeTab]);
-
-  const handlePlayerDeleted = async () => {
-    try {
-      const { players, matches } = await getTekoData();
-      setPlayers(Array.isArray(players) ? players : []);
-      setMatches(Array.isArray(matches) ? matches : []);
-      showToast("Pemain berhasil dihapus.", "success");
-    } catch {
-      showToast("Gagal memuat ulang data.", "error");
-    }
-  };
 
   const handleSaveMatch = async (newMatch: Omit<Match, "id">) => {
     const id = matches.length > 0 ? Math.max(...matches.map((m) => m.id)) + 1 : 1;
@@ -203,18 +106,6 @@ export default function HomeContent() {
     }
   };
 
-  const handleMatchDeleted = async () => {
-    try {
-      const { players, matches } = await getTekoData();
-      setPlayers(Array.isArray(players) ? players : []);
-      setMatches(Array.isArray(matches) ? matches : []);
-      showToast("Pertandingan berhasil dihapus.", "success");
-    } catch (error) {
-      console.error("Gagal memuat ulang data:", error);
-      showToast("Gagal memuat ulang data.", "error");
-    }
-  };
-
   return (
     <section className="overflow-x-hidden">
       {/* ── Toast ── */}
@@ -234,7 +125,7 @@ export default function HomeContent() {
       {/* ── Hero Section — parallax + 3D tilt ── */}
       <div
         ref={heroRef}
-        className="relative overflow-hidden h-52 md:h-72 mb-8 md:mb-14"
+        className="relative overflow-hidden h-52 md:h-60 mb-8"
         style={{ transformOrigin: "center bottom" }}
       >
         {/* Parallax background layer — moves at 0.5× scroll speed */}
@@ -293,7 +184,7 @@ export default function HomeContent() {
             🎾 Tenis Komedi 🎾
           </h1>
           <p className="text-slate-400 text-sm md:text-base font-medium tracking-wide">
-            Peringkat &amp; Statistik Pemain
+            Sedikit Kompetisi, Banyakin Haha Hihi di Lapangan
           </p>
         </div>
       </div>
@@ -317,69 +208,50 @@ export default function HomeContent() {
         </div>
       </div>
 
-      {/* ── Controls row ── */}
-      <div className="px-4 md:px-8 mb-4 md:mb-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 md:gap-6">
-          <HomeTab
-            activeTab={activeTab}
-            onSelect={(tab) => {
-              setActiveTab(tab);
-              setTournamentTab("ranking");
-            }}
-          />
-          <div className="flex items-center gap-x-3">
-            {isAdmin && (
-              <>
-                <Link
-                  href="/players/add"
-                  className="font-black px-4 md:px-7 py-2 md:py-2.5 rounded-xl transition-all shadow-lg shadow-blue-500/20 active:scale-95 flex items-center justify-center gap-2 bg-blue-500 hover:bg-blue-400 text-sm"
-                >
-                  <span>+</span> ATP atau WTA
-                </Link>
-                <button
-                  onClick={() => setIsModalOpen(true)}
-                  className="font-black px-4 md:px-7 py-2 md:py-2.5 cursor-pointer rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-95 flex items-center justify-center gap-2 bg-emerald-500 hover:bg-emerald-400 text-sm"
-                >
-                  <span>+</span> Pertandingan
-                </button>
-              </>
-            )}
+      {/* ── Photo gallery ── */}
+      <Gallery />
+
+      {/* ── Floating admin actions ── */}
+      {isAdmin && (
+        <div
+          ref={fabRef}
+          className="fixed z-40 bottom-24 right-4 md:bottom-6 md:right-6 flex flex-col items-end gap-3"
+        >
+          {/* Sub actions */}
+          <div
+            className={`flex flex-col items-end gap-3 transition-all duration-200 origin-bottom-right ${
+              isFabOpen
+                ? "opacity-100 scale-100 translate-y-0 pointer-events-auto"
+                : "opacity-0 scale-95 translate-y-2 pointer-events-none"
+            }`}
+          >
+            <Link
+              href="/players/add"
+              onClick={() => setIsFabOpen(false)}
+              className="flex items-center gap-2 pl-4 pr-5 py-3 rounded-full font-black text-sm text-white shadow-lg shadow-blue-500/30 bg-blue-500 hover:bg-blue-400 active:scale-95 transition-all whitespace-nowrap"
+            >
+              <span>+</span> ATP atau WTA
+            </Link>
+            <button
+              onClick={() => { setIsModalOpen(true); setIsFabOpen(false); }}
+              className="flex items-center gap-2 pl-4 pr-5 py-3 rounded-full font-black text-sm text-white shadow-lg shadow-emerald-500/30 bg-emerald-500 hover:bg-emerald-400 active:scale-95 transition-all cursor-pointer whitespace-nowrap"
+            >
+              <span>+</span> Pertandingan
+            </button>
           </div>
+
+          {/* Main toggle */}
+          <button
+            onClick={() => setIsFabOpen((v) => !v)}
+            aria-label={isFabOpen ? "Tutup menu tambah" : "Buka menu tambah"}
+            className={`w-14 h-14 rounded-full flex items-center justify-center text-2xl font-black text-white cursor-pointer shadow-xl shadow-emerald-900/50 bg-linear-to-br from-emerald-500 to-emerald-600 transition-transform duration-200 active:scale-90 ${
+              isFabOpen ? "rotate-45" : ""
+            }`}
+          >
+            +
+          </button>
         </div>
-      </div>
-
-      {/* {<TournamentTab activeTab={tournamentTab} onSelect={setTournamentTab} />} */}
-
-      {/* ── Tables section ── */}
-      <div className="px-4 md:px-8 pb-12">
-        {tournamentTab === "ranking" ? (
-          <div className="grid md:flex grid-cols-1 gap-10 md:gap-x-8">
-            <div className="w-full md:w-3/5">
-              <HomeTable
-                players={currentPlayers}
-                matches={currentMatches}
-                activeTab={activeTab}
-                onPlayerDeleted={handlePlayerDeleted}
-              />
-            </div>
-            <div className="w-full md:w-2/5">
-              <MatchTable
-                matches={currentMatches}
-                players={safePlayers}
-                activeTab={activeTab}
-                onMatchDeleted={handleMatchDeleted}
-                onMatchEdited={handleMatchDeleted}
-              />
-            </div>
-          </div>
-        ) : (
-          <TournamentTable
-            tournamentTab={tournamentTab}
-            activeGender={activeTab}
-            players={safePlayers}
-          />
-        )}
-      </div>
+      )}
 
       {isModalOpen && (
         <MatchModal
