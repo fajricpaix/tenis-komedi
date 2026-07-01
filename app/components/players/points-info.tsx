@@ -40,7 +40,7 @@ export default function PointsInfo({ accent }: Props) {
 
       <div className="px-4 pb-4 space-y-3">
         <p className="text-xs text-slate-400 leading-relaxed">
-          Poin diperoleh dari hasil setiap pertandingan dalam turnamen, kemudian dikalikan <span className={`font-bold ${c.textSoft}`}>× 100</span>.
+          Poin diperoleh dari hasil setiap pertandingan dalam turnamen, kemudian dikalikan <span className={`font-bold ${c.textSoft}`}>× 133</span>.
         </p>
 
         <div className={`rounded-xl overflow-hidden border ${c.tableBorder}`}>

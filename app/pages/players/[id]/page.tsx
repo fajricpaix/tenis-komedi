@@ -33,8 +33,6 @@ function getPageNumbers(current: number, total: number): (number | "…")[] {
   return result;
 }
 
-const MATCHES_PAGE_SIZE = 6;
-
 type RankInfo = { rank: number; total: number; points: number; wins: number; losses: number };
 
 export default function PlayerDetailPage() {
@@ -45,6 +43,7 @@ export default function PlayerDetailPage() {
   const [rankInfo, setRankInfo] = useState<RankInfo>({ rank: 0, total: 0, points: 0, wins: 0, losses: 0 });
   const [playerMatches, setPlayerMatches] = useState<Match[]>([]);
   const [matchPage, setMatchPage] = useState(1);
+  const [matchesPageSize, setMatchesPageSize] = useState(6);
   const [mounted, setMounted] = useState(false);
   const [showCard, setShowCard] = useState(false);
 
@@ -106,6 +105,18 @@ export default function PlayerDetailPage() {
     const t = setTimeout(() => setMounted(true), 30);
     return () => clearTimeout(t);
   }, [player]);
+
+  // Show more matches per page on desktop (md breakpoint = 768px)
+  useEffect(() => {
+    const mql = window.matchMedia("(min-width: 768px)");
+    const update = () => {
+      setMatchesPageSize(mql.matches ? 10 : 6);
+      setMatchPage(1);
+    };
+    update();
+    mql.addEventListener("change", update);
+    return () => mql.removeEventListener("change", update);
+  }, []);
 
   // Parallax background (desktop / non-touch only)
   useEffect(() => {
@@ -173,8 +184,8 @@ export default function PlayerDetailPage() {
     ? { text: "text-sky-300", soft: "text-sky-400/70", bg: "bg-sky-500/10", border: "border-sky-500/25", ring: "border-sky-400/40", grad: "from-sky-500/25 via-sky-500/5 to-transparent", activePage: "bg-sky-500 border-sky-500 text-slate-900" }
     : { text: "text-pink-300", soft: "text-pink-400/70", bg: "bg-pink-500/10", border: "border-pink-500/25", ring: "border-pink-400/40", grad: "from-pink-500/25 via-pink-500/5 to-transparent", activePage: "bg-pink-500 border-pink-500 text-slate-900" };
 
-  const totalMatchPages = Math.ceil(playerMatches.length / MATCHES_PAGE_SIZE);
-  const pagedMatches = playerMatches.slice((matchPage - 1) * MATCHES_PAGE_SIZE, matchPage * MATCHES_PAGE_SIZE);
+  const totalMatchPages = Math.ceil(playerMatches.length / matchesPageSize);
+  const pagedMatches = playerMatches.slice((matchPage - 1) * matchesPageSize, matchPage * matchesPageSize);
 
   return (
     <div className="relative overflow-hidden">
@@ -183,7 +194,7 @@ export default function PlayerDetailPage() {
         <div className={`absolute -top-10 left-1/2 -translate-x-1/2 w-150 h-150 rounded-full blur-3xl bg-linear-to-b ${accent.grad}`} />
       </div>
 
-      <div className="relative px-4 md:px-8 py-6 md:py-10 max-w-4xl mx-auto">
+      <div className="relative px-4 md:px-8 py-6 md:py-10 container mx-auto">
         {/* Back button + shareable card CTA */}
         <div className="mb-5 flex items-center justify-between gap-3">
           <button
@@ -201,204 +212,209 @@ export default function PlayerDetailPage() {
           </button>
         </div>
 
-        {/* ── Hero: photo + identity ── */}
-        <div
-          className={`transition-all duration-700 ease-out ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <div className="flex flex-col items-center text-center gap-4 md:flex-row md:items-center md:text-left md:gap-8">
-            {/* 3D tilt photo card */}
+        <div className="grid grid-cols-1 md:grid-cols-2 md:gap-8">
+          <div>
+            {/* ── Hero: photo + identity ── */}
             <div
-              ref={tiltRef}
-              className="shrink-0 transition-transform duration-300 ease-out"
-              style={{ transform: "perspective(900px) rotateY(0deg) rotateX(0deg)", transformStyle: "preserve-3d" }}
+              className={`transition-all duration-700 ease-out ${
+                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              }`}
             >
-              <div className={`relative w-40 h-40 md:w-52 md:h-52 rounded-3xl overflow-hidden border-2 shadow-2xl ${accent.ring}`}>
-                <img
-                  src={player.imgUrl || (isAtp ? "/pria.jpg" : "/wanita.jpg")}
-                  alt={player.name}
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
-                {rankInfo.rank > 0 && (
-                  <div className={`absolute top-2 right-2 px-2.5 py-1 rounded-full text-xs font-black backdrop-blur-sm border ${accent.bg} ${accent.border} ${accent.text}`}>
-                    #{rankInfo.rank}
+              <div className="flex flex-col items-center text-center gap-4 md:flex-row md:items-center md:text-left md:gap-8">
+                {/* 3D tilt photo card */}
+                <div
+                  ref={tiltRef}
+                  className="shrink-0 transition-transform duration-300 ease-out"
+                  style={{ transform: "perspective(900px) rotateY(0deg) rotateX(0deg)", transformStyle: "preserve-3d" }}
+                >
+                  <div className={`relative w-40 h-40 md:w-52 md:h-52 rounded-3xl overflow-hidden border-2 shadow-2xl ${accent.ring}`}>
+                    <img
+                      src={player.imgUrl || (isAtp ? "/pria.jpg" : "/wanita.jpg")}
+                      alt={player.name}
+                      className="w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-linear-to-t from-black/50 via-transparent to-transparent" />
+                    {rankInfo.rank > 0 && (
+                      <div className={`absolute top-2 right-2 px-2.5 py-1 rounded-full text-xs font-black backdrop-blur-sm border ${accent.bg} ${accent.border} ${accent.text}`}>
+                        #{rankInfo.rank}
+                      </div>
+                    )}
                   </div>
-                )}
+                </div>
+
+                {/* Identity */}
+                <div className="min-w-0">
+                  <p className={`text-xs font-black uppercase tracking-widest mb-1 ${accent.text}`}>
+                    {isAtp ? "👨🏻‍💼 ATP" : "🧕🏻 WTA"} · Peringkat #{rankInfo.rank || "-"} / {rankInfo.total}
+                  </p>
+                  <h1 className="text-2xl md:text-4xl font-black text-white capitalize leading-tight">
+                    {player.name}
+                  </h1>
+                  {player.nickname && (
+                    <p className="text-sm md:text-base font-semibold text-slate-400 italic mt-0.5">
+                      <span className="not-italic text-slate-600">A.K.A</span> <span className={`capitalize font-black ${accent.text}`}>{player.nickname}</span>
+                    </p>
+                  )}
+                  <div className="flex items-center justify-center md:justify-start gap-1.5 mt-2.5">
+                    <span className="text-base">🇮🇩</span>
+                    <span className="text-sm text-slate-400 capitalize">{player.birthPlace}</span>
+                  </div>
+                </div>
               </div>
             </div>
 
-            {/* Identity */}
-            <div className="min-w-0">
-              <p className={`text-xs font-black uppercase tracking-widest mb-1 ${accent.text}`}>
-                {isAtp ? "👨🏻‍💼 ATP" : "🧕🏻 WTA"} · Peringkat #{rankInfo.rank || "-"} / {rankInfo.total}
-              </p>
-              <h1 className="text-2xl md:text-4xl font-black text-white capitalize leading-tight">
-                {player.name}
-              </h1>
-              {player.nickname && (
-                <p className="text-sm md:text-base font-semibold text-slate-400 italic mt-0.5">
-                  <span className="not-italic text-slate-600">A.K.A</span> <span className={`capitalize font-black ${accent.text}`}>{player.nickname}</span>
-                </p>
-              )}
-              <div className="flex items-center justify-center md:justify-start gap-1.5 mt-2.5">
-                <span className="text-base">🇮🇩</span>
-                <span className="text-sm text-slate-400 capitalize">{player.birthPlace}</span>
-              </div>
+            {/* ── Stat chips ── */}
+            <div
+              className={`grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 transition-all duration-700 ease-out delay-100 ${
+                mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+              }`}
+            >
+              {[
+                { icon: "📅", label: "Umur", value: player.birthDate ? `${calculateAge(player.birthDate)} Tahun` : "-", sub: formatShortDate(player.birthDate) },
+                { icon: "🎾", label: "Main Sejak", value: player.startYear ? `${player.startYear}` : "-", sub: player.startMonth || "" },
+                { icon: "🏆", label: "Poin", value: (rankInfo.points * 100).toLocaleString("id-ID"), sub: "Total poin" },
+                { icon: "📊", label: "M / K", value: `${rankInfo.wins} - ${rankInfo.losses}`, sub: "Menang - Kalah" },
+              ].map((s) => (
+                <div key={s.label} className={`rounded-2xl p-3.5 md:p-4 border ${accent.bg} ${accent.border}`}>
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-bold uppercase tracking-wide text-slate-400">{s.label}</span>
+                    <span className="text-base leading-none">{s.icon}</span>
+                  </div>
+                  <p className="text-lg md:text-xl font-black text-white leading-tight">{s.value}</p>
+                  {s.sub && <p className="text-[11px] text-slate-500 mt-0.5">{s.sub}</p>}
+                </div>
+              ))}
             </div>
+
+            {/* ── Reason ── */}
+            {player.reason && (
+              <div
+                className={`mt-6 px-5 py-4 rounded-2xl text-center border ${accent.border} bg-black/30 transition-all duration-700 ease-out delay-150 ${
+                  mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                }`}
+              >
+                <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1.5">Alasan Main Tenis</h3>
+                <p className={`italic capitalize font-semibold ${accent.text}`}>&quot;{player.reason}&quot;</p>
+              </div>
+            )}
           </div>
-        </div>
 
-        {/* ── Stat chips ── */}
-        <div
-          className={`grid grid-cols-2 md:grid-cols-4 gap-3 mt-8 transition-all duration-700 ease-out delay-100 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          {[
-            { icon: "📅", label: "Umur", value: player.birthDate ? `${calculateAge(player.birthDate)} Tahun` : "-", sub: formatShortDate(player.birthDate) },
-            { icon: "🎾", label: "Main Sejak", value: player.startYear ? `${player.startYear}` : "-", sub: player.startMonth || "" },
-            { icon: "🏆", label: "Poin", value: (rankInfo.points * 100).toLocaleString(), sub: "Total poin" },
-            { icon: "📊", label: "M / K", value: `${rankInfo.wins} - ${rankInfo.losses}`, sub: "Menang - Kalah" },
-          ].map((s) => (
-            <div key={s.label} className={`rounded-2xl p-3.5 md:p-4 border ${accent.bg} ${accent.border}`}>
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-xs font-bold uppercase tracking-wide text-slate-400">{s.label}</span>
-                <span className="text-base leading-none">{s.icon}</span>
-              </div>
-              <p className="text-lg md:text-xl font-black text-white leading-tight">{s.value}</p>
-              {s.sub && <p className="text-[11px] text-slate-500 mt-0.5">{s.sub}</p>}
-            </div>
-          ))}
-        </div>
-
-        {/* ── Reason ── */}
-        {player.reason && (
+          {/* ── Skills ── */}
           <div
-            className={`mt-6 px-5 py-4 rounded-2xl text-center border ${accent.border} bg-black/30 transition-all duration-700 ease-out delay-150 ${
+            className={`mt-6 transition-all duration-700 ease-out delay-200 col-span-2 md:col-span-1 ${
               mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
             }`}
           >
-            <h3 className="text-xs font-bold uppercase tracking-widest text-slate-500 mb-1.5">Alasan Main Tenis</h3>
-            <p className={`italic capitalize font-semibold ${accent.text}`}>&quot;{player.reason}&quot;</p>
+            <h2 className="text-sm font-black uppercase tracking-widest text-slate-300 mb-3">Skill Pemain</h2>
+            <div className={`rounded-2xl p-4 md:p-5 space-y-3 border bg-black/30 ${accent.border}`}>
+              <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Forehand" value={player.skills.forehand} />
+              <SkillsPlayerDetail imgUrl="/icons/back.webp"    skillName="Backhand" value={player.skills.backhand} />
+              <SkillsPlayerDetail imgUrl="/icons/service.webp" skillName="Service"  value={player.skills.service} />
+              <SkillsPlayerDetail imgUrl="/icons/volley.webp"  skillName="Volley"   value={player.skills.volley} />
+              <SkillsPlayerDetail imgUrl="/icons/slice.webp"   skillName="Slice"    value={player.skills.slice} />
+              <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Loop"     value={player.skills.loop} />
+            </div>
           </div>
-        )}
 
-        {/* ── Skills ── */}
-        <div
-          className={`mt-6 transition-all duration-700 ease-out delay-200 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-300 mb-3">Skill Pemain</h2>
-          <div className={`rounded-2xl p-4 md:p-5 space-y-3 border bg-black/30 ${accent.border}`}>
-            <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Forehand" value={player.skills.forehand} />
-            <SkillsPlayerDetail imgUrl="/icons/back.webp"    skillName="Backhand" value={player.skills.backhand} />
-            <SkillsPlayerDetail imgUrl="/icons/service.webp" skillName="Service"  value={player.skills.service} />
-            <SkillsPlayerDetail imgUrl="/icons/volley.webp"  skillName="Volley"   value={player.skills.volley} />
-            <SkillsPlayerDetail imgUrl="/icons/slice.webp"   skillName="Slice"    value={player.skills.slice} />
-            <SkillsPlayerDetail imgUrl="/icons/fore.webp"    skillName="Loop"     value={player.skills.loop} />
+          {/* ── Match history ── */}
+          <div
+            className={`mt-6 transition-all duration-700 ease-out delay-300 col-span-2 ${
+              mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+            }`}
+          >
+            <h2 className="text-sm font-black uppercase tracking-widest text-slate-300 mb-3">
+              Riwayat Pertandingan <span className="text-slate-600 normal-case font-semibold">({playerMatches.length})</span>
+            </h2>
+
+            {playerMatches.length > 0 ? (
+              <div className="space-y-2 md:grid md:grid-cols-2 md:gap-y-2 md:gap-x-8">
+                {pagedMatches.map((m) => {
+                  const [s1, s2] = parseSetScore(m.setScore);
+                  const isP1Win = m.winner === m.player1;
+                  return (
+                    <div
+                      key={m.id}
+                      className={`rounded-xl px-4 py-3 relative border bg-black/30 ${accent.border}`}
+                    >
+                      <div className="flex items-center gap-1 w-90 md:w-140">
+                        <span className={`font-bold text-xs md:text-sm capitalize truncate max-w-70 md: ${isP1Win ? accent.text : "text-slate-400"}`}>
+                          {m.player1}
+                        </span>
+                        <span className="text-slate-600 font-black italic text-[10px] md:text-xs shrink-0">VS</span>
+                        <span className={`font-bold text-xs md:text-sm capitalize truncate max-w-70 md: ${!isP1Win ? accent.text : "text-slate-400"}`}>
+                          {m.player2}
+                        </span>
+                      </div>
+                      <div className="absolute bottom-3 right-3 opacity-70 italic">
+                        <p className="flex text-center text-3xl font-black tracking-tighter gap-0.5">
+                          <span className={isP1Win ? accent.text : "text-slate-100"}>{s1}</span>
+                          <span className="text-slate-100">-</span>
+                          <span className={!isP1Win ? accent.text : "text-slate-100"}>{s2}</span>
+                        </p>
+                      </div>
+                      {m.matchDate && (
+                        <p className="text-[10px] md:text-xs text-slate-600">{formatShortDate(m.matchDate)}</p>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <p className="text-sm text-slate-500 italic">Belum ada riwayat pertandingan.</p>
+            )}
+
+            {totalMatchPages > 1 && (
+              <div className="flex justify-center items-center gap-1 mt-4">
+                <button
+                  onClick={() => setMatchPage(1)}
+                  disabled={matchPage === 1}
+                  className="px-2 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  «
+                </button>
+                <button
+                  onClick={() => setMatchPage((p) => p - 1)}
+                  disabled={matchPage === 1}
+                  className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  ‹
+                </button>
+
+                {getPageNumbers(matchPage, totalMatchPages).map((p, i) =>
+                  p === "…" ? (
+                    <span key={`e${i}`} className="px-1.5 text-xs text-slate-600 select-none">…</span>
+                  ) : (
+                    <button
+                      key={p}
+                      onClick={() => setMatchPage(p)}
+                      className={`min-w-8 px-2 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
+                        p === matchPage ? accent.activePage : "border-white/10 text-slate-400 hover:bg-white/5"
+                      }`}
+                    >
+                      {p}
+                    </button>
+                  )
+                )}
+
+                <button
+                  onClick={() => setMatchPage((p) => p + 1)}
+                  disabled={matchPage === totalMatchPages}
+                  className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  ›
+                </button>
+                <button
+                  onClick={() => setMatchPage(totalMatchPages)}
+                  disabled={matchPage === totalMatchPages}
+                  className="px-2 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
+                >
+                  »
+                </button>
+              </div>
+            )}
           </div>
         </div>
-
-        {/* ── Match history ── */}
-        <div
-          className={`mt-6 transition-all duration-700 ease-out delay-300 ${
-            mounted ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-          }`}
-        >
-          <h2 className="text-sm font-black uppercase tracking-widest text-slate-300 mb-3">
-            Riwayat Pertandingan <span className="text-slate-600 normal-case font-semibold">({playerMatches.length})</span>
-          </h2>
-
-          {playerMatches.length > 0 ? (
-            <div className="space-y-2">
-              {pagedMatches.map((m) => {
-                const [s1, s2] = parseSetScore(m.setScore);
-                const isP1Win = m.winner === m.player1;
-                return (
-                  <div
-                    key={m.id}
-                    className={`rounded-xl px-4 py-3 relative border bg-black/30 ${accent.border}`}
-                  >
-                    <div className="flex items-center gap-1 w-90">
-                      <span className={`font-bold text-xs capitalize truncate max-w-44 ${isP1Win ? accent.text : "text-slate-400"}`}>
-                        {m.player1}
-                      </span>
-                      <span className="text-slate-600 font-black italic text-[10px] shrink-0">VS</span>
-                      <span className={`font-bold text-xs capitalize truncate max-w-44 ${!isP1Win ? accent.text : "text-slate-400"}`}>
-                        {m.player2}
-                      </span>
-                    </div>
-                    <div className="absolute bottom-3 right-3 opacity-70 italic">
-                      <p className="flex text-center text-3xl font-black tracking-tighter gap-0.5">
-                        <span className={isP1Win ? accent.text : "text-slate-100"}>{s1}</span>
-                        <span className="text-slate-100">-</span>
-                        <span className={!isP1Win ? accent.text : "text-slate-100"}>{s2}</span>
-                      </p>
-                    </div>
-                    {m.matchDate && (
-                      <p className="text-[10px] text-slate-600">{formatShortDate(m.matchDate)}</p>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          ) : (
-            <p className="text-sm text-slate-500 italic">Belum ada riwayat pertandingan.</p>
-          )}
-
-          {totalMatchPages > 1 && (
-            <div className="flex justify-center items-center gap-1 mt-4">
-              <button
-                onClick={() => setMatchPage(1)}
-                disabled={matchPage === 1}
-                className="px-2 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                «
-              </button>
-              <button
-                onClick={() => setMatchPage((p) => p - 1)}
-                disabled={matchPage === 1}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                ‹
-              </button>
-
-              {getPageNumbers(matchPage, totalMatchPages).map((p, i) =>
-                p === "…" ? (
-                  <span key={`e${i}`} className="px-1.5 text-xs text-slate-600 select-none">…</span>
-                ) : (
-                  <button
-                    key={p}
-                    onClick={() => setMatchPage(p)}
-                    className={`min-w-8 px-2 py-1.5 rounded-lg text-xs font-bold border transition-colors cursor-pointer ${
-                      p === matchPage ? accent.activePage : "border-white/10 text-slate-400 hover:bg-white/5"
-                    }`}
-                  >
-                    {p}
-                  </button>
-                )
-              )}
-
-              <button
-                onClick={() => setMatchPage((p) => p + 1)}
-                disabled={matchPage === totalMatchPages}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                ›
-              </button>
-              <button
-                onClick={() => setMatchPage(totalMatchPages)}
-                disabled={matchPage === totalMatchPages}
-                className="px-2 py-1.5 rounded-lg text-xs font-bold border border-white/10 text-slate-400 hover:bg-white/5 disabled:opacity-30 disabled:cursor-not-allowed transition-colors cursor-pointer"
-              >
-                »
-              </button>
-            </div>
-          )}
-        </div>
+        
       </div>
 
       {showCard && (

@@ -63,7 +63,7 @@ export default function RaceToChampions({ players, accent }: Props) {
               {player.name}
             </p>
             <p className={`text-[10px] md:text-sm font-black tabular-nums ${c.text}`}>
-              {(player.points * 100).toLocaleString()}
+              {(player.points * 133).toLocaleString("id-ID")}
             </p>
           </div>
         ))}

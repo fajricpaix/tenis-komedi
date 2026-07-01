@@ -64,7 +64,7 @@ export function AtpDesktopGrid({ players }: { players: PlayerWithRank[] }) {
               <div className="mt-3 pt-3 border-t border-white/5 w-full flex items-center justify-between">
                 <span className="text-xs text-slate-600 uppercase tracking-wide font-semibold">Poin</span>
                 <span className="text-sm font-black text-sky-400 group-hover:text-sky-300 transition-colors tabular-nums">
-                  {player.points * 100}
+                  {(player.points * 133).toLocaleString("id-ID")}
                 </span>
               </div>
             </div>
@@ -117,7 +117,7 @@ export function WtaDesktopGrid({ players }: { players: PlayerWithRank[] }) {
 
             <div className="absolute bottom-0 inset-x-0 bg-linear-to-r from-fuchsia-950/90 via-pink-950/90 to-fuchsia-950/90 backdrop-blur-sm px-3 py-2 border-t border-pink-500/20">
               <p className="text-center text-xs font-black tracking-widest text-pink-300 uppercase">
-                {player.points * 100} <span className="text-pink-500/60">Points</span>
+                {(player.points * 100).toLocaleString("id-ID")} <span className="text-pink-500/60">Points</span>
               </p>
             </div>
           </div>

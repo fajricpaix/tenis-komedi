@@ -85,7 +85,7 @@ export default function RankingMobileList({ players, accent }: Props) {
           </div>
 
           <p className="text-right font-bold text-slate-300 text-sm tabular-nums">
-            {player.points * 100}
+            {(player.points * 133).toLocaleString("id-ID")}
           </p>
         </Link>
       ))}
