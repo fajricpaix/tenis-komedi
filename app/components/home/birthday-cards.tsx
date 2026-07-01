@@ -1,8 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import Link from "next/link";
 import { type Player } from "@utils/fetcher";
-import PlayerDetailModal from "@components/players/players-detail-modal";
 
 type Props = {
   players: Player[];
@@ -40,8 +39,6 @@ const SKILL_CONFIG: { key: keyof Player["skills"]; label: string; color: string 
 ];
 
 export default function BirthdayCards({ players }: Props) {
-  const [selectedPlayerId, setSelectedPlayerId] = useState<number | null>(null);
-
   const safePlayers = Array.isArray(players) ? players : [];
   const upcomingBirthdays = safePlayers
     .filter((p) => !!p.birthDate)
@@ -52,14 +49,13 @@ export default function BirthdayCards({ players }: Props) {
   if (upcomingBirthdays.length === 0) return null;
 
   return (
-    <>
-      <div className="md:order-2 md:w-3/5">
-        <div className="flex items-center justify-center gap-2 mb-4">
-          <span className="text-lg md:text-3xl">🎂</span>
-          <h2 className="font-bold text-slate-100 md:text-xl">Ulang Tahun Terdekat</h2>
-        </div>
+    <div className="md:order-2 md:w-3/5">
+      <div className="flex items-center justify-center gap-2 mb-4">
+        <span className="text-lg md:text-3xl">🎂</span>
+        <h2 className="font-bold text-slate-100 md:text-xl">Ulang Tahun Terdekat</h2>
+      </div>
 
-        <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto overflow-y-hidden md:overflow-visible md:justify-center pb-2 md:pb-0">
+      <div className="flex md:grid md:grid-cols-3 gap-4 md:gap-8 overflow-x-auto overflow-y-hidden md:overflow-visible md:justify-center pb-2 md:pb-0">
           {upcomingBirthdays.map((player, index) => {
             const { label, className } = getBirthdayLabel(player.daysUntil);
             const isToday = player.daysUntil === 0;
@@ -79,14 +75,11 @@ export default function BirthdayCards({ players }: Props) {
 
             return (
               /* Flip card wrapper — perspective needed on the outer container */
-              <div
+              <Link
                 key={player.id ?? index}
-                className="shrink-0 w-44 md:w-full group cursor-pointer"
+                href={`/players/${player.id}`}
+                className="shrink-0 w-44 md:w-full group cursor-pointer block"
                 style={{ perspective: "900px" }}
-                onClick={() => setSelectedPlayerId(player.id)}
-                role="button"
-                tabIndex={0}
-                onKeyDown={(e) => e.key === "Enter" && setSelectedPlayerId(player.id)}
               >
                 {/* Inner flipper — rotates on hover (desktop only) */}
                 <div
@@ -172,18 +165,10 @@ export default function BirthdayCards({ players }: Props) {
                   </div>
 
                 </div>
-              </div>
+              </Link>
             );
           })}
         </div>
       </div>
-
-      {selectedPlayerId !== null && (
-        <PlayerDetailModal
-          playerId={selectedPlayerId}
-          onClose={() => setSelectedPlayerId(null)}
-        />
-      )}
-    </>
   );
 }

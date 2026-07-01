@@ -18,13 +18,22 @@ function IconHome({ className }: { className?: string }) {
   );
 }
 
-function IconUsers({ className }: { className?: string }) {
+function IconMale({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-      <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-      <circle cx="9" cy="7" r="4" />
-      <path d="M23 21v-2a4 4 0 00-3-3.87" />
-      <path d="M16 3.13a4 4 0 010 7.75" />
+      <circle cx="10" cy="14" r="6" />
+      <path d="M15 9l6-6" />
+      <path d="M15 3h6v6" />
+    </svg>
+  );
+}
+
+function IconFemale({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="12" cy="8" r="6" />
+      <path d="M12 14v7" />
+      <path d="M9 18h6" />
     </svg>
   );
 }
@@ -169,57 +178,12 @@ export default function Header() {
             href="/"
             className={`px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors ${
               pathname === "/"
-                ? "bg-emerald-500/15 text-emerald-300"
-                : "text-slate-400 hover:text-white hover:bg-white/6"
+                ? "bg-purple-500/15 text-purple-500"
+                : "text-slate-400 hover:text-purple-500 hover:bg-purple-500/15"
             }`}
           >
             Beranda
           </Link>
-
-          {/* Tour dropdown */}
-          <div className="relative">
-            <button
-              onClick={() => setOpenDropdown((v) => (v === "tour" ? null : "tour"))}
-              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
-                isTourActive || openDropdown === "tour"
-                  ? "bg-emerald-500/15 text-emerald-300"
-                  : "text-slate-400 hover:text-white hover:bg-white/6"
-              }`}
-            >
-              Tour
-              <IconChevron
-                className={`w-3 h-3 transition-transform duration-200 ${
-                  openDropdown === "tour" ? "rotate-180" : ""
-                }`}
-              />
-            </button>
-
-            <div
-              className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-44 rounded-xl p-1.5 transition-all duration-200 origin-top ${
-                openDropdown === "tour"
-                  ? "opacity-100 scale-100 pointer-events-auto"
-                  : "opacity-0 scale-95 pointer-events-none"
-              }`}
-              style={{
-                background: "rgba(9,15,28,0.95)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                boxShadow: "0 16px 40px rgba(0,0,0,0.6)",
-                backdropFilter: "blur(24px)",
-              }}
-            >
-              {tourList.length > 0 ? (
-                tourList.map(({ title, slug }) => (
-                  <DropdownLink key={slug} href={`/tour/${slug}`} label={title}
-                    active={pathname === `/tour/${slug}`}
-                    activeClass="bg-emerald-500/15 text-emerald-300"
-                    hoverClass="hover:bg-emerald-500/8 hover:text-emerald-300"
-                  />
-                ))
-              ) : (
-                <span className="block px-3 py-2 text-sm text-slate-500">Belum ada tour</span>
-              )}
-            </div>
-          </div>
 
           {/* Pemain dropdown */}
           <div className="relative">
@@ -227,8 +191,8 @@ export default function Header() {
               onClick={() => setOpenDropdown((v) => (v === "pemain" ? null : "pemain"))}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
                 isPlayersActive || openDropdown === "pemain"
-                  ? "bg-sky-500/15 text-sky-300"
-                  : "text-slate-400 hover:text-white hover:bg-white/6"
+                  ? "bg-purple-500/15 text-purple-500"
+                  : "text-slate-400 hover:text-purple-500 hover:bg-purple-500/15"
               }`}
             >
               Pemain
@@ -265,14 +229,59 @@ export default function Header() {
             </div>
           </div>
 
+          {/* Tour dropdown */}
+          <div className="relative">
+            <button
+              onClick={() => setOpenDropdown((v) => (v === "tour" ? null : "tour"))}
+              className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
+                isTourActive || openDropdown === "tour"
+                  ? "bg-purple-500/15 text-purple-500"
+                  : "text-slate-400 hover:text-purple-500 hover:bg-purple-500/15"
+              }`}
+            >
+              Tour
+              <IconChevron
+                className={`w-3 h-3 transition-transform duration-200 ${
+                  openDropdown === "tour" ? "rotate-180" : ""
+                }`}
+              />
+            </button>
+
+            <div
+              className={`absolute top-full left-1/2 -translate-x-1/2 mt-2 w-44 rounded-xl p-1.5 transition-all duration-200 origin-top ${
+                openDropdown === "tour"
+                  ? "opacity-100 scale-100 pointer-events-auto"
+                  : "opacity-0 scale-95 pointer-events-none"
+              }`}
+              style={{
+                background: "rgba(9,15,28,0.95)",
+                border: "1px solid rgba(255,255,255,0.08)",
+                boxShadow: "0 16px 40px rgba(0,0,0,0.6)",
+                backdropFilter: "blur(24px)",
+              }}
+            >
+              {tourList.length > 0 ? (
+                tourList.map(({ title, slug }) => (
+                  <DropdownLink key={slug} href={`/tour/${slug}`} label={title}
+                    active={pathname === `/tour/${slug}`}
+                    activeClass="bg-purple-500/15 text-purple-500"
+                    hoverClass="hover:text-purple-500 hover:bg-purple-500/15"
+                  />
+                ))
+              ) : (
+                <span className="block px-3 py-2 text-sm text-slate-500">Belum ada tour</span>
+              )}
+            </div>
+          </div>
+
           {/* Event dropdown */}
           <div className="relative">
             <button
               onClick={() => setOpenDropdown((v) => (v === "event" ? null : "event"))}
               className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-sm font-semibold transition-colors cursor-pointer ${
                 isEventActive || openDropdown === "event"
-                  ? "bg-emerald-500/15 text-emerald-300"
-                  : "text-slate-400 hover:text-white hover:bg-white/6"
+                  ? "bg-purple-500/15 text-purple-500"
+                  : "text-slate-400 hover:text-purple-500 hover:bg-purple-500/15"
               }`}
             >
               Event
@@ -298,8 +307,8 @@ export default function Header() {
             >
               <DropdownLink href="/events/wimblegoon" label="🎾 Wimblegoon"
                 active={pathname === "/events/wimblegoon"}
-                activeClass="bg-emerald-500/15 text-emerald-300"
-                hoverClass="hover:bg-emerald-500/8 hover:text-emerald-300"
+                activeClass="bg-purple-500/15 text-purple-500"
+                hoverClass="hover:text-purple-500 hover:bg-purple-500/15"
               />
             </div>
           </div>
@@ -341,19 +350,53 @@ export default function Header() {
           <Link
             href="/"
             className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all ${
-              pathname === "/" ? "text-emerald-400" : "text-slate-600"
+              pathname === "/" ? "text-purple-500" : "text-slate-600"
             }`}
           >
             {pathname === "/" && (
-              <span className="absolute w-1 h-1 rounded-full bg-emerald-400 -mt-3 mb-0.5 opacity-80" />
+              <span className="absolute w-1 h-1 rounded-full bg-purple-500 -mt-3 mb-0.5 opacity-80" />
             )}
             <IconHome className="w-5.5 h-5.5" />
             <span
               className={`text-[10px] font-bold tracking-wide transition-all ${
-                pathname === "/" ? "text-emerald-400" : "text-slate-600"
+                pathname === "/" ? "text-purple-500" : "text-slate-600"
               }`}
             >
               Beranda
+            </span>
+          </Link>
+
+          {/* ATP */}
+          <Link
+            href="/players/list/atp"
+            className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all ${
+              pathname.startsWith("/players/list/atp") ? "text-sky-400" : "text-slate-600"
+            }`}
+          >
+            <IconMale className="w-5.5 h-5.5" />
+            <span
+              className={`text-[10px] font-bold tracking-wide transition-all ${
+                pathname.startsWith("/players/list/atp") ? "text-sky-400" : "text-slate-600"
+              }`}
+            >
+              ATP
+            </span>
+          </Link>
+
+          {/* WTA */}
+          <Link
+            href="/players/list/wta"
+            className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all ${
+              pathname.startsWith("/players/list/wta") ? "text-pink-400" : "text-slate-600"
+            }`}
+          >
+            <IconFemale className="w-5.5 h-5.5" />
+            <span
+              className={`text-[10px] font-bold tracking-wide transition-all ${
+                pathname.startsWith("/players/list/wta") ? "text-pink-400" : "text-slate-600"
+              }`}
+            >
+              WTA
             </span>
           </Link>
 
@@ -362,13 +405,13 @@ export default function Header() {
             <button
               onClick={() => setOpenDropdown((v) => (v === "tour-mobile" ? null : "tour-mobile"))}
               className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all cursor-pointer ${
-                isTourActive || openDropdown === "tour-mobile" ? "text-emerald-400" : "text-slate-600"
+                isTourActive || openDropdown === "tour-mobile" ? "text-purple-500" : "text-slate-600"
               }`}
             >
               <IconTour className="w-5.5 h-5.5" />
               <span
                 className={`text-[10px] font-bold tracking-wide transition-all ${
-                  isTourActive || openDropdown === "tour-mobile" ? "text-emerald-400" : "text-slate-600"
+                  isTourActive || openDropdown === "tour-mobile" ? "text-purple-500" : "text-slate-600"
                 }`}
               >
                 Tour
@@ -392,7 +435,7 @@ export default function Header() {
                 tourList.map(({ title, slug }) => (
                   <DropdownLink key={slug} href={`/tour/${slug}`} label={title}
                     active={pathname === `/tour/${slug}`}
-                    activeClass="bg-emerald-500/15 text-emerald-300"
+                    activeClass="bg-purple-500/15 text-purple-500"
                     hoverClass="hover:bg-emerald-500/8 hover:text-emerald-300"
                   />
                 ))
@@ -402,61 +445,17 @@ export default function Header() {
             </div>
           </div>
 
-          {/* Pemain — with ATP/WTA submenu */}
-          <div className="relative">
-            <button
-              onClick={() => setOpenDropdown((v) => (v === "pemain-mobile" ? null : "pemain-mobile"))}
-              className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all cursor-pointer ${
-                isPlayersActive || openDropdown === "pemain-mobile" ? "text-sky-400" : "text-slate-600"
-              }`}
-            >
-              <IconUsers className="w-5.5 h-5.5" />
-              <span
-                className={`text-[10px] font-bold tracking-wide transition-all ${
-                  isPlayersActive || openDropdown === "pemain-mobile" ? "text-sky-400" : "text-slate-600"
-                }`}
-              >
-                Pemain
-              </span>
-            </button>
-
-            <div
-              className={`absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-40 rounded-xl p-1.5 transition-all duration-200 origin-bottom ${
-                openDropdown === "pemain-mobile"
-                  ? "opacity-100 scale-100 pointer-events-auto"
-                  : "opacity-0 scale-95 pointer-events-none"
-              }`}
-              style={{
-                background: "rgba(9,15,28,0.95)",
-                border: "1px solid rgba(255,255,255,0.08)",
-                boxShadow: "0 -8px 32px rgba(0,0,0,0.6)",
-                backdropFilter: "blur(24px)",
-              }}
-            >
-              <DropdownLink href="/players/list/atp" label="ATP Ranking"
-                active={pathname === "/players/list/atp"}
-                activeClass="bg-sky-500/15 text-sky-300"
-                hoverClass="hover:bg-sky-500/8 hover:text-sky-300"
-              />
-              <DropdownLink href="/players/list/wta" label="WTA Ranking"
-                active={pathname === "/players/list/wta"}
-                activeClass="bg-pink-500/15 text-pink-300"
-                hoverClass="hover:bg-pink-500/8 hover:text-pink-300"
-              />
-            </div>
-          </div>
-
           {/* Event */}
           <Link
             href="/events/wimblegoon"
             className={`flex flex-col items-center gap-1 px-5 py-2 rounded-2xl transition-all ${
-              isEventActive ? "text-emerald-400" : "text-slate-600"
+              isEventActive ? "text-purple-500" : "text-slate-600"
             }`}
           >
             <IconTrophy className="w-5.5 h-5.5" />
             <span
               className={`text-[10px] font-bold tracking-wide transition-all ${
-                isEventActive ? "text-emerald-400" : "text-slate-600"
+                isEventActive ? "text-purple-500" : "text-slate-600"
               }`}
             >
               Event

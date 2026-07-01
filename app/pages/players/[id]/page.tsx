@@ -273,7 +273,7 @@ export default function PlayerDetailPage() {
                 { icon: "📅", label: "Umur", value: player.birthDate ? `${calculateAge(player.birthDate)} Tahun` : "-", sub: formatShortDate(player.birthDate) },
                 { icon: "🎾", label: "Main Sejak", value: player.startYear ? `${player.startYear}` : "-", sub: player.startMonth || "" },
                 { icon: "🏆", label: "Poin", value: (rankInfo.points * 100).toLocaleString("id-ID"), sub: "Total poin" },
-                { icon: "📊", label: "M / K", value: `${rankInfo.wins} - ${rankInfo.losses}`, sub: "Menang - Kalah" },
+                { icon: "📊", label: "Pertandingan", value: `${rankInfo.wins} - ${rankInfo.losses}`, sub: "Menang - Kalah" },
               ].map((s) => (
                 <div key={s.label} className={`rounded-2xl p-3.5 md:p-4 border ${accent.bg} ${accent.border}`}>
                   <div className="flex items-center justify-between mb-1">
